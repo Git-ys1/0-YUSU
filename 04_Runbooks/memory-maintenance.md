@@ -15,10 +15,10 @@
 - `LEARNINGS.md` -> `ACTIVE.md`: 只有稳定、跨任务、高价值的规则才提升。
 - `ACTIVE.md` -> `PROFILE.md`: 只有长期用户偏好或身份事实才提升。
 - 项目记忆 -> 跨项目经验：至少两个项目复现，或用户明确说这条以后也要默认应用。
+- 旧 Codex memory -> 本库：管理员只迁移全局/跨项目内容；项目特定条目由对应项目 Codex 在真实项目上下文中认领后再写。
 
 ## 命名规则
 
 - 项目 slug 使用小写短横线：`simple-oscilloscope`
 - 日志使用日期：`YYYY-MM-DD.md`
 - 条目编号使用类型前缀：`LRN-YYYYMMDD-001`
-

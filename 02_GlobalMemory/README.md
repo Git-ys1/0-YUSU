@@ -9,6 +9,7 @@
 - `LEARNINGS.md`: 尚未提升为规则的可复用经验
 - `ERRORS.md`: 可复用的错误和环境排障记录
 - `FEATURE_REQUESTS.md`: 长期缺失能力或反复出现的需求
+- `legacy-import-YYYY-MM-DD.md`: 从旧 Codex memory 迁移来的来源说明和导入边界
 
 ## 提升规则
 
@@ -16,4 +17,3 @@
 2. 只把长期用户偏好提升到 `PROFILE.md`。
 3. 不确定内容先放 `LEARNINGS.md`。
 4. 一次性噪声不入库。
-

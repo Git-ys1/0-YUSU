@@ -12,6 +12,10 @@
   Source: Windows Codex global memory, reviewed during vault setup on 2026-06-03
 - [ACT-005] 非平凡项目经验应优先写入本共享知识库，项目事实进 `01_Projects/`，跨项目经验进 `03_CrossProject/`。
   Source: this vault setup on 2026-06-03
+- [ACT-006] 项目特定历史记忆先不要由本库管理员代写；只建立入库规则和索引，具体项目经验由对应项目 Codex 认领后写入。
+  Source: user correction during legacy memory import on 2026-06-03
+- [ACT-007] Codex 手工主记忆写入本仓库；各端 `~/.codex/memories` 只作为本机自动召回和旧记忆导入来源。
+  Source: system decision during shared vault setup on 2026-06-03
 
 ## Maintenance Rules
 
@@ -22,4 +26,3 @@
 ## Last Reviewed
 
 - 2026-06-03
-

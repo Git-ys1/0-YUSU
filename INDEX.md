@@ -33,6 +33,7 @@
 - [[02_GlobalMemory/LEARNINGS]]
 - [[02_GlobalMemory/ERRORS]]
 - [[02_GlobalMemory/FEATURE_REQUESTS]]
+- [[02_GlobalMemory/legacy-import-2026-06-03]]
 
 ## 模板
 
