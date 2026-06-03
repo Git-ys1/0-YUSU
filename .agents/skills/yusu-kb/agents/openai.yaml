@@ -1,0 +1,7 @@
+interface:
+  display_name: "YUSU KB"
+  short_description: "Search and update yusu's shared Codex knowledge vault."
+  default_prompt: "$yusu-kb Search the shared knowledge vault before continuing."
+policy:
+  allow_implicit_invocation: true
+
