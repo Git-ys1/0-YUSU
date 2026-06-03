@@ -11,6 +11,7 @@ Evidence:
 - Windows 主库存在：`F:\AcademicHub\0#YUSU`
 - Windows 已设置 `YUSU_KB_ROOT`
 - GitHub 私有远端已创建：`https://github.com/Git-ys1/0-YUSU`
+- GitHub 远端已验证：visibility `PRIVATE`，default branch `main`，初始提交 `4f62a6e`
 - Windows preflight 已通过：F 盘为 NTFS，Health Status 为 Healthy，Fast Startup `HiberbootEnabled = 0`
 - Windows 已运行共享写入检查：`00_Inbox/shared-checks/windows-2026-06-03T22-48-50+08-00.md`
 - 已写 Ubuntu 挂载指南：`04_Runbooks/ubuntu-first-run.md`
