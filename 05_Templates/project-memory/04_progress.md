@@ -8,6 +8,12 @@
 
 - ...
 
+## Milestones
+
+| Date/Phase | Milestone | Evidence | Notes |
+|---|---|---|---|
+| ... | ... | ... | ... |
+
 ## In Progress
 
 - ...
@@ -20,4 +26,3 @@
 
 - Date:
 - Source:
-

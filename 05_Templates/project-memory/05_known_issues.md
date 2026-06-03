@@ -20,6 +20,10 @@
 
 ...
 
+### Failed Attempts
+
+- ...
+
 ### Codex Rule
 
 ...
@@ -30,4 +34,3 @@
 - Logs:
 - Files:
 ```
-

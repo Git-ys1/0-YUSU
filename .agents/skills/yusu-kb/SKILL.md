@@ -29,6 +29,7 @@ This skill makes Codex use yusu's shared knowledge vault before and after non-tr
    - `03_CrossProject/pitfalls.md`
    - `03_CrossProject/tooling.md`
    - `02_GlobalMemory/ACTIVE.md`
+6. If the project is mature or long-running, read `04_Runbooks/mature-project-ingestion.md`; each engineer should first run `tools/find-own-codex-session.*`, use only their own `rollout-*.jsonl` as the session source, and run `tools/mature-project-retro-audit.*` with that `SessionFile` before calling the ingestion complete.
 
 ## Search commands
 
@@ -67,3 +68,4 @@ Do not use `~/.codex/memories` as the manual canonical store. Codex Memories are
 2. Add cross-project lessons only when reusable.
 3. Update `06_Maps/` when a new project, tool, pitfall, or topic is added.
 4. Never store secrets, tokens, cookies, private keys, or raw private data.
+5. For mature projects, do not finish until the read-only retrospective audit gate passes against the current engineer's own JSONL, or the remaining failures are recorded in `06_todo_next.md`.

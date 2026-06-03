@@ -46,6 +46,12 @@ bash tools/resolve-kb-root.sh
 
 ## 2. 新项目标准流程
 
+先判断项目类型：
+
+- 新项目或轻量项目：按本文件建立基础项目记忆。
+- 成熟项目或长期项目：先读 `04_Runbooks/mature-project-ingestion.md`，按多轮证据挖掘和完整项目周期总结执行。
+- 只有当前状态快照、没有历史证据时：先写 `pending`，不要假装已经完成成熟项目入库。
+
 如果来源是旧 Codex memory 或本机散落记忆，先区分管理员职责和项目 Codex 职责：
 
 - 知识库管理员只导入稳定的全局偏好、跨项目工具经验、跨项目坑点和来源索引。
@@ -68,6 +74,33 @@ bash tools/resolve-kb-root.sh
 ```
 
 推荐从 `05_Templates/project-memory/` 复制模板，然后填事实。
+
+成熟项目还必须补齐：
+
+- `07_development_history.md`: 从立项到当前版本的阶段史。
+- `08_onboarding_from_zero.md`: 给新开发者从零接手的路线。
+- `09_session_evidence.md`: 当前工程师自己的单个 Codex JSONL、Git 历史、旧文档和命令证据索引。
+- `adr/`: 关键架构和产品取舍的 ADR 条目。
+
+成熟项目完成前必须运行只读质量 gate：
+
+先找当前工程师自己的 JSONL：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File F:\AcademicHub\0#YUSU\tools\find-own-codex-session.ps1 -ProjectPath "<project-path>"
+```
+
+```bash
+bash "$YUSU_KB_ROOT/tools/find-own-codex-session.sh" --project-path "<project-path>"
+```
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File F:\AcademicHub\0#YUSU\tools\mature-project-retro-audit.ps1 -Slug "<project-slug>" -ProjectPath "<project-path>" -SessionFile "<own-rollout-jsonl>"
+```
+
+```bash
+bash "$YUSU_KB_ROOT/tools/mature-project-retro-audit.sh" --slug "<project-slug>" --project-path "<project-path>" --session-file "<own-rollout-jsonl>"
+```
 
 ## 3. 写入位置
 

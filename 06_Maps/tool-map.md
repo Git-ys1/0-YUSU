@@ -14,3 +14,6 @@
 | SQLite CLI | local database repair | prefer stdin SQL over `.read C:\...` paths on Windows |
 | Tkinter | Windows desktop UI | keep selection callbacks lightweight |
 | Git | shell tooling | quote `@{u}` in PowerShell |
+| Codex session inventory | mature project ingestion | use `tools/codex-session-inventory.*` only to locate the current engineer's own JSONL via metadata |
+| Find own Codex session | mature project ingestion | use `tools/find-own-codex-session.*` to resolve `CODEX_THREAD_ID` to the current engineer JSONL |
+| Mature project retro audit | mature project ingestion | use `tools/mature-project-retro-audit.*` with one explicit engineer JSONL as a read-only quality gate before completion |

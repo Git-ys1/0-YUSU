@@ -14,6 +14,7 @@
 - Default to Chinese unless the user asks otherwise.
 - Keep entries factual, concise, reusable, and source-aware.
 - Do not invent project history. If a project Codex has not provided evidence, leave placeholders or mark content as pending.
+- For mature projects, do not write a shallow snapshot. Use `04_Runbooks/mature-project-ingestion.md` and reconstruct timeline, abandoned approaches, failures, decisions, current runbook, and from-zero onboarding from evidence.
 - Do not store secrets, credentials, private tokens, cookies, SSH keys, or raw private data.
 - Prefer append/update over destructive rewrites.
 - Preserve user-created files and unrelated local changes.
@@ -34,4 +35,3 @@ Future Codex sessions should locate this vault through `YUSU_KB_ROOT` when possi
 
 - Windows: `tools/resolve-kb-root.ps1`
 - Ubuntu/Linux: `tools/resolve-kb-root.sh`
-

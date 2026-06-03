@@ -17,6 +17,7 @@
    - `04_Runbooks/system-decisions.md`
    - `04_Runbooks/codex-retrieval-workflow.md`
    - `04_Runbooks/codex-ingestion-guide.md`
+   - `04_Runbooks/mature-project-ingestion.md`，如果项目已经经历多轮迭代、长期开发、200+ commits、大型 JSONL 会话或用户明确要求“完整项目周期总结”
    - `04_Runbooks/windows-ubuntu-shared-folder.md`，如果涉及 Ubuntu 或共享更新
 3. 搜索是否已有项目条目：
    - `rg "<project-name>|<repo-path>|<key-module>" "$YUSU_KB_ROOT"`
@@ -29,6 +30,7 @@
 - 如果发现跨项目复用经验，提炼到 `03_CrossProject/`。
 - 如果发现稳定的全局规则，先写到 `02_GlobalMemory/LEARNINGS.md`；只有足够稳定时再进入 `02_GlobalMemory/ACTIVE.md`。
 - 保留原始证据位置，例如项目路径、命令、错误文本、日期和操作者。
+- 成熟项目不能只写当前结论。必须重建从立项、试错、舍弃方案、关键转向到当前成熟形态的开发史。
 
 ## 严禁
 

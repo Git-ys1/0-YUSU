@@ -16,6 +16,7 @@
 - 检索工作流：[04_Runbooks/codex-retrieval-workflow.md](04_Runbooks/codex-retrieval-workflow.md)
 - GitHub 私有仓库同步：[04_Runbooks/github-sync.md](04_Runbooks/github-sync.md)
 - 入库指南：[04_Runbooks/codex-ingestion-guide.md](04_Runbooks/codex-ingestion-guide.md)
+- 成熟项目入库：[04_Runbooks/mature-project-ingestion.md](04_Runbooks/mature-project-ingestion.md)
 - Windows/Ubuntu 共享指南：[04_Runbooks/windows-ubuntu-shared-folder.md](04_Runbooks/windows-ubuntu-shared-folder.md)
 - 全局 `AGENTS.md` 接入片段：[04_Runbooks/global-agents-snippet.md](04_Runbooks/global-agents-snippet.md)
 
