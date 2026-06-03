@@ -4,9 +4,10 @@
 
 ## Knowledge System
 
+- [[01_Projects/yusu-codex-knowledge-vault/README]]
 - [[04_Runbooks/system-decisions]]
 - [[04_Runbooks/codex-retrieval-workflow]]
 - [[04_Runbooks/codex-ingestion-guide]]
 - [[04_Runbooks/windows-ubuntu-shared-folder]]
 - [[04_Runbooks/shared-access-verification]]
-
+- [[04_Runbooks/github-sync]]

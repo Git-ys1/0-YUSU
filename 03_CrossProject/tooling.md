@@ -30,3 +30,22 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\path\to\script.ps1
 ```powershell
 python C:\Users\yusu\.codex\skills\.system\skill-creator\scripts\quick_validate.py <skill-folder>
 ```
+
+### Freshly installed Codex skills need a fresh discovery surface
+
+如果某个 skill 是在当前长线程中刚创建或安装的，不要声称“当前线程已经被动触发成功”。当前线程的技能清单可能是在会话开始时加载的。可立即验证的证据是：
+
+- `SKILL.md` frontmatter 有效
+- skill 已链接到实际发现路径
+- 全局 `AGENTS.md` 会提示使用它
+- 搜索脚本能命中知识库
+
+要证明被动触发，应开启新的 Codex 线程或重启后观察技能清单/行为。
+
+### GitHub repository names may be normalized
+
+GitHub 远端仓库名不一定保留本地目录名中的特殊字符。本次请求 `0#YUSU`，GitHub CLI 创建结果为 `Git-ys1/0-YUSU`。以后写同步指南时，要区分本地路径名和远端仓库名，不要硬假设二者完全相同。
+
+### Dual-boot shared folder is not proven until both OSes write-read
+
+Windows 上存在 `F:\...` 不能证明 Ubuntu 原生双系统能看见它。只有 Ubuntu 挂载/clone 后写入检查文件，并且 Windows 能读到，才算共享闭环。未验证前优先采用 GitHub private repo pull/push 作为跨端同步层。

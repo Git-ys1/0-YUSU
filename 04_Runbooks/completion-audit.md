@@ -43,6 +43,8 @@ Evidence:
 - `tools/search-kb.ps1`
 - `tools/search-kb.sh`
 - `yusu-kb` skill 已通过 `skill-creator/scripts/quick_validate.py`
+- `tools/check-codex-startup-readiness.ps1` 已验证 Windows 侧开工前发现前提：`YUSU_KB_ROOT`、全局 AGENTS 块、两个 skill 发现路径、搜索命中
+- `01_Projects/yusu-codex-knowledge-vault/` 已记录本知识库自身的真实项目记忆
 
 ## Requirement 3: 记忆写在哪里
 

@@ -9,6 +9,12 @@
 └── carbonrag/
 ```
 
+## Current Project Entries
+
+| Project | Slug | Path | Notes |
+|---|---|---|---|
+| YUSU Codex Knowledge Vault | `yusu-codex-knowledge-vault` | `F:\AcademicHub\0#YUSU` | This vault itself; includes GitHub sync, skill setup, retrieval decisions |
+
 ## 新项目入库
 
 1. 从 `05_Templates/project-memory/` 复制一套文件。
@@ -32,4 +38,3 @@
 - `05_known_issues.md`: 已知坑点和不要重复犯的错
 - `06_todo_next.md`: 下一步任务
 - `session-log/`: 大任务原始记录
-

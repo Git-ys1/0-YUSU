@@ -43,6 +43,23 @@ bash "$YUSU_KB_ROOT/tools/search-kb.sh" "Simple Oscilloscope Keil hex"
 rg -n -i "project|tool|error|keyword" "$YUSU_KB_ROOT/01_Projects" "$YUSU_KB_ROOT/03_CrossProject" "$YUSU_KB_ROOT/02_GlobalMemory"
 ```
 
+## Startup readiness check
+
+Windows 侧可以用这个脚本检查“新 Codex 线程开工前是否具备被动发现本库的前提”：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tools\check-codex-startup-readiness.ps1
+```
+
+它检查：
+
+- `YUSU_KB_ROOT`
+- 全局 `AGENTS.md` 中的 YUSU 知识库块
+- `yusu-kb` skill 的 `.agents/skills` 和 `.codex/skills` 发现路径
+- `search-kb.ps1` 是否能实际命中本库
+
+注意：如果 skill 是在当前长线程中刚创建的，这个脚本只能证明新线程的发现前提已经具备，不能证明当前长线程已经重新加载了 skill 元数据。
+
 ## 检索顺序
 
 1. 搜项目名、仓库路径、硬件名、框架名。

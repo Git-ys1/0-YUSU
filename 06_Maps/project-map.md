@@ -4,5 +4,4 @@
 
 | Project | Slug | Path | Status | Last Updated |
 |---|---|---|---|---|
-| pending | pending | pending | pending | pending |
-
+| YUSU Codex Knowledge Vault | `yusu-codex-knowledge-vault` | `F:\AcademicHub\0#YUSU` | active | 2026-06-03 |
