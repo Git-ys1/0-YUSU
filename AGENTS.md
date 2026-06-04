@@ -19,6 +19,7 @@
 - Do not store secrets, credentials, private tokens, cookies, SSH keys, or raw private data.
 - Prefer append/update over destructive rewrites.
 - Preserve user-created files and unrelated local changes.
+- Other project Codex sessions may write project memory into this vault from their own project worktrees. The vault administrator may verify those changes here, fix quality/routing/format issues, then commit and push them from this repository.
 - For non-trivial structural changes, update `INDEX.md` and the relevant folder `README.md`.
 
 ## Memory Routing
