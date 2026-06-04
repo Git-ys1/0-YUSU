@@ -22,15 +22,17 @@ This skill makes Codex use yusu's shared knowledge vault before and after non-tr
 2. Read `04_Runbooks/system-decisions.md`.
 3. Read `04_Runbooks/codex-retrieval-workflow.md`.
 4. Read `04_Runbooks/super-yusu-v0.2-ingestion.md`.
-5. Search for the current project name, repository path, framework, toolchain, hardware, and likely error keywords.
-6. Prefer this order:
+5. If the task requires cross-document synthesis or a cited investigation across many memory files, read `04_Runbooks/super-yusu-v0.3-marginalia.md`.
+6. Search for the current project name, repository path, framework, toolchain, hardware, and likely error keywords.
+7. Before installing a new runtime, search the vault for existing project-local toolchains and venvs that may already satisfy the requirement.
+8. Prefer this order:
    - `01_Projects/<project-slug>/05_known_issues.md`
    - `01_Projects/<project-slug>/02_runbook.md`
    - `01_Projects/<project-slug>/03_decisions.md`
    - `03_CrossProject/pitfalls.md`
    - `03_CrossProject/tooling.md`
    - `02_GlobalMemory/ACTIVE.md`
-7. If the project is mature or long-running, read `04_Runbooks/mature-project-ingestion.md`; each engineer should first run `tools/find-own-codex-session.*`, use only their own `rollout-*.jsonl` as the session source, and run `tools/mature-project-retro-audit.*` with that `SessionFile` before calling the ingestion complete.
+9. If the project is mature or long-running, read `04_Runbooks/mature-project-ingestion.md`; each engineer should first run `tools/find-own-codex-session.*`, use only their own `rollout-*.jsonl` as the session source, and run `tools/mature-project-retro-audit.*` with that `SessionFile` before calling the ingestion complete.
 
 ## Search commands
 
@@ -51,6 +53,26 @@ Fallback:
 ```bash
 rg -n -i "keyword" "$YUSU_KB_ROOT"
 ```
+
+## Marginalia deep research layer
+
+Use Marginalia only for broad, cited, cross-document investigation. Do not use it for every small lookup.
+
+Windows:
+
+```powershell
+F:\AcademicHub\0#YUSU\tools\sync-yusu-kb-to-marginalia.ps1 -Check
+F:\AcademicHub\0#YUSU\tools\run-marginalia-yusu.ps1
+```
+
+Ubuntu/Linux:
+
+```bash
+bash "$YUSU_KB_ROOT/tools/sync-yusu-kb-to-marginalia.sh" --check
+bash "$YUSU_KB_ROOT/tools/run-marginalia-yusu.sh"
+```
+
+Actual ingest requires a real LLM API key in `.marginalia-yusu/.env`; never write placeholder keys or secrets into the vault.
 
 ## Where to write memory
 

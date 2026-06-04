@@ -17,6 +17,7 @@ Codex 的职责：
 - 通过全局 `AGENTS.md` 得知知识库存在
 - 通过用户级 `yusu-kb` skill 按流程搜索
 - 通过 `tools/search-kb.*` 和 `rg` 找证据
+- 必要时通过 V0.3 Marginalia 做跨文档深度调查
 - 把新经验写回正确目录
 
 ## 快速检索
@@ -124,3 +125,27 @@ C:\Users\yusu\.codex\skills\yusu-kb
 1. 本地向量索引 + 简单 MCP search/read server
 2. Basic Memory / Khoj 这类现成 second-brain MCP
 3. Obsidian 插件只作为人类 UI，不作为 Codex 的硬依赖
+
+## V0.3: 什么时候用 Marginalia
+
+Marginalia 已作为可选深度研究层接入，见 `04_Runbooks/super-yusu-v0.3-marginalia.md`。
+
+继续优先用 `rg` / `tools/search-kb.*` 处理快速查找。只有当问题需要跨大量项目记忆做综合判断、需要带引用报告、或需要读取原文片段并多步追踪证据时，才启用 Marginalia。
+
+Windows:
+
+```powershell
+.\tools\setup-marginalia-yusu.ps1 -SyncProjection
+.\tools\sync-yusu-kb-to-marginalia.ps1 -Check
+.\tools\run-marginalia-yusu.ps1
+```
+
+Ubuntu/Linux:
+
+```bash
+bash tools/setup-marginalia-yusu.sh --sync-projection
+bash tools/sync-yusu-kb-to-marginalia.sh --check
+bash tools/run-marginalia-yusu.sh
+```
+
+实际 `/ingest --all` 前必须在 `.marginalia-yusu/.env` 配置真实 LLM API key。没有 key 时只做 `-Check`，不要把占位 key 写入 `.env`。

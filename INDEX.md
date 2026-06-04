@@ -8,6 +8,7 @@
 - [[04_Runbooks/github-sync]]
 - [[04_Runbooks/codex-ingestion-guide]]
 - [[04_Runbooks/super-yusu-v0.2-ingestion]]
+- [[04_Runbooks/super-yusu-v0.3-marginalia]]
 - [[04_Runbooks/mature-project-ingestion]]
 - [[04_Runbooks/windows-ubuntu-shared-folder]]
 - [[04_Runbooks/global-agents-snippet]]
@@ -46,3 +47,7 @@
 - [[05_Templates/project-memory/08_onboarding_from_zero]]
 - [[05_Templates/project-memory/09_session_evidence]]
 - [[05_Templates/project-memory/10_project_summary]]
+
+## 外部依赖
+
+- [[vendor/README]]

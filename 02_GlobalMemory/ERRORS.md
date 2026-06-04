@@ -277,6 +277,32 @@ Invalid YAML in frontmatter: mapping values are not allowed here
 
 frontmatter 只保留 `name` 和 `description`，且当 `description` 含冒号、引号、路径或复杂标点时用双引号包裹。修改后必须运行 `quick_validate.py <skill-folder>`。
 
+## [ERR-20260604-001] missed_existing_project_python_env
+**Logged**: 2026-06-04
+**Priority**: high
+**Status**: active
+
+### Summary
+
+部署 Marginalia 时，系统 PATH 只暴露 Python 3.7 且没有 `uv`，Codex 差点开始下载新的 Python/uv。用户指出 Simple Oscilloscope 项目已有 Python 3.11 venv，知识库里也已经记录了这个事实。
+
+### Error
+
+```text
+No suitable system Python 3.11 found, but an existing project-local Python 3.11 venv was already documented.
+```
+
+### Context
+
+- OS: Windows
+- Project/path: `F:\AcademicHub\0#YUSU`
+- Existing interpreter: `F:\Project\Simple Oscilloscope\.venv\python.exe`
+- Evidence: `01_Projects/simple-oscilloscope/02_runbook.md` says PC runtime uses Python 3.11 venv.
+
+### Suggested Fix
+
+Before installing a new runtime, search this vault for existing project-local toolchains, venvs, conda envs, and setup scripts. Prefer an already validated non-C-drive interpreter when it satisfies the version requirement.
+
 ## Entry Template
 
 ```md

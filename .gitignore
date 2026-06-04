@@ -1,5 +1,7 @@
 .obsidian/workspace*
 .obsidian/cache
+.tools/
+.marginalia-yusu/
 00_Inbox/shared-checks/
 .trash/
 *.tmp
