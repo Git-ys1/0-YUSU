@@ -2,6 +2,7 @@
 .obsidian/cache
 .tools/
 .marginalia-yusu/
+.playwright-cli/
 00_Inbox/shared-checks/
 .trash/
 *.tmp

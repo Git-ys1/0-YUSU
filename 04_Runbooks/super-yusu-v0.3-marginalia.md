@@ -64,6 +64,34 @@ Run the CLI:
 .\tools\run-marginalia-yusu.ps1
 ```
 
+Run the API server for the desktop/web UI:
+
+```powershell
+.\tools\run-marginalia-api-yusu.ps1
+```
+
+If you only want to inspect the UI before configuring a real LLM key, use:
+
+```powershell
+.\tools\run-marginalia-api-yusu.ps1 -AllowPlaceholderKey
+```
+
+The placeholder mode is UI-only. It lets `/health`, settings, and the desktop shell load, but real chat, ingest, reflection, and LLM-dependent background work will fail until a real API key is configured.
+
+Run the browser UI in a second terminal:
+
+```powershell
+.\tools\run-marginalia-ui-yusu.ps1
+```
+
+Open:
+
+```text
+http://127.0.0.1:5173/
+```
+
+Why the UI script copies files first: Vite fails when the project root path contains `#` (`F:\AcademicHub\0#YUSU`). The script copies the desktop source to `F:\AcademicHub\YUSU-Marginalia-Desktop-Run`, installs Node dependencies there, and runs Vite from the no-`#` path. It also uses `node@22` through npm cache under `.tools/npm-cache`, because the system Node 24 triggered a Vite dependency pre-optimization crash during the initial UI test.
+
 Sync this Markdown vault into Marginalia mirror storage:
 
 ```powershell
@@ -129,6 +157,9 @@ Verified on 2026-06-04:
 - `.marginalia-yusu/.env` was initialized with `MARGINALIA_HOME=F:/AcademicHub/0#YUSU/.marginalia-yusu/data`.
 - 99 Markdown/TXT files were projected into `.marginalia-yusu/data/library/yusu-kb/`.
 - `/check` started Marginalia embedded mode and detected the mirrored files as new.
+- API server verified at `http://127.0.0.1:8000/health` with placeholder key and `WORKER_ENABLED=false`.
+- Browser UI verified at `http://127.0.0.1:5173/`; Playwright confirmed the Chinese navigation pages: `聊天`, `资料库`, `搜索`, `设置`.
+- Settings page verified server state: `MARGINALIA_HOME=F:\AcademicHub\0#YUSU\.marginalia-yusu\data`, SQLite, mirror storage, worker disabled.
 
 `/ingest --all` is intentionally not complete until the user configures a real LLM API key. A placeholder key is acceptable only for read-only `/check`; it must not be written to `.env`.
 
