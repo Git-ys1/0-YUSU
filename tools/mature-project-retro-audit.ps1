@@ -16,6 +16,7 @@ param(
     [int]$MinEvidenceLines = 20,
     [int]$MinSummaryLines = 25,
     [int]$MinImportantThings = 3,
+    [int]$MinRoutingRows = 3,
     [switch]$AllowCwdMismatch
 )
 
@@ -158,7 +159,8 @@ $evidenceLines = Count-SubstantiveLines $evidence
 $summaryLines = Count-SubstantiveLines $summary
 $issueCount = Count-RegexLines $issues "(?m)^##\s+Issue:"
 $decisionCount = Count-RegexLines $decisions "(?m)^##\s+Decision:"
-$importantThingCount = Count-RegexLines $summary "(?m)^\|\s*[0-9]+\s*\|"
+$importantThingCount = Count-RegexLines $summary "(?m)^\|\s*[0-9]+\s*\|\s*(?!\.\.\.\s*\|)"
+$routingRowCount = Count-RegexLines $summary "(?m)^\|\s*(?!\.\.\.\s*\|)(?!Candidate Lesson\s*\|)[^|]+\s*\|\s*(project-only|cross-project pitfall|cross-project pattern|cross-project tooling|architecture decision|global learning|active global rule|feature request|map only|deferred)\s*\|"
 $adrDir = Join-Path $projectMemory "adr"
 $adrCount = 0
 if (Test-Path -LiteralPath $adrDir) {
@@ -171,6 +173,7 @@ Add-Check "From-zero onboarding has enough substance" ($onboardingLines -ge $Min
 Add-Check "Session evidence has enough substance" ($evidenceLines -ge $MinEvidenceLines) "$evidenceLines substantive lines, required $MinEvidenceLines"
 Add-Check "Project summary has enough substance" ($summaryLines -ge $MinSummaryLines) "$summaryLines substantive lines, required $MinSummaryLines"
 Add-Check "Project summary important things count" ($importantThingCount -ge $MinImportantThings) "$importantThingCount ranked things, required $MinImportantThings"
+Add-Check "Memory Routing Audit row count" ($routingRowCount -ge $MinRoutingRows) "$routingRowCount routed lessons, required $MinRoutingRows"
 Add-Check "Known issues count" ($issueCount -ge $MinIssues) "$issueCount issues, required $MinIssues"
 Add-Check "Decision/ADR count" ($totalDecisions -ge $MinDecisions) "$totalDecisions decisions/ADRs, required $MinDecisions"
 
@@ -180,6 +183,7 @@ $summaryRequiredSections = @(
     "Final Shape",
     "Hard-Won Lessons",
     "Rules For Future Codex",
+    "Memory Routing Audit",
     "Remaining Risks"
 )
 foreach ($section in $summaryRequiredSections) {
@@ -256,6 +260,7 @@ Write-Output "- Which current design choices are consequences of earlier failed 
 Write-Output "- What exact commands and files prove the current runbook?"
 Write-Output "- If rebuilding from zero, what order avoids the historical traps?"
 Write-Output "- What are the 3-7 most important things this project taught us?"
+Write-Output "- Which of those lessons must be promoted outside 01_Projects, and where?"
 
 Write-Output ""
 if ($failures.Count -gt 0) {

@@ -2,6 +2,10 @@
 
 这是给后续各项目 Codex 必读的入库指南。目标是让每个项目的经验进入同一个知识库，避免新项目重复旧项目的错误。
 
+**Protocol Version**: super-yusuV0.2
+
+V0.2 的核心要求：成熟项目不能只写 `01_Projects/<project-slug>/`。完整复盘后必须在 `10_project_summary.md` 写出最重要 3-7 件事，并按 `04_Runbooks/super-yusu-v0.2-ingestion.md` 完成 `Memory Routing Audit`。
+
 ## 0. 先定位知识库
 
 优先读取环境变量：
@@ -77,10 +81,10 @@ bash tools/resolve-kb-root.sh
 
 成熟项目还必须补齐：
 
-- `07_development_history.md`: 从立项到当前版本的阶段史。
-- `08_onboarding_from_zero.md`: 给新开发者从零接手的路线。
-- `09_session_evidence.md`: 当前工程师自己的单个 Codex JSONL、Git 历史、旧文档和命令证据索引。
-- `10_project_summary.md`: 从完整复盘里提炼出的最重要 3-7 件事和未来 Codex 规则。
+   - `07_development_history.md`: 从立项到当前版本的阶段史。
+   - `08_onboarding_from_zero.md`: 给新开发者从零接手的路线。
+   - `09_session_evidence.md`: 当前工程师自己的单个 Codex JSONL、Git 历史、旧文档和命令证据索引。
+   - `10_project_summary.md`: 从完整复盘里提炼出的最重要 3-7 件事、未来 Codex 规则和 `Memory Routing Audit`。
 - `adr/`: 关键架构和产品取舍的 ADR 条目。
 
 成熟项目完成前必须运行只读质量 gate：
@@ -165,6 +169,9 @@ bash "$YUSU_KB_ROOT/tools/mature-project-retro-audit.sh" --slug "<project-slug>"
 
 - 新项目是否已加入 `01_Projects/README.md` 或 `INDEX.md`
 - 是否更新了项目目录 `README.md`
+- 成熟项目是否在 `10_project_summary.md` 总结了最重要 3-7 件事
+- 是否完成 `Memory Routing Audit`
 - 是否把跨项目经验提炼到了 `03_CrossProject/`
+- 是否更新必要的 `02_GlobalMemory/` 和 `06_Maps/`
 - 是否保留了证据和日期
 - 是否确认没有秘密信息

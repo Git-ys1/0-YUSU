@@ -7,6 +7,7 @@
 - [[04_Runbooks/codex-retrieval-workflow]]
 - [[04_Runbooks/github-sync]]
 - [[04_Runbooks/codex-ingestion-guide]]
+- [[04_Runbooks/super-yusu-v0.2-ingestion]]
 - [[04_Runbooks/mature-project-ingestion]]
 - [[04_Runbooks/windows-ubuntu-shared-folder]]
 - [[04_Runbooks/global-agents-snippet]]

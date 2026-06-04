@@ -12,6 +12,7 @@ min_onboarding_lines=30
 min_evidence_lines=20
 min_summary_lines=25
 min_important_things=3
+min_routing_rows=3
 allow_cwd_mismatch=0
 
 while [[ $# -gt 0 ]]; do
@@ -48,6 +49,10 @@ while [[ $# -gt 0 ]]; do
       min_important_things="$2"
       shift 2
       ;;
+    --min-routing-rows)
+      min_routing_rows="$2"
+      shift 2
+      ;;
     --allow-cwd-mismatch)
       allow_cwd_mismatch=1
       shift
@@ -69,14 +74,14 @@ if [[ -z "$kb_root" ]]; then
   kb_root="$(bash "$script_dir/resolve-kb-root.sh")"
 fi
 
-python3 - "$slug" "$project_path" "$session_file" "$kb_root" "$min_issues" "$min_decisions" "$min_history_lines" "$min_onboarding_lines" "$min_evidence_lines" "$min_summary_lines" "$min_important_things" "$allow_cwd_mismatch" <<'PY'
+python3 - "$slug" "$project_path" "$session_file" "$kb_root" "$min_issues" "$min_decisions" "$min_history_lines" "$min_onboarding_lines" "$min_evidence_lines" "$min_summary_lines" "$min_important_things" "$min_routing_rows" "$allow_cwd_mismatch" <<'PY'
 import json
 import re
 import subprocess
 import sys
 from pathlib import Path
 
-slug, project_path, session_file, kb_root, min_issues, min_decisions, min_history_lines, min_onboarding_lines, min_evidence_lines, min_summary_lines, min_important_things, allow_cwd_mismatch = sys.argv[1:]
+slug, project_path, session_file, kb_root, min_issues, min_decisions, min_history_lines, min_onboarding_lines, min_evidence_lines, min_summary_lines, min_important_things, min_routing_rows, allow_cwd_mismatch = sys.argv[1:]
 min_issues = int(min_issues)
 min_decisions = int(min_decisions)
 min_history_lines = int(min_history_lines)
@@ -84,6 +89,7 @@ min_onboarding_lines = int(min_onboarding_lines)
 min_evidence_lines = int(min_evidence_lines)
 min_summary_lines = int(min_summary_lines)
 min_important_things = int(min_important_things)
+min_routing_rows = int(min_routing_rows)
 allow_cwd_mismatch = bool(int(allow_cwd_mismatch))
 
 project = Path(project_path).expanduser()
@@ -198,7 +204,8 @@ evidence_lines = substantive_lines(evidence)
 summary_lines = substantive_lines(summary)
 issue_count = count_regex_lines(issues, r"^##\s+Issue:")
 decision_count = count_regex_lines(decisions, r"^##\s+Decision:")
-important_thing_count = count_regex_lines(summary, r"^\|\s*[0-9]+\s*\|")
+important_thing_count = count_regex_lines(summary, r"^\|\s*[0-9]+\s*\|\s*(?!\.\.\.\s*\|)")
+routing_row_count = count_regex_lines(summary, r"^\|\s*(?!\.\.\.\s*\|)(?!Candidate Lesson\s*\|)[^|]+\s*\|\s*(project-only|cross-project pitfall|cross-project pattern|cross-project tooling|architecture decision|global learning|active global rule|feature request|map only|deferred)\s*\|")
 adr_dir = project_memory / "adr"
 adr_count = len([p for p in adr_dir.glob("*.md") if p.name != "_template.md"]) if adr_dir.exists() else 0
 total_decisions = decision_count + adr_count
@@ -208,10 +215,11 @@ add_check("From-zero onboarding has enough substance", onboarding_lines >= min_o
 add_check("Session evidence has enough substance", evidence_lines >= min_evidence_lines, f"{evidence_lines} substantive lines, required {min_evidence_lines}")
 add_check("Project summary has enough substance", summary_lines >= min_summary_lines, f"{summary_lines} substantive lines, required {min_summary_lines}")
 add_check("Project summary important things count", important_thing_count >= min_important_things, f"{important_thing_count} ranked things, required {min_important_things}")
+add_check("Memory Routing Audit row count", routing_row_count >= min_routing_rows, f"{routing_row_count} routed lessons, required {min_routing_rows}")
 add_check("Known issues count", issue_count >= min_issues, f"{issue_count} issues, required {min_issues}")
 add_check("Decision/ADR count", total_decisions >= min_decisions, f"{total_decisions} decisions/ADRs, required {min_decisions}")
 
-for section in ["One-Page Summary", "Most Important Things", "Final Shape", "Hard-Won Lessons", "Rules For Future Codex", "Remaining Risks"]:
+for section in ["One-Page Summary", "Most Important Things", "Final Shape", "Hard-Won Lessons", "Rules For Future Codex", "Memory Routing Audit", "Remaining Risks"]:
     add_check(f"Summary section: {section}", re.search(rf"^##\s+{re.escape(section)}\s*$", summary, re.MULTILINE) is not None, section)
 
 for section in ["First 30 Minutes", "First Day", "Minimal Working Loop", "Common Newcomer Traps", "If Rebuilding From Scratch"]:
@@ -263,6 +271,7 @@ for prompt in [
     "What exact commands and files prove the current runbook?",
     "If rebuilding from zero, what order avoids the historical traps?",
     "What are the 3-7 most important things this project taught us?",
+    "Which of those lessons must be promoted outside 01_Projects, and where?",
 ]:
     print(f"- {prompt}")
 

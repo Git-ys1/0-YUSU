@@ -6,7 +6,7 @@
 01_Projects/<project-slug>/
 ```
 
-轻量项目可以只填基础文件。成熟项目必须继续补齐 `07_development_history.md`、`08_onboarding_from_zero.md`、`09_session_evidence.md`、`10_project_summary.md` 和 `adr/`，并按 `04_Runbooks/mature-project-ingestion.md` 做多轮证据挖掘。
+轻量项目可以只填基础文件。成熟项目必须继续补齐 `07_development_history.md`、`08_onboarding_from_zero.md`、`09_session_evidence.md`、`10_project_summary.md` 和 `adr/`，并按 `04_Runbooks/mature-project-ingestion.md` 做多轮证据挖掘，最后按 `04_Runbooks/super-yusu-v0.2-ingestion.md` 完成 `Memory Routing Audit`。
 
 成熟项目提交前先用 `tools/find-own-codex-session.*` 找到当前工程师自己的 JSONL，再运行 `tools/mature-project-retro-audit.*`。审计脚本只读项目、Git 和当前工程师传入的单个 Codex JSONL，用失败退出码约束复盘质量。
 

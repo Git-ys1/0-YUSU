@@ -36,6 +36,16 @@
 - Check first:
 - Escalate to user when:
 
+## Memory Routing Audit
+
+按 `04_Runbooks/super-yusu-v0.2-ingestion.md` 判断每条重要结论应该留在项目内、提升到跨项目经验、升级为全局候选、只补索引、暂缓，或明确拒绝入库。
+
+| Candidate Lesson | Route | Target File | Action | Evidence |
+|---|---|---|---|---|
+| ... | project-only | 01_Projects/<project-slug>/... | kept | ... |
+| ... | cross-project pattern | 03_CrossProject/patterns.md | written | ... |
+| ... | cross-project pitfall | 03_CrossProject/pitfalls.md | written | ... |
+
 ## Remaining Risks
 
 | Risk | Why It Remains | Next Check |

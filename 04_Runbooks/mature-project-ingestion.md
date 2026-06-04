@@ -10,6 +10,7 @@
 - 哪些错误后来被修掉，但新开发者很可能再次踩？
 - 当前架构为什么长成这样？
 - 如果今天从零重做，应该按什么顺序走？
+- 哪些经验必须提升到跨项目或全局记忆，而不是只留在本项目目录？
 
 ## 0. 适用范围
 
@@ -224,6 +225,22 @@ git branch --all
 
 - `10_project_summary.md`
 
+### Pass G: Memory Routing Audit
+
+目标：把最终总结里的关键结论逐条判断入库层级，避免成熟项目只留下项目内快照。
+
+必须按 `04_Runbooks/super-yusu-v0.2-ingestion.md` 执行：
+
+- 每个最重要结论都要判断为 `project-only`、跨项目经验、全局候选、map-only、deferred 或 rejected。
+- 可复用经验必须实际写入 `03_CrossProject/`、`02_GlobalMemory/` 或 `06_Maps/` 的对应位置。
+- 不提升的结论必须说明为什么只适合本项目。
+- 证据不足的结论必须写入 `06_todo_next.md`，不能假装完成。
+
+输出到：
+
+- `10_project_summary.md` 的 `Memory Routing Audit`
+- 必要时更新 `03_CrossProject/`、`02_GlobalMemory/`、`06_Maps/`
+
 ## 4. 写入文件标准
 
 成熟项目建议至少形成这些文件：
@@ -255,6 +272,7 @@ git branch --all
 - `03_decisions.md` 至少写当前架构中 3 个最重要的取舍。
 - `08_onboarding_from_zero.md` 必须能让新 Codex/新开发者按顺序开始工作。
 - `10_project_summary.md` 必须列出整个项目经历里最重要的 3-7 件事，并把它们链接回证据。
+- `10_project_summary.md` 必须包含 `Memory Routing Audit`，逐条说明关键结论写到了哪里、为何保留或为何暂缓。
 - 每个重大结论都要有文件、commit、命令、session id 或用户确认作为证据。
 
 ## 5. 推荐提示词
@@ -266,6 +284,7 @@ git branch --all
 F:\AcademicHub\0#YUSU\00_START_HERE_FOR_CODEX.md
 F:\AcademicHub\0#YUSU\04_Runbooks\codex-ingestion-guide.md
 F:\AcademicHub\0#YUSU\04_Runbooks\mature-project-ingestion.md
+F:\AcademicHub\0#YUSU\04_Runbooks\super-yusu-v0.2-ingestion.md
 
 这不是当前状态快照。请回到项目真实目录，读取当前代码、Git 历史、已有文档和你自己的 Codex session JSONL，重建从立项、试错、失败、转向、成熟到当前状态的完整项目史。
 
@@ -274,21 +293,23 @@ F:\AcademicHub\0#YUSU\04_Runbooks\mature-project-ingestion.md
 - 08_onboarding_from_zero.md
 - 09_session_evidence.md
 - 10_project_summary.md 的最重要 3-7 件事
+- 10_project_summary.md 的 Memory Routing Audit
 - 05_known_issues.md 的高价值坑点
 - 03_decisions.md / adr/ 的关键决策
 
 不要写密钥、token、cookie、隐私数据。不要把未经核实的回忆写成事实；证据不足就标 pending。
-写完更新 INDEX.md、06_Maps/，并提交推送。
+写完按 super-yusuV0.2 判断每条重要结论是否要进入 03_CrossProject/、02_GlobalMemory/ 或 06_Maps/。如果只留在项目内，要在 Memory Routing Audit 说明原因。最后更新 INDEX.md、06_Maps/，并提交推送。
 ```
 
 ## 6. 多轮工作节奏
 
-成熟项目不能强求一轮完成。推荐四轮：
+成熟项目不能强求一轮完成。推荐五轮：
 
 1. 盘点轮：只做 repo/Git/session inventory，列证据，不急着写结论。
 2. 考古轮：按时间线挖失败、转向、舍弃方案和关键验收点。
 3. 入库轮：写完整项目记忆、ADR 和项目总结。
-4. 审计轮：站在从零开发者角度检查“读完能否开工、能否抓住最重要几件事”，补缺口。
+4. 路由轮：按 super-yusuV0.2 把最终总结逐条判断 project-only、跨项目、全局候选或 deferred。
+5. 审计轮：站在从零开发者角度检查“读完能否开工、能否抓住最重要几件事、能否知道哪些经验已被提升”，补缺口。
 
 每轮都要把未完成问题写到 `06_todo_next.md`，不要让长项目记忆停在代理上下文里。
 
@@ -313,6 +334,7 @@ bash "$YUSU_KB_ROOT/tools/mature-project-retro-audit.sh" --slug "<project-slug>"
 - 成熟项目必备文件是否存在。
 - `07_development_history.md`、`08_onboarding_from_zero.md`、`09_session_evidence.md`、`10_project_summary.md` 是否有足够实质内容。
 - `10_project_summary.md` 是否包含 `Most Important Things`，且至少列出 3 条最重要事项。
+- `10_project_summary.md` 是否包含 `Memory Routing Audit`，且至少覆盖 3 条重要结论。
 - `05_known_issues.md` 至少有 5 个真实坑点。
 - `03_decisions.md` 和 `adr/` 至少有 3 个关键决策。
 - `09_session_evidence.md` 必须引用当前工程师传入的 session id 或 JSONL 文件名。
@@ -329,6 +351,7 @@ bash "$YUSU_KB_ROOT/tools/mature-project-retro-audit.sh" --slug "<project-slug>"
 - 能从 `README.md` 或 `INDEX.md` 进入这些文件。
 - `09_session_evidence.md` 指向了当前工程师自己的具体 JSONL、commit、日志或文档。
 - `10_project_summary.md` 已把完整复盘提炼成最重要 3-7 件事。
+- `10_project_summary.md` 已按 super-yusuV0.2 完成 `Memory Routing Audit`。
 - 所有 secrets/隐私内容已跳过或脱敏。
 - 项目特定内容没有误提炼到全局规则。
 - 跨项目内容确实可复用，才进入 `03_CrossProject/`。
