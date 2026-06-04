@@ -44,3 +44,4 @@
 - [[05_Templates/project-memory/07_development_history]]
 - [[05_Templates/project-memory/08_onboarding_from_zero]]
 - [[05_Templates/project-memory/09_session_evidence]]
+- [[05_Templates/project-memory/10_project_summary]]

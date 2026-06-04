@@ -14,6 +14,8 @@ param(
     [int]$MinHistoryLines = 35,
     [int]$MinOnboardingLines = 30,
     [int]$MinEvidenceLines = 20,
+    [int]$MinSummaryLines = 25,
+    [int]$MinImportantThings = 3,
     [switch]$AllowCwdMismatch
 )
 
@@ -135,7 +137,8 @@ $required = @(
     "06_todo_next.md",
     "07_development_history.md",
     "08_onboarding_from_zero.md",
-    "09_session_evidence.md"
+    "09_session_evidence.md",
+    "10_project_summary.md"
 )
 
 foreach ($name in $required) {
@@ -145,14 +148,17 @@ foreach ($name in $required) {
 $history = Get-RawText (Join-Path $projectMemory "07_development_history.md")
 $onboarding = Get-RawText (Join-Path $projectMemory "08_onboarding_from_zero.md")
 $evidence = Get-RawText (Join-Path $projectMemory "09_session_evidence.md")
+$summary = Get-RawText (Join-Path $projectMemory "10_project_summary.md")
 $issues = Get-RawText (Join-Path $projectMemory "05_known_issues.md")
 $decisions = Get-RawText (Join-Path $projectMemory "03_decisions.md")
 
 $historyLines = Count-SubstantiveLines $history
 $onboardingLines = Count-SubstantiveLines $onboarding
 $evidenceLines = Count-SubstantiveLines $evidence
+$summaryLines = Count-SubstantiveLines $summary
 $issueCount = Count-RegexLines $issues "(?m)^##\s+Issue:"
 $decisionCount = Count-RegexLines $decisions "(?m)^##\s+Decision:"
+$importantThingCount = Count-RegexLines $summary "(?m)^\|\s*[0-9]+\s*\|"
 $adrDir = Join-Path $projectMemory "adr"
 $adrCount = 0
 if (Test-Path -LiteralPath $adrDir) {
@@ -163,8 +169,22 @@ $totalDecisions = $decisionCount + $adrCount
 Add-Check "Development history has enough substance" ($historyLines -ge $MinHistoryLines) "$historyLines substantive lines, required $MinHistoryLines"
 Add-Check "From-zero onboarding has enough substance" ($onboardingLines -ge $MinOnboardingLines) "$onboardingLines substantive lines, required $MinOnboardingLines"
 Add-Check "Session evidence has enough substance" ($evidenceLines -ge $MinEvidenceLines) "$evidenceLines substantive lines, required $MinEvidenceLines"
+Add-Check "Project summary has enough substance" ($summaryLines -ge $MinSummaryLines) "$summaryLines substantive lines, required $MinSummaryLines"
+Add-Check "Project summary important things count" ($importantThingCount -ge $MinImportantThings) "$importantThingCount ranked things, required $MinImportantThings"
 Add-Check "Known issues count" ($issueCount -ge $MinIssues) "$issueCount issues, required $MinIssues"
 Add-Check "Decision/ADR count" ($totalDecisions -ge $MinDecisions) "$totalDecisions decisions/ADRs, required $MinDecisions"
+
+$summaryRequiredSections = @(
+    "One-Page Summary",
+    "Most Important Things",
+    "Final Shape",
+    "Hard-Won Lessons",
+    "Rules For Future Codex",
+    "Remaining Risks"
+)
+foreach ($section in $summaryRequiredSections) {
+    Add-Check "Summary section: $section" ($summary -match "(?m)^##\s+$([regex]::Escape($section))\s*$") $section
+}
 
 $onboardingRequiredSections = @(
     "First 30 Minutes",
@@ -235,6 +255,7 @@ Write-Output "- Which failures were expensive enough that a new Codex must not r
 Write-Output "- Which current design choices are consequences of earlier failed attempts?"
 Write-Output "- What exact commands and files prove the current runbook?"
 Write-Output "- If rebuilding from zero, what order avoids the historical traps?"
+Write-Output "- What are the 3-7 most important things this project taught us?"
 
 Write-Output ""
 if ($failures.Count -gt 0) {

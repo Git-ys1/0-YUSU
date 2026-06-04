@@ -80,6 +80,7 @@ bash tools/resolve-kb-root.sh
 - `07_development_history.md`: 从立项到当前版本的阶段史。
 - `08_onboarding_from_zero.md`: 给新开发者从零接手的路线。
 - `09_session_evidence.md`: 当前工程师自己的单个 Codex JSONL、Git 历史、旧文档和命令证据索引。
+- `10_project_summary.md`: 从完整复盘里提炼出的最重要 3-7 件事和未来 Codex 规则。
 - `adr/`: 关键架构和产品取舍的 ADR 条目。
 
 成熟项目完成前必须运行只读质量 gate：

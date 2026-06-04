@@ -68,4 +68,4 @@ Do not use `~/.codex/memories` as the manual canonical store. Codex Memories are
 2. Add cross-project lessons only when reusable.
 3. Update `06_Maps/` when a new project, tool, pitfall, or topic is added.
 4. Never store secrets, tokens, cookies, private keys, or raw private data.
-5. For mature projects, do not finish until the read-only retrospective audit gate passes against the current engineer's own JSONL, or the remaining failures are recorded in `06_todo_next.md`.
+5. For mature projects, do not finish until `10_project_summary.md` captures the most important 3-7 project lessons and the read-only retrospective audit gate passes against the current engineer's own JSONL, or the remaining failures are recorded in `06_todo_next.md`.

@@ -208,6 +208,22 @@ git branch --all
 - `02_runbook.md`
 - `05_known_issues.md`
 
+### Pass F: 最终总结
+
+目标：把完整复盘压缩成下一任工程师必须记住的少数关键结论。
+
+不能只写“项目已完成”。必须提炼：
+
+- 整个项目最重要的 3-7 件事。
+- 当前成熟形态的核心判断。
+- 最昂贵的坑和它留下的规则。
+- 最关键的架构/产品取舍。
+- 未来 Codex 开工前必须检查什么。
+
+输出到：
+
+- `10_project_summary.md`
+
 ## 4. 写入文件标准
 
 成熟项目建议至少形成这些文件：
@@ -225,6 +241,7 @@ git branch --all
 ├── 07_development_history.md
 ├── 08_onboarding_from_zero.md
 ├── 09_session_evidence.md
+├── 10_project_summary.md
 ├── adr/
 │   └── YYYY-MM-DD-short-title.md
 └── session-log/
@@ -237,6 +254,7 @@ git branch --all
 - `05_known_issues.md` 至少包含最容易复发的 5 个坑点，成熟大项目通常更多。
 - `03_decisions.md` 至少写当前架构中 3 个最重要的取舍。
 - `08_onboarding_from_zero.md` 必须能让新 Codex/新开发者按顺序开始工作。
+- `10_project_summary.md` 必须列出整个项目经历里最重要的 3-7 件事，并把它们链接回证据。
 - 每个重大结论都要有文件、commit、命令、session id 或用户确认作为证据。
 
 ## 5. 推荐提示词
@@ -255,6 +273,7 @@ F:\AcademicHub\0#YUSU\04_Runbooks\mature-project-ingestion.md
 - 07_development_history.md
 - 08_onboarding_from_zero.md
 - 09_session_evidence.md
+- 10_project_summary.md 的最重要 3-7 件事
 - 05_known_issues.md 的高价值坑点
 - 03_decisions.md / adr/ 的关键决策
 
@@ -268,8 +287,8 @@ F:\AcademicHub\0#YUSU\04_Runbooks\mature-project-ingestion.md
 
 1. 盘点轮：只做 repo/Git/session inventory，列证据，不急着写结论。
 2. 考古轮：按时间线挖失败、转向、舍弃方案和关键验收点。
-3. 入库轮：写完整项目记忆和 ADR。
-4. 审计轮：站在从零开发者角度检查“读完能否开工”，补缺口。
+3. 入库轮：写完整项目记忆、ADR 和项目总结。
+4. 审计轮：站在从零开发者角度检查“读完能否开工、能否抓住最重要几件事”，补缺口。
 
 每轮都要把未完成问题写到 `06_todo_next.md`，不要让长项目记忆停在代理上下文里。
 
@@ -292,7 +311,8 @@ bash "$YUSU_KB_ROOT/tools/mature-project-retro-audit.sh" --slug "<project-slug>"
 这个 gate 会检查：
 
 - 成熟项目必备文件是否存在。
-- `07_development_history.md`、`08_onboarding_from_zero.md`、`09_session_evidence.md` 是否有足够实质内容。
+- `07_development_history.md`、`08_onboarding_from_zero.md`、`09_session_evidence.md`、`10_project_summary.md` 是否有足够实质内容。
+- `10_project_summary.md` 是否包含 `Most Important Things`，且至少列出 3 条最重要事项。
 - `05_known_issues.md` 至少有 5 个真实坑点。
 - `03_decisions.md` 和 `adr/` 至少有 3 个关键决策。
 - `09_session_evidence.md` 必须引用当前工程师传入的 session id 或 JSONL 文件名。
@@ -305,9 +325,10 @@ bash "$YUSU_KB_ROOT/tools/mature-project-retro-audit.sh" --slug "<project-slug>"
 
 完成前逐条检查：
 
-- 当前状态、历史阶段、失败史、决策史、从零上手、证据索引都已存在。
+- 当前状态、历史阶段、失败史、决策史、从零上手、证据索引、最终项目总结都已存在。
 - 能从 `README.md` 或 `INDEX.md` 进入这些文件。
 - `09_session_evidence.md` 指向了当前工程师自己的具体 JSONL、commit、日志或文档。
+- `10_project_summary.md` 已把完整复盘提炼成最重要 3-7 件事。
 - 所有 secrets/隐私内容已跳过或脱敏。
 - 项目特定内容没有误提炼到全局规则。
 - 跨项目内容确实可复用，才进入 `03_CrossProject/`。
