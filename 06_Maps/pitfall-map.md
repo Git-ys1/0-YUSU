@@ -11,3 +11,9 @@
 | PowerShell profile noise is not target command failure | cross-project | [[03_CrossProject/pitfalls]] | active |
 | Local generated Codex memories fragment across systems | cross-project | [[03_CrossProject/pitfalls]] | active |
 | UI automation can be over-engineered | cross-project | [[03_CrossProject/pitfalls]] | active |
+| 坐标宏回放没有恢复起点 | auto-play | [[03_CrossProject/pitfalls]] | active |
+| Instrument UI readouts placed in data coordinates | simple-oscilloscope | [[03_CrossProject/pitfalls]] | active |
+| High-rate firmware claims made by changing constants only | simple-oscilloscope | [[03_CrossProject/pitfalls]] | active |
+| Windows PyInstaller rebuild locks dist files | simple-oscilloscope | [[03_CrossProject/tooling]] | active |
+| Sample-index trigger quantization causes visible instrument jitter | simple-oscilloscope | [[03_CrossProject/pitfalls]] | active |
+| 覆盖用户设置和用户宏文件 | auto-play | [[03_CrossProject/pitfalls]] | active |

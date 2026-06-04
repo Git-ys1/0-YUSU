@@ -78,6 +78,49 @@ Playwright 文件上传工具可能只能从声明的 allowed roots 选文件。
 
 交付 Windows GUI/自动化工具时，不要让用户双击 `app.py`。系统文件关联可能调用旧 Python 并一闪而过。应提供 `.bat` 启动入口，直接调用项目虚拟环境里的 `python.exe`，并提供 debug 启动脚本、日志和 `pause`。
 
+Evidence:
+
+- Auto Play evidence: `start.bat`, `start_debug.bat`, `stop_running_scripts.ps1`, `logs/startup.log`.
+
 ### Windows GUI automation input stack
 
 游戏或桌面自动化在独占全屏、管理员权限游戏、DirectInput 场景下，普通 `pynput` 监听和标准输入注入可能失效。优先考虑 Windows `RegisterHotKey`、PyDirectInput、管理员启动入口，并提示用户必要时切到无边框窗口或窗口化全屏。
+
+Evidence:
+
+- Auto Play evidence: `autogame/win_hotkeys.py`, `autogame/macro_engine.py`, `以管理员启动宏录制器.bat`, `README.md`.
+### 宏录制器冒烟测试
+
+测试键盘连点器或宏引擎时，先避免不可控真实输入。优先 monkeypatch 底层 press/release 方法，断言生成的事件顺序；确认后再在无风险窗口里测试真实输入。Auto Play 的多键连点器轮流/同时模式就适合用这个方式验证。
+
+Evidence:
+
+- Auto Play evidence: multi-key clicker sequence/simultaneous smoke test monkeypatched `_press_key` and `_release_keys` before any real input test.
+
+
+
+### Windows PyInstaller rebuilds can fail when the packaged exe is still running
+
+When rebuilding a PyInstaller onedir app on Windows, the previous packaged exe or DLLs may be locked by a still-running process. The symptom is `Access is denied` while removing or overwriting `dist\<AppName>`.
+
+Before retrying, inspect and stop the packaged process:
+
+```powershell
+Get-Process | Where-Object { $_.ProcessName -like '*SimpleScopePC*' }
+Stop-Process -Id <pid>
+```
+
+Evidence: Simple Oscilloscope V0.9.3 failed on `dist\SimpleScopePC\SimpleScopePC.exe` until PID `22756` was stopped.
+
+### Keil plus STM32CubeProgrammer Windows release loop
+
+For Keil-first STM32 repositories, preserve the existing project files and use the local command-line build/flash scripts as the release path. A practical loop is:
+
+```powershell
+tools\build_keil.bat
+tools\flash_stlink.bat
+```
+
+Then verify the running firmware through its normal serial protocol. This avoids confusing "hex was built" with "board was flashed."
+
+Evidence: Simple Oscilloscope V0.9.3 generated `Objects\SimpleOscilloscope.hex`, flashed by ST-Link, and COM14 returned firmware `0.9.3`.

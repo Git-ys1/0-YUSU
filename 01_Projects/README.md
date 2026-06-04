@@ -1,4 +1,4 @@
-# Project Memories
+﻿# Project Memories
 
 每个项目使用一个稳定 slug，例如：
 
@@ -14,6 +14,8 @@
 | Project | Slug | Path | Notes |
 |---|---|---|---|
 | YUSU Codex Knowledge Vault | `yusu-codex-knowledge-vault` | `F:\AcademicHub\0#YUSU` | This vault itself; includes GitHub sync, skill setup, retrieval decisions |
+| Auto Play 宏录制器 | `auto-play` | `F:\Project\auto play` | Windows 游戏宏录制器/连点器；图像识别实验保留为次级路径 |
+| Simple Oscilloscope | `simple-oscilloscope` | `F:\Project\Simple Oscilloscope` | STM32F103C8T6 Keil firmware + PySide6/PyQtGraph Windows upper-computer; V0.9.5 hand-in release |
 
 ## 新项目入库
 

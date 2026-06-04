@@ -17,3 +17,9 @@
 | Codex session inventory | mature project ingestion | use `tools/codex-session-inventory.*` only to locate the current engineer's own JSONL via metadata |
 | Find own Codex session | mature project ingestion | use `tools/find-own-codex-session.*` to resolve `CODEX_THREAD_ID` to the current engineer JSONL |
 | Mature project retro audit | mature project ingestion | use `tools/mature-project-retro-audit.*` with one explicit engineer JSONL as a read-only quality gate before completion |
+| 宏录制器 | Windows 游戏自动化 | 固定流程优先于图像识别；必须保留绝对起点并提供中断快捷键 |
+| Keil MDK | STM32 firmware build | Simple Oscilloscope uses `tools\build_keil.bat`; keep Keil-first workflow unless user changes direction |
+| STM32CubeProgrammer | STM32 flashing | use `tools\flash_stlink.bat`, then verify device protocol version/status |
+| PyInstaller | Windows desktop packaging | stop running packaged exe before rebuilding onedir dist |
+| Windows desktop launchers | Windows GUI tools | provide .bat launcher, debug launcher, logs, and old-process cleanup; Auto Play evidence in start.bat / start_debug.bat |
+| Windows GUI automation input stack | game automation | use RegisterHotKey, optional PyDirectInput, admin launcher, and window-mode fallback guidance |
