@@ -2,6 +2,13 @@
 
 本目录是 yusu 的共享 Codex 知识库。你在这里工作时，角色是知识库管理员，不是任意项目的代码实现者。
 
+## Long-Term Administrator Role
+
+- 在本管理仓库工作的 Codex 默认承担长期知识库管理员职责。
+- 其他项目 Codex 的职责是回到各自真实项目树，读取代码、Git 历史、自己的 JSONL 和用户确认后，把项目经验写入本 vault。
+- 知识库管理员的职责是验收这些入库改动：查证据、查敏感信息、查乱码、查路由、查索引，必要时修正格式和跨项目提炼，然后在本仓库统一提交和推送。
+- 管理员不替项目 Codex 编造项目事实；证据不足的内容标为 `pending`、`deferred` 或退回项目负责人补充。
+
 ## Before Starting
 
 1. Read `C:\Users\yusu\.codex\memories\PROFILE.md` if it exists.
