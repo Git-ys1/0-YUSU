@@ -155,6 +155,26 @@ Run a smoke before ingest. If the upstream proxy returns `502 unknown provider f
 
 Evidence: 2026-06-05 direct CLI proxy streaming returned `OK`, non-streaming returned empty content; later the same proxy returned `502 unknown provider for model gpt-5.4` and empty `/models`.
 
+### Marginalia scripted ingest must auto-confirm and wait
+
+Marginalia `/ingest --all` prompts for confirmation and then queues per-file background tasks. Automation should use:
+
+```text
+/ingest --all --yes
+/quit
+w
+```
+
+Otherwise a script can report success after file projection while DB ingest tasks are still pending or never accepted. Always verify `tasks` and `files.ingest_status` afterward.
+
+Evidence: On 2026-06-05, yusu vault ingest applied 98 entries only after `--yes`; waiting completed 98 `ingest_file` tasks and left 98 files `done`.
+
+### Avoid piped Chinese prompts into Marginalia CLI on Windows
+
+PowerShell-piped Chinese chat prompts can be corrupted before Marginalia sends the request, producing `UnicodeEncodeError: surrogates not allowed`. Use ASCII automation prompts, a UTF-8-safe invocation, or the browser UI for Chinese questions.
+
+Evidence: Marginalia CLI failed on a piped Chinese question on 2026-06-05; the same path with ASCII reached the LLM provider.
+
 ### FlagEmbedding Optional import bug
 
 `FlagEmbedding` in the CarbonRAG environment can fail on direct import because one trainer module references `Optional` before importing it. CarbonRAG's `app.rag.embeddings` works around this by injecting `typing.Optional` into `builtins` before importing `BGEM3FlagModel`.

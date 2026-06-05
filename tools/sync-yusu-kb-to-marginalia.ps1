@@ -59,7 +59,7 @@ $env:MARGINALIA_HOME = ((Join-Path $runtimeDir "data") -replace "\\", "/")
 
 if ($Ingest) {
     $env:WORKER_ENABLED = "true"
-    $commands = "/check`n/ingest --all`n/quit`nq`n"
+    $commands = "/check`n/ingest --all --yes`n/quit`nw`n"
 } else {
     $env:WORKER_ENABLED = "false"
     if (-not $env:LLM_DEFAULT_API_KEY) {

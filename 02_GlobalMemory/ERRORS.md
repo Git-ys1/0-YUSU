@@ -363,6 +363,64 @@ output = []
 
 Use `tools/run-codex-proxy-llm-shim.ps1` to convert streaming output into non-streaming `chat.completions`, and always smoke the shim before running Marginalia ingest. If the upstream proxy itself returns `unknown provider`, pause ingest and retry later or switch provider.
 
+## [ERR-20260605-003] marginalia_ingest_prompt_and_background_wait
+**Logged**: 2026-06-05
+**Priority**: high
+**Status**: resolved
+
+### Summary
+
+Marginalia CLI `/ingest --all` is interactive. If an automation pipes `/ingest --all` without `--yes`, the confirmation prompt defaults to cancel; if it quits with `q`, background `ingest_file` tasks remain pending.
+
+### Error
+
+```text
+apply 98 changes? [y/N] cancelled.
+98 ingest task(s) queued
+```
+
+### Context
+
+- OS: Windows
+- Project/path: `F:\AcademicHub\0#YUSU`
+- Tool: Marginalia embedded CLI
+- Scripts: `tools/sync-yusu-kb-to-marginalia.ps1`, `tools/sync-yusu-kb-to-marginalia.sh`
+
+### Suggested Fix
+
+For scripted ingest, send `/ingest --all --yes`, then `/quit`, then `w` to wait for background tasks. Verify SQLite state afterward:
+
+```text
+tasks: ingest_file done
+files: ingest_status done
+```
+
+## [ERR-20260605-004] marginalia_cli_windows_piped_chinese_unicode
+**Logged**: 2026-06-05
+**Priority**: medium
+**Status**: active
+
+### Summary
+
+Piping Chinese text directly from Windows PowerShell into `marginalia.exe` can corrupt UTF-8 text into surrogate characters before the API request is built.
+
+### Error
+
+```text
+UnicodeEncodeError: surrogates not allowed
+```
+
+### Context
+
+- OS: Windows
+- Project/path: `F:\AcademicHub\0#YUSU`
+- Tool: Marginalia CLI
+- Command class: piped non-ASCII chat prompt
+
+### Suggested Fix
+
+Use ASCII smoke prompts for CLI automation, use a UTF-8-safe invocation, or ask Chinese questions through the browser UI. Do not diagnose this as an LLM failure unless an ASCII prompt also fails.
+
 ## Entry Template
 
 ```md

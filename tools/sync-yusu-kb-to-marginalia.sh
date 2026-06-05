@@ -68,7 +68,7 @@ export MARGINALIA_HOME="$runtime_dir/data"
 cd "$runtime_dir"
 if [[ "$ingest" -eq 1 ]]; then
   export WORKER_ENABLED=true
-  printf '/check\n/ingest --all\n/quit\nq\n' | "$marginalia_bin"
+  printf '/check\n/ingest --all --yes\n/quit\nw\n' | "$marginalia_bin"
 else
   export WORKER_ENABLED=false
   export LLM_DEFAULT_API_KEY="${LLM_DEFAULT_API_KEY:-placeholder-for-readonly-check}"
