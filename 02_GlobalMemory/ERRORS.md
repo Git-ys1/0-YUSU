@@ -303,6 +303,66 @@ No suitable system Python 3.11 found, but an existing project-local Python 3.11 
 
 Before installing a new runtime, search this vault for existing project-local toolchains, venvs, conda envs, and setup scripts. Prefer an already validated non-C-drive interpreter when it satisfies the version requirement.
 
+## [ERR-20260605-001] flagembedding_optional_import
+**Logged**: 2026-06-05
+**Priority**: medium
+**Status**: active
+
+### Summary
+
+CarbonRAG's Python environment has local BGE-M3 available, but direct `import FlagEmbedding` can fail because the installed package references `Optional` before importing it.
+
+### Error
+
+```text
+NameError: name 'Optional' is not defined
+```
+
+### Context
+
+- OS: Windows
+- Project/path: `F:\Project\CarbonRag`
+- Python: `F:\Project\CarbonRag\backend\.conda\python.exe`
+- Command class: direct `import FlagEmbedding`
+
+### Suggested Fix
+
+Reuse CarbonRAG's wrapper instead of importing `FlagEmbedding` directly:
+
+```python
+from app.rag.embeddings import embed_documents
+```
+
+The wrapper injects `typing.Optional` into `builtins` before importing `BGEM3FlagModel`. Local smoke on 2026-06-05 returned one `1024`-dimension `BAAI/bge-m3` vector.
+
+## [ERR-20260605-002] codex_proxy_nonstream_empty_or_unrouted
+**Logged**: 2026-06-05
+**Priority**: medium
+**Status**: active
+
+### Summary
+
+The recommended CLI proxy for local Codex-style LLM access can behave differently by protocol and time: streaming chat returned usable text, while non-streaming `chat.completions` / `responses` returned empty content; later the same endpoint returned `502 unknown provider for model gpt-5.4`.
+
+### Error
+
+```text
+message.content = null
+output = []
+502 unknown provider for model gpt-5.4
+```
+
+### Context
+
+- OS: Windows
+- Project/path: `F:\AcademicHub\0#YUSU`
+- Upstream class: OpenAI-compatible CLI proxy
+- Consumer: Marginalia LLM profiles
+
+### Suggested Fix
+
+Use `tools/run-codex-proxy-llm-shim.ps1` to convert streaming output into non-streaming `chat.completions`, and always smoke the shim before running Marginalia ingest. If the upstream proxy itself returns `unknown provider`, pause ingest and retry later or switch provider.
+
 ## Entry Template
 
 ```md

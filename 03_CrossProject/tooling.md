@@ -112,6 +112,57 @@ Stop-Process -Id <pid>
 
 Evidence: Simple Oscilloscope V0.9.3 failed on `dist\SimpleScopePC\SimpleScopePC.exe` until PID `22756` was stopped.
 
+### Local BGE-M3 embedding via OpenAI-compatible shim
+
+Some tools, including Marginalia V0.2.1, can use local embeddings only if they are exposed as an OpenAI-compatible `/v1/embeddings` API. CarbonRAG already has local `BAAI/bge-m3` model files and a Python wrapper, but it does not expose that wrapper as HTTP.
+
+Use the yusu vault shim instead of pointing tools at CarbonRAG's normal backend:
+
+```powershell
+F:\AcademicHub\0#YUSU\tools\run-carbonrag-bge-embedding-server.ps1
+```
+
+Then configure the consumer with:
+
+```ini
+EMBEDDING_PROVIDER=openai-compatible
+EMBEDDING_BASE_URL=http://127.0.0.1:8011/v1
+EMBEDDING_API_KEY=local-bge-key
+EMBEDDING_MODEL=BAAI/bge-m3
+EMBEDDING_DIMENSIONS=1024
+```
+
+Evidence: 2026-06-05 local smoke returned one `1024`-dimension embedding through `/v1/embeddings`.
+
+### Codex proxy streaming needs a local non-streaming shim
+
+Some Codex-oriented proxy endpoints can stream usable text but return empty `message.content` in non-streaming `chat.completions` or `responses`. Marginalia expects non-streaming `chat.completions`, so point Marginalia at the local shim:
+
+```powershell
+F:\AcademicHub\0#YUSU\tools\run-codex-proxy-llm-shim.ps1
+```
+
+Marginalia local `.env`:
+
+```ini
+LLM_DEFAULT_PROVIDER=openai-compatible
+LLM_DEFAULT_BASE_URL=http://127.0.0.1:8010/v1
+LLM_DEFAULT_API_KEY=local-llm-key
+LLM_DEFAULT_MODEL=gpt-5.4
+```
+
+Run a smoke before ingest. If the upstream proxy returns `502 unknown provider for model ...`, do not blame Marginalia; wait for proxy routing to recover or switch provider.
+
+Evidence: 2026-06-05 direct CLI proxy streaming returned `OK`, non-streaming returned empty content; later the same proxy returned `502 unknown provider for model gpt-5.4` and empty `/models`.
+
+### FlagEmbedding Optional import bug
+
+`FlagEmbedding` in the CarbonRAG environment can fail on direct import because one trainer module references `Optional` before importing it. CarbonRAG's `app.rag.embeddings` works around this by injecting `typing.Optional` into `builtins` before importing `BGEM3FlagModel`.
+
+When reusing CarbonRAG's BGE-M3, call `app.rag.embeddings.embed_documents()` instead of importing `FlagEmbedding` directly.
+
+Evidence: direct `import FlagEmbedding` failed on 2026-06-05 with `NameError: name 'Optional' is not defined`; `from app.rag.embeddings import embed_documents` returned `bge_m3 BAAI/bge-m3 1 1024 True`.
+
 ### Keil plus STM32CubeProgrammer Windows release loop
 
 For Keil-first STM32 repositories, preserve the existing project files and use the local command-line build/flash scripts as the release path. A practical loop is:

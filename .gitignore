@@ -7,5 +7,6 @@
 .trash/
 *.tmp
 *.bak
+__pycache__/
 Thumbs.db
 Desktop.ini
