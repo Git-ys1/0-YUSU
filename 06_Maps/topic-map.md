@@ -27,3 +27,10 @@
 - [[03_CrossProject/patterns]]: Transport-protocol-acquisition-processing-UI layering、Hardware release requires artifact plus device verification
 - [[03_CrossProject/pitfalls]]: Instrument UI readouts placed in data coordinates、High-rate firmware claims made by changing constants only、Sample-index trigger quantization causes visible instrument jitter
 - [[03_CrossProject/tooling]]: Keil plus STM32CubeProgrammer Windows release loop、Windows PyInstaller rebuilds can fail when the packaged exe is still running
+
+## CleanScout Robotics Software
+
+- [[01_Projects/cleanscout-rover-vue3/README]]: V 线前后端、public-edge、OpenClaw、ESP32-CAM、ASR；source `Git-ys1/CleanScout_rover/vue3`
+- [[03_CrossProject/patterns]]: Outbound relay/worker behind NAT
+- [[03_CrossProject/pitfalls]]: Duplicate UI intent as device toggle; long-lived MJPEG timeout
+- [[03_CrossProject/architecture-decisions]]: Product UI wraps high-privilege local capabilities through backend adapters

@@ -195,3 +195,22 @@ tools\flash_stlink.bat
 Then verify the running firmware through its normal serial protocol. This avoids confusing "hex was built" with "board was flashed."
 
 Evidence: Simple Oscilloscope V0.9.3 generated `Objects\SimpleOscilloscope.hex`, flashed by ST-Link, and COM14 returned firmware `0.9.3`.
+
+
+### Backend deploy scripts must load runtime env before Prisma
+
+Prisma CLI validates `schema.prisma` before migrations run, so update/bootstrap scripts must load the production env file first. If `DATABASE_URL` is missing during `npx prisma migrate deploy`, the deployment script is wrong even if the systemd service would later have the env.
+
+Evidence: CleanScout `cleanscout-rover-vue3` V-1.9.7 update script fixes and repeated VPS `DATABASE_URL` failures.
+
+### Deployed revision marker for cloud update verification
+
+When a deployment syncs only a backend subdirectory, write the source commit to a deployed revision file such as `/opt/vline-backend/backend/.deploy-revision`. Future operators can verify whether cloud backend is actually latest without guessing from Git state elsewhere.
+
+Evidence: CleanScout `cleanscout-rover-vue3` V-1.9.7 cloud update verification.
+
+### Raw MJPEG relay over parse/repack for display streams
+
+If a camera's native MJPEG endpoint is smooth, preserve its stream shape as far as possible before trying FPS constants. For H5 display, backend can relay multipart MJPEG directly; snapshot remains fallback.
+
+Evidence: CleanScout `cleanscout-rover-vue3` V-2.2.2.

@@ -186,3 +186,48 @@ Represent triggers as a point with both sample index and interpolated crossing t
 - Project/path: `F:\Project\Simple Oscilloscope`
 - Date: 2026-06-04
 - Source: V0.9.4 task, `pc_app/scope_app/processing/trigger.py`, `pc_app/scope_app/processing/pipeline.py`, commit `e92e895`.
+
+
+### Pitfall: UI click duplicated as device toggle
+**Status**: active
+**Seen In**: cleanscout-rover-vue3
+
+### Symptom
+
+A robot/device starts and immediately stops even though the user thinks they clicked once.
+
+### Root Cause
+
+The frontend/backend emits both press and release as the same command, while the device side interprets identical repeated commands as toggle-stop.
+
+### Better Approach
+
+Define click semantics explicitly: one command per toggle, explicit `stop` for stopping. Keep press-and-hold protocols separate from toggle protocols.
+
+### Evidence
+
+- Project/source: `Git-ys1/CleanScout_rover/vue3`
+- HDS evidence path: `F:\Project\CSc——uniapp\vue3`
+- Source: V-1.9.8 edge-relay duplicate command fix and `docs/deployment.md` control responsibility notes.
+
+### Pitfall: Long-lived MJPEG stream killed by normal request timeout
+**Status**: active
+**Seen In**: cleanscout-rover-vue3
+
+### Symptom
+
+Camera stream appears extremely choppy or reconnects every few seconds despite the native camera page being smooth.
+
+### Root Cause
+
+Long-lived stream is handled like a normal short HTTP request with a short timeout, or the worker parses/repackages frames unnecessarily.
+
+### Better Approach
+
+Treat MJPEG as a stream: raw tunnel when possible, no short fetch timeout for source stream, no historical queue, no frame re-encode unless required.
+
+### Evidence
+
+- Project/source: `Git-ys1/CleanScout_rover/vue3`
+- HDS evidence path: `F:\Project\CSc——uniapp\vue3`
+- Source: V-2.2.2 raw MJPEG tunnel, `docs/camera-mjpeg-stream.md`.

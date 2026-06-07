@@ -16,6 +16,7 @@
 | YUSU Codex Knowledge Vault | `yusu-codex-knowledge-vault` | `F:\AcademicHub\0#YUSU` | This vault itself; includes GitHub sync, skill setup, retrieval decisions |
 | Auto Play 宏录制器 | `auto-play` | `F:\Project\auto play` | Windows 游戏宏录制器/连点器；图像识别实验保留为次级路径 |
 | Simple Oscilloscope | `simple-oscilloscope` | `F:\Project\Simple Oscilloscope` | STM32F103C8T6 Keil firmware + PySide6/PyQtGraph Windows upper-computer; V0.9.5 hand-in release |
+| CleanScout Rover 前后端 | `cleanscout-rover-vue3` | `Git-ys1/CleanScout_rover/vue3`; env root `%CLEANSCOUT_VUE3_ROOT%` / `$CLEANSCOUT_VUE3_ROOT`; HDS evidence `F:\Project\CSc——uniapp\vue3` | CSR/V 线软件交互系统；uni-app frontend + Express backend + edge-relay/OpenClaw/camera workers |
 
 ## 新项目入库
 
