@@ -73,3 +73,55 @@ Use GitHub private repo clone/pull/push as the reliable cross-system path. Direc
 ### Codex Rule
 
 Do not call `F:\AcademicHub\0#YUSU` a proven shared folder until Ubuntu writes `00_Inbox/shared-checks/ubuntu-*.md` and Windows reads it.
+
+## Issue: Mature project entries can become project-local silos
+**Status**: active
+**Severity**: high
+**Last Seen**: 2026-06-09
+
+### Symptom
+
+A mature project can have a long, polished `01_Projects/<slug>/` entry while reusable lessons never reach `03_CrossProject/`, `02_GlobalMemory/`, or `06_Maps/`.
+
+### Likely Cause
+
+The writer summarizes the project but does not perform the second-pass routing audit required by super-yusuV0.2.
+
+### Verified Fix or Workaround
+
+Every mature project must include `10_project_summary.md` with `Most Important Things` and `Memory Routing Audit`. Run `tools/mature-project-retro-audit.*` before declaring completion.
+
+### Codex Rule
+
+If a mature project only changes `01_Projects/<slug>/`, explain in `Memory Routing Audit` why every important lesson is project-only. Otherwise route reusable lessons.
+
+### Evidence
+
+- `04_Runbooks/mature-project-ingestion.md`
+- `04_Runbooks/super-yusu-v0.2-ingestion.md`
+
+## Issue: Session traversal can accidentally become raw transcript dumping
+**Status**: active
+**Severity**: high
+**Last Seen**: 2026-06-09
+
+### Symptom
+
+Strict session review requests can tempt an agent to copy large raw JSONL conversation content into the vault.
+
+### Likely Cause
+
+The user needs evidence that sessions were traversed, but the system also needs privacy, compactness, and project-specific evidence boundaries.
+
+### Verified Fix or Workaround
+
+Use a metadata and topic-count inventory instead of raw transcript copying. Keep exact session IDs, paths, cwd, sizes, and topic hit counts, then use the project-specific session as primary evidence.
+
+### Codex Rule
+
+For vault administrator audits, record session metadata and traversal coverage. For project facts, use the owning engineer's project session, Git history, and repository evidence.
+
+### Evidence
+
+- `tools/build-superyusu-session-inventory.ps1`
+- `01_Projects/yusu-codex-knowledge-vault/session-log/2026-06-09-session-inventory.md`

@@ -13,7 +13,7 @@
 
 | Project | Slug | Path | Notes |
 |---|---|---|---|
-| YUSU Codex Knowledge Vault | `yusu-codex-knowledge-vault` | `F:\AcademicHub\0#YUSU` | This vault itself; includes GitHub sync, skill setup, retrieval decisions |
+| YUSU Codex Knowledge Vault | `yusu-codex-knowledge-vault` | `F:\AcademicHub\0#YUSU` | This vault itself; includes GitHub sync, skill setup, mature ingestion protocol, session inventory, and retrieval decisions |
 | Auto Play 宏录制器 | `auto-play` | `F:\Project\auto play` | Windows 游戏宏录制器/连点器；图像识别实验保留为次级路径 |
 | Simple Oscilloscope | `simple-oscilloscope` | `F:\Project\Simple Oscilloscope` | STM32F103C8T6 Keil firmware + PySide6/PyQtGraph Windows upper-computer; V0.9.5 hand-in release |
 | HyperFrames | `hyperframes` | `F:\Project\HyperFrames` | HyperFrames HTML/GSAP video production workspace; first verified 10-second 1920x1080 render |
@@ -42,4 +42,8 @@
 - `04_progress.md`: 当前进度和状态
 - `05_known_issues.md`: 已知坑点和不要重复犯的错
 - `06_todo_next.md`: 下一步任务
+- `07_development_history.md`: 成熟项目阶段史
+- `08_onboarding_from_zero.md`: 从零接手路线
+- `09_session_evidence.md`: 会话、Git 和命令证据索引
+- `10_project_summary.md`: 最重要结论和 Memory Routing Audit
 - `session-log/`: 大任务原始记录

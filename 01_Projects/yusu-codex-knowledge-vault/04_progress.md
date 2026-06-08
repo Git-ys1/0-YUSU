@@ -2,7 +2,7 @@
 
 ## Current State
 
-Windows host deployment and GitHub private remote are operational. The vault is searchable, has a validated `yusu-kb` skill, and has endpoint setup scripts for Windows and Ubuntu.
+Windows host deployment and GitHub private remote are operational. The vault is searchable, has a validated `yusu-kb` skill, endpoint setup scripts, mature-project ingestion rules, super-yusuV0.2 routing audit rules, and an optional Marginalia research layer.
 
 ## Completed
 
@@ -15,11 +15,16 @@ Windows host deployment and GitHub private remote are operational. The vault is 
 - Added GitHub sync and Ubuntu endpoint setup runbooks.
 - Verified search via `tools/search-kb.ps1`.
 - Added startup readiness check via `tools/check-codex-startup-readiness.ps1`.
+- Added mature-project ingestion workflow and audit scripts.
+- Added super-yusuV0.2 `Memory Routing Audit` protocol.
+- Added Marginalia V0.3 research layer and local LLM/embedding adapter notes.
+- Added a privacy-preserving SuperYUSU session inventory over 38 local rollout JSONL files.
+- Added mature project files `07_development_history.md`, `08_onboarding_from_zero.md`, `09_session_evidence.md`, and `10_project_summary.md` for this vault itself.
 
 ## In Progress
 
-- First real project memory entry for this vault itself.
-- Cross-project lessons from this setup are being promoted into `03_CrossProject/` and `02_GlobalMemory/ERRORS.md`.
+- Running mature-project retrospective audit against the primary 0#YUSU session.
+- Keeping maps and cross-project routing aligned with the new mature entry.
 
 ## Blocked
 
@@ -28,5 +33,5 @@ Windows host deployment and GitHub private remote are operational. The vault is 
 
 ## Last Meaningful Update
 
-- Date: 2026-06-03
-- Source: Codex session in `F:\AcademicHub\0#YUSU`
+- Date: 2026-06-09
+- Source: Codex session evidence inventory plus Git history in `F:\AcademicHub\0#YUSU`
