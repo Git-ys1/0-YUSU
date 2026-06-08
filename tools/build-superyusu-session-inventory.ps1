@@ -48,56 +48,59 @@ if (Test-Path -LiteralPath $SessionIndexPath) {
 
 $patterns = [ordered]@{
   "yusu" = "(?i)yusu|0#YUSU|0-YUSU|YUSU_KB|superyusu|super-yusu"
-  "kb_ingestion" = "\u5165\u5e93|\u77e5\u8bc6\u5e93|mature-project|Memory Routing Audit|session_evidence|project_summary"
+  "kb_ingestion" = "\x{5165}\x{5e93}|\x{77e5}\x{8bc6}\x{5e93}|mature-project|Memory Routing Audit|session_evidence|project_summary"
   "marginalia" = "(?i)marginalia|semantic index|BGE|embedding shim"
   "carbonrag" = "(?i)CarbonRag|RAG-Pro|Milvus|crawler|super admin"
-  "cleanscout" = "(?i)CleanScout|CSR|OpenRF1|\u4e0b\u4f4d\u673a|Vue3"
+  "cleanscout" = "(?i)CleanScout|CSR|OpenRF1|\x{4e0b}\x{4f4d}\x{673a}|Vue3"
   "tooling" = "(?i)GitNexus|Mattermost|Docker|NoMachine|Orange Pi|HyperFrames"
 }
 
 $files = Get-ChildItem -LiteralPath $SessionRoot -Recurse -Filter "rollout-*.jsonl" |
   Sort-Object FullName
 
+$hitByFile = @{}
+foreach ($file in $files) {
+  $hitByFile[$file.FullName] = @{}
+  foreach ($key in $patterns.Keys) {
+    $hitByFile[$file.FullName][$key] = 0
+  }
+}
+
+foreach ($key in $patterns.Keys) {
+  $pattern = $patterns[$key]
+  $rgOutput = & rg --count-matches --no-heading --with-filename --glob "rollout-*.jsonl" -e $pattern $SessionRoot 2>$null
+  foreach ($line in $rgOutput) {
+    if ($line -match "^(.*):(\d+)$") {
+      $path = $Matches[1]
+      $count = [int]$Matches[2]
+      if ($hitByFile.ContainsKey($path)) {
+        $hitByFile[$path][$key] = $count
+      }
+    }
+  }
+}
+
 $results = New-Object System.Collections.Generic.List[object]
 $totalBytes = 0L
-$totalLines = 0L
 $ownThreadId = $env:CODEX_THREAD_ID
 
 foreach ($file in $files) {
   $totalBytes += [long]$file.Length
-  $lineCount = 0L
   $jsonErrors = 0
   $firstMeta = $null
-  $typeCounts = @{}
-  $hits = @{}
-  foreach ($key in $patterns.Keys) { $hits[$key] = 0 }
-
-  foreach ($line in [System.IO.File]::ReadLines($file.FullName)) {
-    $lineCount++
-
-    if ($lineCount -eq 1) {
-      try {
-        $firstMeta = $line | ConvertFrom-Json
-      } catch {
-        $jsonErrors++
-      }
-      continue
+  try {
+    $reader = [System.IO.File]::OpenText($file.FullName)
+    try {
+      $firstLine = $reader.ReadLine()
+    } finally {
+      $reader.Dispose()
     }
-
-    foreach ($key in $patterns.Keys) {
-      if ($line -match $patterns[$key]) {
-        $hits[$key]++
-      }
+    if ($firstLine) {
+      $firstMeta = $firstLine | ConvertFrom-Json
     }
-
-    if ($line -match '"type"\s*:\s*"([^"]+)"') {
-      $t = $Matches[1]
-      if (-not $typeCounts.ContainsKey($t)) { $typeCounts[$t] = 0 }
-      $typeCounts[$t]++
-    }
+  } catch {
+    $jsonErrors++
   }
-
-  $totalLines += $lineCount
 
   $sessionId = $null
   $timestamp = $null
@@ -121,8 +124,12 @@ foreach ($file in $files) {
 
   $topicList = @()
   foreach ($key in $patterns.Keys) {
-    if ($hits[$key] -gt 0) {
-      $topicList += "$key=$($hits[$key])"
+    $count = 0
+    if ($hitByFile.ContainsKey($file.FullName)) {
+      $count = $hitByFile[$file.FullName][$key]
+    }
+    if ($count -gt 0) {
+      $topicList += "$key=$count"
     }
   }
   if ($topicList.Count -eq 0) { $topicList = @("none") }
@@ -133,7 +140,6 @@ foreach ($file in $files) {
     LastWriteTime = $file.LastWriteTime
     File = $file.FullName
     MB = Convert-BytesToMb $file.Length
-    Lines = $lineCount
     Cwd = $cwd
     ThreadName = $threadName
     IndexUpdatedAt = $indexUpdatedAt
@@ -141,7 +147,6 @@ foreach ($file in $files) {
     ModelProvider = $modelProvider
     IsCurrentThread = ($sessionId -and $sessionId -eq $ownThreadId)
     JsonErrors = $jsonErrors
-    TypeCounts = (($typeCounts.GetEnumerator() | Sort-Object Name | ForEach-Object { "$($_.Name)=$($_.Value)" }) -join "; ")
     TopicHits = ($topicList -join "; ")
   })
 }
@@ -164,7 +169,7 @@ $lines.Add("- Session root: ``$SessionRoot``")
 $lines.Add("- Files scanned: $($results.Count)")
 $lines.Add("- Total bytes: $totalBytes")
 $lines.Add("- Total MB: $(Convert-BytesToMb $totalBytes)")
-$lines.Add("- Total JSONL lines scanned: $totalLines")
+$lines.Add("- Traversal method: first-line session metadata for every rollout file plus ripgrep topic scans across all rollout JSONL files.")
 $lines.Add("- Current ``CODEX_THREAD_ID``: ``$ownThreadId``")
 $lines.Add("- Privacy rule: this inventory records metadata, counts, and topic-hit counts only; it does not copy raw private conversation text.")
 $lines.Add("")
@@ -183,13 +188,13 @@ foreach ($session in $vaultSessions) {
 $lines.Add("")
 $lines.Add("## Full Traversal Table")
 $lines.Add("")
-$lines.Add("| # | Session ID | MB | Lines | Last Write | Cwd | Thread | Topic Hits | Current |")
-$lines.Add("|---:|---|---:|---:|---|---|---|---|---|")
+$lines.Add("| # | Session ID | MB | Last Write | Cwd | Thread | Topic Hits | Current |")
+$lines.Add("|---:|---|---:|---|---|---|---|---|")
 $i = 0
 foreach ($session in $results | Sort-Object LastWriteTime) {
   $i++
   $lastWrite = $session.LastWriteTime.ToString("yyyy-MM-dd HH:mm:ss")
-  $lines.Add("| $i | ``$($session.SessionId)`` | $($session.MB) | $($session.Lines) | $lastWrite | $(Escape-MdCell $session.Cwd) | $(Escape-MdCell $session.ThreadName) | $(Escape-MdCell $session.TopicHits) | $($session.IsCurrentThread) |")
+  $lines.Add("| $i | ``$($session.SessionId)`` | $($session.MB) | $lastWrite | $(Escape-MdCell $session.Cwd) | $(Escape-MdCell $session.ThreadName) | $(Escape-MdCell $session.TopicHits) | $($session.IsCurrentThread) |")
 }
 $lines.Add("")
 $lines.Add("## Notes")
@@ -200,4 +205,4 @@ $lines.Add("- Future project Codex instances should use find-own-codex-session.*
 
 [System.IO.File]::WriteAllLines($OutputPath, $lines, [System.Text.UTF8Encoding]::new($false))
 Write-Output "Wrote $OutputPath"
-Write-Output "files=$($results.Count) total_mb=$(Convert-BytesToMb $totalBytes) lines=$totalLines"
+Write-Output "files=$($results.Count) total_mb=$(Convert-BytesToMb $totalBytes)"
