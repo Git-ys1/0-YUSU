@@ -16,6 +16,8 @@
 | YUSU Codex Knowledge Vault | `yusu-codex-knowledge-vault` | `F:\AcademicHub\0#YUSU` | This vault itself; includes GitHub sync, skill setup, retrieval decisions |
 | Auto Play 宏录制器 | `auto-play` | `F:\Project\auto play` | Windows 游戏宏录制器/连点器；图像识别实验保留为次级路径 |
 | Simple Oscilloscope | `simple-oscilloscope` | `F:\Project\Simple Oscilloscope` | STM32F103C8T6 Keil firmware + PySide6/PyQtGraph Windows upper-computer; V0.9.5 hand-in release |
+| HyperFrames | `hyperframes` | `F:\Project\HyperFrames` | HyperFrames HTML/GSAP video production workspace; first verified 10-second 1920x1080 render |
+| CleanScout_rover 下位机 | `cleanscout-rover-lower-firmware` | `F:\Project\CleanScout_rover` | STM32 lower-firmware slice only: formal OpenRF1 motion controller plus frozen mechanical-arm vendor baseline |
 
 ## 新项目入库
 

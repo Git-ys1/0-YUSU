@@ -42,6 +42,30 @@ python C:\Users\yusu\.codex\skills\.system\skill-creator\scripts\quick_validate.
 
 要证明被动触发，应开启新的 Codex 线程或重启后观察技能清单/行为。
 
+HyperFrames evidence: on 2026-06-05 the `HyperFrames by HeyGen` plugin was installed and its skills were available in the plugin cache, but a newly created delegated thread with `@HyperFrames by HeyGen` reported `systemError`. For plugin work, treat current worktree artifacts, CLI outputs, and rendered files as stronger completion evidence than delegated-thread status alone.
+
+### Project-local wrappers for native media CLIs
+
+Video/audio render tools often depend on native binaries such as FFmpeg and FFprobe. If `doctor` reports missing tools on Windows, prefer a project-local wrapper that prepends npm-installed binary directories to `PATH` instead of relying on machine-wide PATH mutation.
+
+Pattern:
+
+```powershell
+npm install --save-dev @ffmpeg-installer/ffmpeg @ffprobe-installer/ffprobe
+```
+
+Then route stable scripts through a Node wrapper that sets `FFMPEG_PATH`, `FFPROBE_PATH`, and `PATH` before calling the render CLI.
+
+Evidence: HyperFrames on `F:\Project\HyperFrames` initially failed doctor for missing FFmpeg/FFprobe; `scripts/local-hyperframes.mjs` fixed `npm run doctor`, `npm run check`, and `npm run render`.
+
+### Video completion needs visual-frame evidence
+
+For HTML-to-video workflows, successful encode metadata is necessary but not enough. A valid MP4 can still have clipped text, missing timed elements, or bad layout. Pair lint/inspect with key-frame snapshots or contact sheets before claiming the video is correct.
+
+Evidence: HyperFrames first demo used `npm run check`, FFprobe metadata, and `npm run hf -- snapshot --at 0.8,2.6,4.0,5.6,8.0 --describe false`; the contact sheet confirmed the title and three lines appeared in sequence.
+
+If the video is supposed to have sound, also verify FFprobe shows an `audio` stream. HyperFrames v0.6.72 on `F:\Project\HyperFrames` reported `audioCount: 1` during render, but the MP4 initially contained only video. The stable workaround was to render an intermediate video-only MP4 and then mux the audio with FFmpeg (`scripts/mux-audio.mjs`), producing a final file with H.264 video and AAC audio.
+
 ### GitHub repository names may be normalized
 
 GitHub 远端仓库名不一定保留本地目录名中的特殊字符。本次请求 `0#YUSU`，GitHub CLI 创建结果为 `Git-ys1/0-YUSU`。以后写同步指南时，要区分本地路径名和远端仓库名，不要硬假设二者完全相同。
@@ -195,3 +219,83 @@ tools\flash_stlink.bat
 Then verify the running firmware through its normal serial protocol. This avoids confusing "hex was built" with "board was flashed."
 
 Evidence: Simple Oscilloscope V0.9.3 generated `Objects\SimpleOscilloscope.hex`, flashed by ST-Link, and COM14 returned firmware `0.9.3`.
+
+### HyperFrames TTS on Windows
+
+For HyperFrames `tts` on Windows, keep exact narration in a `.txt` file and pass the file path to the CLI. Inline quoted text can generate an unusably short WAV even when the same text works from a file.
+
+Also treat non-English Kokoro voices as environment-sensitive. On `F:\Project\HyperFrames`, `zf_xiaobei --lang zh` failed with `RuntimeError: language "zh" is not supported by the espeak backend`; English `af_nova` worked after a project-local Python 3.11 venv installed `kokoro-onnx` and `soundfile`.
+
+Evidence: On 2026-06-05, inline English narration generated a 0.81-second WAV, while file input generated a 7.98-second WAV. The final narration mix was muxed into the HyperFrames MP4 and verified with FFprobe plus FFmpeg `volumedetect`.
+
+### Chinese TTS fallback ladder on Windows
+
+When a local TTS stack cannot synthesize Mandarin, check installed Windows SAPI voices before reaching for paid APIs:
+
+```powershell
+Add-Type -AssemblyName System.Speech
+$s = New-Object System.Speech.Synthesis.SpeechSynthesizer
+$s.GetInstalledVoices() | ForEach-Object { $_.VoiceInfo }
+```
+
+On `F:\Project\HyperFrames`, `Microsoft Huihui Desktop zh-CN` was available and generated a valid WAV through System.Speech. For better demo quality without an API key, `edge-tts` with `zh-CN-XiaoxiaoNeural` generated a much more natural Chinese MP3, which FFmpeg could mix/mux into a HyperFrames MP4. Treat Edge TTS as convenient but unofficial; for commercial or policy-sensitive production, use an official hosted provider such as OpenAI Audio, Azure Speech, HeyGen TTS, or ElevenLabs.
+
+### Edge TTS VTT can drive lyric-video timing
+
+For lyric or caption-driven videos, generate `edge-tts` media and subtitles together, then treat the VTT as the timing source for HyperFrames scenes:
+
+```powershell
+.tools\tts-venv\Scripts\edge-tts.exe --voice zh-CN-XiaoxiaoNeural --file narration.zh-CN.txt --write-media voice.mp3 --write-subtitles voice.vtt
+```
+
+Evidence: HyperFrames production `002-guobao-fan-lyric-video` used the Edge VTT line timings to build `TIMING.md` and a GSAP scene table. `npm run check:002` returned 0 lint errors/warnings and 0 layout issues; the rendered MP4 had verified video/audio streams and contact sheets showed the Chinese lyric lines aligned with matching visual beats.
+
+### Historical STM32 build logs do not prove the current machine can compile
+
+Imported STM32 vendor examples often include `*.build_log.htm` or IDE HTML logs that show a previous machine once built successfully. Treat those logs as artifact evidence only, not as proof that the current machine already has a usable Keil toolchain.
+
+Before claiming a newly imported example is locally buildable:
+
+1. rediscover the current machine's `UV4.exe` or equivalent;
+2. compare that real path against the historical log path;
+3. only say "local build verified" after an actual rebuild on the current machine.
+
+If the current machine cannot yet rediscover the compiler path, it is acceptable to flash a verified existing `hex`, but say clearly that flashing was verified while local rebuild was not.
+
+Evidence: CleanScout Rover lower-firmware mechanical-arm vendor baseline on 2026-06-07 had `template.build_log.htm` pointing at `D:\Keil_v5\ARM\ARMCC\Bin`, while the current machine could not confirm that Keil path. The safe path was to keep the log as historical evidence and flash the already generated `template.hex`.
+
+### ST-Link read-only identity check before flashing imported STM32 hex
+
+When a repository receives a new STM32 subproject or vendor baseline, do a read-only ST-Link connection check before writing flash. A minimal pattern is:
+
+```powershell
+STM32_Programmer_CLI.exe -c port=SWD mode=UR reset=HWrst -r32 0x08000000 4
+```
+
+This confirms probe visibility, target voltage, device ID / density, flash size, and that the board at least responds under reset. Only after that should you flash the imported `hex`. This reduces the chance of blindly writing a mismatched image just because ST-Link was detected.
+
+Evidence: CleanScout Rover lower-firmware mechanical-arm baseline on 2026-06-07 was first identified as `STM32F101/F103 High-density`, `Device ID 0x414`, `256 KB`, and only then flashed with `template.hex`.
+
+### Board firmware cannot be assumed equal to repo artifacts
+
+In long-running embedded projects with local experimental branches, do not assume the MCU currently runs the same image as the latest repo `hex` or the latest `main` commit. Verify the board state explicitly through one or more of:
+
+- read-only flash comparison
+- version/identity over the normal runtime protocol
+- fresh flash plus post-flash behavior check
+
+Without that verification, "the repo changed" and "the board changed" are separate claims.
+
+Evidence: CleanScout Rover lower-firmware auditing on 2026-06-07 showed that the STM32 board contents did not exactly match the current formal RF1 firmware outputs, even after comparing current and reconstructed local artifacts.
+
+### Keil GUI may rewrite project XML and local debug fields
+
+Keil/uVision can rewrite `.uvprojx`, `.uvoptx`, local debug fields, and formatting just by opening or saving a project. In embedded repos where the project file itself is versioned, treat GUI-side changes as suspicious until a zero-diff or intentional-diff review proves otherwise.
+
+Recommended discipline:
+
+1. isolate project-file changes from source changes;
+2. diff `.uvprojx` separately before commit;
+3. ignore `.uvguix.*`, `.uvoptx`, local J-Link logs, and generated debug config unless the project explicitly needs them.
+
+Evidence: CleanScout Rover lower-firmware cleanup on 2026-06-07 had to restore Keil project files after GUI-side rewrites, even though the underlying runtime behavior was meant to stay unchanged.

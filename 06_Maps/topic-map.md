@@ -24,6 +24,15 @@
 ## Embedded And Instrument Apps
 
 - [[01_Projects/simple-oscilloscope/README]]
+- [[01_Projects/cleanscout-rover-lower-firmware/README]]
 - [[03_CrossProject/patterns]]: Transport-protocol-acquisition-processing-UI layering、Hardware release requires artifact plus device verification
+- [[03_CrossProject/patterns]]: Hardware falsification before software architecture fallback、Checkpoints as hardware evidence
 - [[03_CrossProject/pitfalls]]: Instrument UI readouts placed in data coordinates、High-rate firmware claims made by changing constants only、Sample-index trigger quantization causes visible instrument jitter
 - [[03_CrossProject/tooling]]: Keil plus STM32CubeProgrammer Windows release loop、Windows PyInstaller rebuilds can fail when the packaged exe is still running
+- [[03_CrossProject/tooling]]: Historical STM32 build logs do not prove current machine can compile、ST-Link read-only identity check before flashing imported STM32 hex、Board firmware may not equal repository artifact
+
+## Media And Video Production
+
+- [[01_Projects/hyperframes/README]]
+- [[03_CrossProject/patterns]]: Separate research context from fictionalized profile claims
+- [[03_CrossProject/tooling]]: HyperFrames TTS on Windows、Chinese TTS fallback ladder on Windows、Edge TTS VTT can drive lyric-video timing
