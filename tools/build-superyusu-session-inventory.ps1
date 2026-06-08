@@ -90,11 +90,13 @@ foreach ($file in $files) {
   $firstMeta = $null
   $firstLine = $null
   try {
-    $reader = [System.IO.File]::OpenText($file.FullName)
+    $stream = [System.IO.File]::Open($file.FullName, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::ReadWrite)
+    $reader = [System.IO.StreamReader]::new($stream)
     try {
       $firstLine = $reader.ReadLine()
     } finally {
       $reader.Dispose()
+      $stream.Dispose()
     }
     if ($firstLine) {
       $firstMeta = $firstLine | ConvertFrom-Json
