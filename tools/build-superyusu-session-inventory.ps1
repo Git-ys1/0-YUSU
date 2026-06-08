@@ -88,6 +88,7 @@ foreach ($file in $files) {
   $totalBytes += [long]$file.Length
   $jsonErrors = 0
   $firstMeta = $null
+  $firstLine = $null
   try {
     $reader = [System.IO.File]::OpenText($file.FullName)
     try {
@@ -107,12 +108,24 @@ foreach ($file in $files) {
   $cwd = $null
   $source = $null
   $modelProvider = $null
+  if ($firstLine) {
+    if ($firstLine -match '"id"\s*:\s*"([^"]+)"') { $sessionId = $Matches[1] }
+    if ($firstLine -match '"timestamp"\s*:\s*"([^"]+)"') { $timestamp = $Matches[1] }
+    if ($firstLine -match '"cwd"\s*:\s*"((?:\\.|[^"])*)"') {
+      $cwd = $Matches[1] -replace '\\\\', '\'
+    }
+    if ($firstLine -match '"source"\s*:\s*"([^"]+)"') { $source = $Matches[1] }
+    if ($firstLine -match '"model_provider"\s*:\s*"([^"]+)"') { $modelProvider = $Matches[1] }
+  }
   if ($firstMeta -and $firstMeta.payload) {
-    $sessionId = $firstMeta.payload.id
-    $timestamp = $firstMeta.payload.timestamp
-    $cwd = $firstMeta.payload.cwd
-    $source = $firstMeta.payload.source
-    $modelProvider = $firstMeta.payload.model_provider
+    if (-not $sessionId) { $sessionId = $firstMeta.payload.id }
+    if (-not $timestamp) { $timestamp = $firstMeta.payload.timestamp }
+    if (-not $cwd) { $cwd = $firstMeta.payload.cwd }
+    if (-not $source) { $source = $firstMeta.payload.source }
+    if (-not $modelProvider) { $modelProvider = $firstMeta.payload.model_provider }
+  }
+  if (-not $sessionId -and $file.Name -match "([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\.jsonl$") {
+    $sessionId = $Matches[1]
   }
 
   $threadName = ""
