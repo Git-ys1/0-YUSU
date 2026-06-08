@@ -15,9 +15,10 @@
 | Tkinter | Windows desktop UI | keep selection callbacks lightweight |
 | Git | shell tooling | quote `@{u}` in PowerShell |
 | Codex session inventory | mature project ingestion | use `tools/codex-session-inventory.*` only to locate the current engineer's own JSONL via metadata |
+| SuperYUSU session inventory | vault administrator audit | `tools/build-superyusu-session-inventory.ps1` scans local Codex session metadata/topic counts for this management vault without copying raw conversation text |
 | Find own Codex session | mature project ingestion | use `tools/find-own-codex-session.*` to resolve `CODEX_THREAD_ID` to the current engineer JSONL |
 | Mature project retro audit | mature project ingestion | use `tools/mature-project-retro-audit.*` with one explicit engineer JSONL as a read-only quality gate before completion |
-| Marginalia | deep KB research | optional cited investigation layer; yusu vault ingested 98 entries and has BGE semantic index, but chat depends on working LLM proxy |
+| Marginalia | deep KB research | optional cited investigation layer; yusu vault has 146 ingested entries and BGE semantic index as of 2026-06-08; Markdown merges require separate ingest/reindex, and chat depends on working LLM proxy |
 | Codex proxy LLM shim | local LLM API adapter | `tools/run-codex-proxy-llm-shim.*` converts streaming CLI proxy output into non-streaming chat-completions for Marginalia |
 | CarbonRAG BGE-M3 embedding shim | local semantic recall | `tools/run-carbonrag-bge-embedding-server.*` exposes CarbonRAG local BGE-M3 as OpenAI-compatible `/v1/embeddings` for Marginalia |
 | HyperFrames | HTML video rendering | use Codex plugin `HyperFrames by HeyGen`; local repo wrapper injects FFmpeg/FFprobe for stable render commands |
@@ -30,3 +31,5 @@
 | Windows GUI automation input stack | game automation | use RegisterHotKey, optional PyDirectInput, admin launcher, and window-mode fallback guidance |
 | CleanScout backend deploy scripts | cloud backend operations | load env before Prisma; record `.deploy-revision`; use bootstrap/check/update split |
 | Raw MJPEG relay | camera stream display | preserve ESP32-CAM native stream through worker/backend; avoid parse/repack if native page is smooth |
+| Orange Pi SSH | remote embedded/Linux development | use `ssh opi5max` from Windows Codex; dedicated key is configured for `orangepi@10.53.110.224`; never store the password in vault |
+| NoMachine on Orange Pi | remote desktop | if install sticks with an apt lock, inspect stopped apt/dpkg state first; on `opi5max`, NoMachine 9.6.3 is installed and listens on port 4000 |

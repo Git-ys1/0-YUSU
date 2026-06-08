@@ -158,6 +158,10 @@ EMBEDDING_DIMENSIONS=1024
 
 Evidence: 2026-06-05 local smoke returned one `1024`-dimension embedding through `/v1/embeddings`.
 
+If `/v1/embeddings` returns `500` with `[Errno 22] Invalid argument` while CarbonRAG direct `embed_documents()` still works, restart only the `8011` shim and smoke a single embedding before rebuilding downstream indexes. Treat this as a stale shim/runtime state first, not as proof the BGE-M3 model files are corrupt.
+
+Evidence: On 2026-06-08, the long-running shim failed during Marginalia semantic-index build, while CarbonRAG direct Python embedding returned `ok 1 1024 True`; restarting `tools\run-carbonrag-bge-embedding-server.ps1` restored `/v1/embeddings`.
+
 ### Codex proxy streaming needs a local non-streaming shim
 
 Some Codex-oriented proxy endpoints can stream usable text but return empty `message.content` in non-streaming `chat.completions` or `responses`. Marginalia expects non-streaming `chat.completions`, so point Marginalia at the local shim:
@@ -192,6 +196,12 @@ w
 Otherwise a script can report success after file projection while DB ingest tasks are still pending or never accepted. Always verify `tasks` and `files.ingest_status` afterward.
 
 Evidence: On 2026-06-05, yusu vault ingest applied 98 entries only after `--yes`; waiting completed 98 `ingest_file` tasks and left 98 files `done`.
+
+After Git merges into the Markdown vault, do not assume Marginalia sees the new files. Run `sync-yusu-kb-to-marginalia.ps1 -Check`, then `-Ingest`, then rebuild the semantic index. Markdown/Git is canonical; Marginalia SQLite and `semantic-index/default` are derived state.
+
+If a file remains `ingest_status=pending` even though its `ingest_file` task is `done`, prefer the official reprocess path. The modified-file ingest path can leave `ingested_at` set, causing the handler to skip the file and never flip it back to `done`.
+
+Evidence: On 2026-06-08, CSR lower firmware and CleanScout Vue3 Markdown were committed, but Marginalia initially saw 48 new and 12 modified files. After ingest and BGE reindex, the CSR semantic smoke query ranked `01_Projects/cleanscout-rover-lower-firmware/02_runbook.md` first, and the final index contained 146 entries.
 
 ### Avoid piped Chinese prompts into Marginalia CLI on Windows
 
@@ -317,3 +327,26 @@ Evidence: CleanScout `cleanscout-rover-vue3` V-1.9.7 cloud update verification.
 If a camera's native MJPEG endpoint is smooth, preserve its stream shape as far as possible before trying FPS constants. For H5 display, backend can relay multipart MJPEG directly; snapshot remains fallback.
 
 Evidence: CleanScout `cleanscout-rover-vue3` V-2.2.2.
+
+### Orange Pi remote SSH development access
+
+For the local Windows Codex environment, the Orange Pi 5 Max at `10.53.110.224` is reachable as `orangepi@10.53.110.224`. On 2026-06-08, a dedicated local SSH key was created at `C:\Users\yusu\.ssh\orangepi_10_53_110_224_ed25519`, its public key was added to the remote `authorized_keys`, and `C:\Users\yusu\.ssh\config` gained aliases `opi5max`, `orangepi5max`, and `10.53.110.224`.
+
+Use `ssh opi5max` for future development. Verified remote baseline: hostname `orangepi5max`, Ubuntu 20.04.6 / Orange Pi Focal, kernel `5.10.160-rockchip-rk3588`, user `orangepi`, Git 2.25.1, Python 3.8.10, Docker 28.1.1, and about 33G free on `/`.
+
+Do not store or repeat the device password in the knowledge vault.
+
+### NoMachine install recovery on Orange Pi
+
+If `apt install ./nomachine_arm64.deb` on `opi5max` appears stuck at around 60% with `/var/lib/dpkg/lock-frontend` held by `apt`, do not remove lock files first. Inspect `ps`, `lsof`, `dpkg -l nomachine`, `/var/log/dpkg.log`, and `/var/log/apt/term.log`.
+
+On 2026-06-08, the package had actually reached `status installed nomachine:arm64 9.6.3-1`, while the outer `sudo apt` / `apt` processes were stopped (`T`) and still held the frontend/archive locks, with a defunct `dpkg` child. The safe recovery was to terminate the stopped outer apt/sudo processes, then run:
+
+```bash
+sudo dpkg --configure -a
+sudo DEBIAN_FRONTEND=noninteractive apt-get -f install -y
+/usr/NX/bin/nxserver --status
+ss -lntp | grep ':4000'
+```
+
+Verified result: `dpkg -s nomachine` reports `Status: install ok installed`, NoMachine 9.6.3 services `nxserver`, `nxnode`, and `nxd` are enabled, and port `4000` listens on IPv4/IPv6. Windows `Test-NetConnection 10.53.110.224 -Port 4000` succeeded.

@@ -421,6 +421,127 @@ UnicodeEncodeError: surrogates not allowed
 
 Use ASCII smoke prompts for CLI automation, use a UTF-8-safe invocation, or ask Chinese questions through the browser UI. Do not diagnose this as an LLM failure unless an ASCII prompt also fails.
 
+## [ERR-20260608-001] marginalia_markdown_ingest_index_are_separate
+**Logged**: 2026-06-08
+**Priority**: high
+**Status**: active
+
+### Summary
+
+Writing Markdown into the YUSU vault and committing/pushing Git does not update Marginalia's SQLite library or BGE semantic index. After CSR lower firmware and CleanScout Vue3 were merged into Markdown, Marginalia still reported the files as `new` until `sync-yusu-kb-to-marginalia.ps1 -Ingest` and `build-marginalia-semantic-index-yusu.ps1 -UseLocalBge -Resume` were run.
+
+### Error
+
+```text
+Projected 147 file(s)
+in_sync: 86
+new: 48
+modified: 12
+```
+
+### Context
+
+- OS: Windows
+- Project/path: `F:\AcademicHub\0#YUSU`
+- Tool: Marginalia mirror storage + semantic index
+
+### Suggested Fix
+
+Treat Marginalia as a second derived index. After knowledge-base merges, run:
+
+```powershell
+.\tools\sync-yusu-kb-to-marginalia.ps1 -Check
+.\tools\sync-yusu-kb-to-marginalia.ps1 -Ingest
+.\tools\build-marginalia-semantic-index-yusu.ps1 -UseLocalBge -Resume
+```
+
+Then verify `new=0`, `modified=0`, active files are `ingest_status=done`, and the semantic index manifest entry count matches active indexed files. `Projected N` may be one higher than `in_sync` when the projection includes `.agents/...` because Marginalia skips hidden path parts during scan.
+
+## [ERR-20260608-002] marginalia_modified_ingested_at_skip
+**Logged**: 2026-06-08
+**Priority**: medium
+**Status**: active
+
+### Summary
+
+Marginalia's `/ingest --all` modified-file path can update `files.sha256` and set `ingest_status=pending` without clearing `ingested_at`. The `ingest_file` handler then sees `ingested_at` already set and skips work, leaving the file stuck at `pending` even though the task is `done`.
+
+### Error
+
+```text
+files.ingest_status = pending
+tasks.status = done
+file_row.ingested_at is not null
+```
+
+### Context
+
+- OS: Windows
+- Project/path: `F:\AcademicHub\0#YUSU`
+- Observed file: `yusu-kb/06_Maps/tool-map.md`
+- Upstream code path: `services.sync.apply_modified` -> `tasks.handlers.ingest_file`
+
+### Suggested Fix
+
+Use the official reprocess path for stuck modified files so `ingested_at` is cleared before re-queueing. If using a custom one-off script, load `.marginalia-yusu/.env` before constructing `TaskRunner`, then call `services.reprocess.reprocess_file` and wait until pending/running task counts return to zero.
+
+## [ERR-20260608-003] marginalia_recovery_runner_must_load_env
+**Logged**: 2026-06-08
+**Priority**: high
+**Status**: active
+
+### Summary
+
+Running Marginalia recovery/reprocess code from a bare Python process without loading `.marginalia-yusu/.env` makes `TaskRunner` think no LLM key is configured. It marks pending LLM-dependent tasks `dead`, even though the normal local LLM shim is working.
+
+### Error
+
+```text
+marked 6 pending LLM-dependent task(s) dead: no api_key configured
+```
+
+### Context
+
+- OS: Windows
+- Project/path: `F:\AcademicHub\0#YUSU`
+- Correct local LLM route: `http://127.0.0.1:8010/v1`
+
+### Suggested Fix
+
+Before any embedded Python runner or repair script imports Marginalia settings, load `.marginalia-yusu/.env`, set `MARGINALIA_HOME`, and set `WORKER_ENABLED=true` only for the short repair run. Smoke `http://127.0.0.1:8010/v1/chat/completions` first.
+
+## [ERR-20260608-004] bge_shim_stale_process_invalid_argument
+**Logged**: 2026-06-08
+**Priority**: medium
+**Status**: active
+
+### Summary
+
+The CarbonRAG BGE-M3 model and Python environment can be healthy while the long-running local embedding shim on `8011` fails model loading with `[Errno 22] Invalid argument`. Restarting the shim and smoking `/v1/embeddings` fixed the semantic-index build.
+
+### Error
+
+```text
+local BGE-M3 embedding failed: Failed to load BGE-M3 model ... [Errno 22] Invalid argument
+```
+
+### Context
+
+- OS: Windows
+- Project/path: `F:\AcademicHub\0#YUSU`
+- CarbonRAG path: `F:\Project\CarbonRag`
+- Shim: `tools/run-carbonrag-bge-embedding-server.ps1`
+
+### Suggested Fix
+
+First verify CarbonRAG direct import with `embed_documents`; if direct embedding works, restart the `8011` shim and smoke:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8011/health
+```
+
+Then POST one sample to `/v1/embeddings` and require a 1024-dimensional vector before rebuilding the semantic index.
+
 ## Entry Template
 
 ```md
