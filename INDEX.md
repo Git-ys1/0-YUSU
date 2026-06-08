@@ -20,6 +20,7 @@
 - [[01_Projects/README]]
 - [[01_Projects/auto-play/README]]
 - [[01_Projects/simple-oscilloscope/README]]
+- [[01_Projects/cleanscout-rover-vue3/README]]
 - [[06_Maps/project-map]]
 
 ## 跨项目经验

@@ -187,3 +187,25 @@ This keeps the creative work useful without accidentally laundering invented ach
 ### Evidence
 
 - HyperFrames production `003-tian-binxian-profile`: `assets/research/research-notes.md` records public energy-sector sources, while `index.html` and `README.md` label the result as `概念人物志 / 虚构演绎`.
+
+## Pattern: Outbound relay/worker behind NAT
+**Status**: active
+**Seen In**: cleanscout-rover-vue3
+
+### Use When
+
+A cloud backend must coordinate devices or local capabilities that live behind phone hotspots, private LANs, or lab networks.
+
+### Avoid When
+
+The backend and device are guaranteed to be on the same trusted LAN and the device exposes a stable inbound service.
+
+### Notes
+
+Have the device/PC side actively connect to cloud over WebSocket, then multiplex registration, heartbeat, requests, and results on that connection. CleanScout uses this for Pi ROS edge-relay, OpenClaw PC worker, and ESP32-CAM camera worker.
+
+### Evidence
+
+- Project: `cleanscout-rover-vue3`
+- Source: `Git-ys1/CleanScout_rover/vue3`
+- Files: `docs/releases/V-1.7.0/README.md`, `docs/releases/V-2.1.0/README.md`, `docs/camera-mjpeg-stream.md`

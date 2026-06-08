@@ -17,3 +17,5 @@
 | Windows PyInstaller rebuild locks dist files | simple-oscilloscope | [[03_CrossProject/tooling]] | active |
 | Sample-index trigger quantization causes visible instrument jitter | simple-oscilloscope | [[03_CrossProject/pitfalls]] | active |
 | 覆盖用户设置和用户宏文件 | auto-play | [[03_CrossProject/pitfalls]] | active |
+| UI click duplicated as device toggle | cleanscout-rover-vue3 | [[03_CrossProject/pitfalls]] | active |
+| Long-lived MJPEG stream killed by normal request timeout | cleanscout-rover-vue3 | [[03_CrossProject/pitfalls]] | active |

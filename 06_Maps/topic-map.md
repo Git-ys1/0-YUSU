@@ -36,3 +36,10 @@
 - [[01_Projects/hyperframes/README]]
 - [[03_CrossProject/patterns]]: Separate research context from fictionalized profile claims
 - [[03_CrossProject/tooling]]: HyperFrames TTS on Windows、Chinese TTS fallback ladder on Windows、Edge TTS VTT can drive lyric-video timing
+
+## CleanScout Robotics Software
+
+- [[01_Projects/cleanscout-rover-vue3/README]]: V 线前后端、public-edge、OpenClaw、ESP32-CAM、ASR；source `Git-ys1/CleanScout_rover/vue3`
+- [[03_CrossProject/patterns]]: Outbound relay/worker behind NAT
+- [[03_CrossProject/pitfalls]]: Duplicate UI intent as device toggle; long-lived MJPEG timeout
+- [[03_CrossProject/architecture-decisions]]: Product UI wraps high-privilege local capabilities through backend adapters

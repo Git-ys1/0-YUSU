@@ -28,3 +28,5 @@
 | PyInstaller | Windows desktop packaging | stop running packaged exe before rebuilding onedir dist |
 | Windows desktop launchers | Windows GUI tools | provide .bat launcher, debug launcher, logs, and old-process cleanup; Auto Play evidence in start.bat / start_debug.bat |
 | Windows GUI automation input stack | game automation | use RegisterHotKey, optional PyDirectInput, admin launcher, and window-mode fallback guidance |
+| CleanScout backend deploy scripts | cloud backend operations | load env before Prisma; record `.deploy-revision`; use bootstrap/check/update split |
+| Raw MJPEG relay | camera stream display | preserve ESP32-CAM native stream through worker/backend; avoid parse/repack if native page is smooth |

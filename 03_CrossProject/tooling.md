@@ -299,3 +299,21 @@ Recommended discipline:
 3. ignore `.uvguix.*`, `.uvoptx`, local J-Link logs, and generated debug config unless the project explicitly needs them.
 
 Evidence: CleanScout Rover lower-firmware cleanup on 2026-06-07 had to restore Keil project files after GUI-side rewrites, even though the underlying runtime behavior was meant to stay unchanged.
+
+### Backend deploy scripts must load runtime env before Prisma
+
+Prisma CLI validates `schema.prisma` before migrations run, so update/bootstrap scripts must load the production env file first. If `DATABASE_URL` is missing during `npx prisma migrate deploy`, the deployment script is wrong even if the systemd service would later have the env.
+
+Evidence: CleanScout `cleanscout-rover-vue3` V-1.9.7 update script fixes and repeated VPS `DATABASE_URL` failures.
+
+### Deployed revision marker for cloud update verification
+
+When a deployment syncs only a backend subdirectory, write the source commit to a deployed revision file such as `/opt/vline-backend/backend/.deploy-revision`. Future operators can verify whether cloud backend is actually latest without guessing from Git state elsewhere.
+
+Evidence: CleanScout `cleanscout-rover-vue3` V-1.9.7 cloud update verification.
+
+### Raw MJPEG relay over parse/repack for display streams
+
+If a camera's native MJPEG endpoint is smooth, preserve its stream shape as far as possible before trying FPS constants. For H5 display, backend can relay multipart MJPEG directly; snapshot remains fallback.
+
+Evidence: CleanScout `cleanscout-rover-vue3` V-2.2.2.

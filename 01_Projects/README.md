@@ -18,6 +18,7 @@
 | Simple Oscilloscope | `simple-oscilloscope` | `F:\Project\Simple Oscilloscope` | STM32F103C8T6 Keil firmware + PySide6/PyQtGraph Windows upper-computer; V0.9.5 hand-in release |
 | HyperFrames | `hyperframes` | `F:\Project\HyperFrames` | HyperFrames HTML/GSAP video production workspace; first verified 10-second 1920x1080 render |
 | CleanScout_rover 下位机 | `cleanscout-rover-lower-firmware` | `F:\Project\CleanScout_rover` | STM32 lower-firmware slice only: formal OpenRF1 motion controller plus frozen mechanical-arm vendor baseline |
+| CleanScout Rover 前后端 | `cleanscout-rover-vue3` | `Git-ys1/CleanScout_rover/vue3`; env root `%CLEANSCOUT_VUE3_ROOT%` / `$CLEANSCOUT_VUE3_ROOT`; HDS evidence `F:\Project\CSc——uniapp\vue3` | CSR/V 线软件交互系统；uni-app frontend + Express backend + edge-relay/OpenClaw/camera workers |
 
 ## 新项目入库
 

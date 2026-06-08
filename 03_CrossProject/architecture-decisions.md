@@ -46,3 +46,27 @@
 
 - Auto Play: `app.py` 默认启动宏录制器；`MaaNTE/` 和 `NTE-Piano-Player-v1.5.2-fixed/` 保留为外部研究资产。
 - Project memory: `01_Projects/auto-play/00_project_brief.md`, `01_Projects/auto-play/10_project_summary.md`.
+
+
+## Decision: Product UI wraps high-privilege local capabilities
+**Status**: accepted
+**Date**: 2026-06-08
+**Applies To**: robotics dashboards, local gateways, OpenClaw-like control planes
+
+### Context
+
+Local dashboards and gateways often expose operator-level capability that is useful for development but unsafe or confusing as public product UI.
+
+### Decision
+
+Expose capability through the product backend and product UI. Keep high-privilege dashboard/Gateway tokens local to trusted machines or workers.
+
+### Consequences
+
+- Product auth and permissions remain centralized.
+- Worker tokens and gateway tokens do not leak to browsers or mini-programs.
+- Backend must own routing, status, timeout and audit logs.
+
+### Evidence
+
+- CleanScout `cleanscout-rover-vue3`: OpenClaw PC worker design in V-2.1.0.
