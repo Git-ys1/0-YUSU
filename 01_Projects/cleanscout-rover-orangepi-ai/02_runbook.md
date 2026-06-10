@@ -70,6 +70,37 @@ python3 yolo11_camera.py \
   --snapshot_path ~/rk3588_ai/debug_logs/yolo11_camera/yolo11_camera_result.jpg
 ```
 
+## Run Arm Tracking Dry-Run
+
+```bash
+cd ~/rk3588_ai/arm_tracking_demo
+~/rk3588_ai/rknn_lite_env/bin/python3 -m py_compile \
+  arm_driver.py target_selector.py visual_servo.py yolo_arm_track.py \
+  tools/scan_serial.py tools/test_arm_driver_dryrun.py \
+  tools/test_one_joint_yaw.py tools/test_one_joint_pitch.py
+
+~/rk3588_ai/rknn_lite_env/bin/python3 tools/scan_serial.py
+~/rk3588_ai/rknn_lite_env/bin/python3 tools/test_arm_driver_dryrun.py --print_cmd
+```
+
+Dry-run visual pipeline:
+
+```bash
+~/rk3588_ai/rknn_lite_env/bin/python3 yolo_arm_track.py \
+  --model_path ~/rk3588_ai/models/official_yolo11.rknn \
+  --target rk3588 \
+  --camera 0 \
+  --track_class any \
+  --dry_run true \
+  --enable_arm \
+  --print_cmd \
+  --no_show \
+  --max_frames 5 \
+  --log_interval 1
+```
+
+Do not use real arm output until `pyserial`, serial port, yaw direction, pitch direction, and PWM safety range are confirmed.
+
 ## Remote Access
 
 Use the existing SSH alias from cross-project tooling:
@@ -79,4 +110,3 @@ ssh opi5max
 ```
 
 Do not store or repeat the device password in the knowledge vault.
-
