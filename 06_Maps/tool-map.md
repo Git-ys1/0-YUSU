@@ -33,3 +33,4 @@
 | Raw MJPEG relay | camera stream display | preserve ESP32-CAM native stream through worker/backend; avoid parse/repack if native page is smooth |
 | Orange Pi SSH | remote embedded/Linux development | use `ssh opi5max` from Windows Codex; dedicated key is configured for `orangepi@10.53.110.224`; never store the password in vault |
 | NoMachine on Orange Pi | remote desktop | if install sticks with an apt lock, inspect stopped apt/dpkg state first; on `opi5max`, NoMachine 9.6.3 is installed and listens on port 4000 |
+| RKNN / RK3588 | OrangePi AI inference | for `init_runtime()` crashes, verify `librknnrt.so` binary integrity with size/SHA/readelf/ctypes before blaming models or reinstalling; use C API smoke to separate runtime/driver from Python wrapper issues |

@@ -10,3 +10,4 @@
 | HyperFrames | `hyperframes` | `F:\Project\HyperFrames` | active | 2026-06-05 |
 | CleanScout Rover 下位机 | `cleanscout-rover-lower-firmware` | `F:\Project\CleanScout_rover` | active | 2026-06-08 |
 | CleanScout Rover 前后端 | `cleanscout-rover-vue3` | `Git-ys1/CleanScout_rover/vue3`; use `%CLEANSCOUT_VUE3_ROOT%` / `$CLEANSCOUT_VUE3_ROOT`; HDS evidence `F:\Project\CSc——uniapp\vue3` | active | 2026-06-08 |
+| CleanScout Rover OrangePi AI | `cleanscout-rover-orangepi-ai` | `F:\Project\CleanScout_rover\OrangePi`; board path `~/rk3588_ai` | active | 2026-06-10 |

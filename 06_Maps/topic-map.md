@@ -40,6 +40,7 @@
 ## CleanScout Robotics Software
 
 - [[01_Projects/cleanscout-rover-vue3/README]]: V 线前后端、public-edge、OpenClaw、ESP32-CAM、ASR；source `Git-ys1/CleanScout_rover/vue3`
+- [[01_Projects/cleanscout-rover-orangepi-ai/README]]: Orange Pi 5 Max / RK3588 / RKNN / YOLO11 摄像头检测；source `F:\Project\CleanScout_rover\OrangePi`
 - [[03_CrossProject/patterns]]: Outbound relay/worker behind NAT
 - [[03_CrossProject/pitfalls]]: Duplicate UI intent as device toggle; long-lived MJPEG timeout
 - [[03_CrossProject/architecture-decisions]]: Product UI wraps high-privilege local capabilities through backend adapters

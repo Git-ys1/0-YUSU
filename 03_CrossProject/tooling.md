@@ -350,3 +350,17 @@ ss -lntp | grep ':4000'
 ```
 
 Verified result: `dpkg -s nomachine` reports `Status: install ok installed`, NoMachine 9.6.3 services `nxserver`, `nxnode`, and `nxd` are enabled, and port `4000` listens on IPv4/IPv6. Windows `Test-NetConnection 10.53.110.224 -Port 4000` succeeded.
+
+### RKNN Runtime integrity before model or OS blame
+
+On RK3588 / RKNN deployments, do not trust Runtime version strings alone. A damaged `librknnrt.so` can still expose the expected version via `strings` while crashing at `RKNNLite.init_runtime()`.
+
+Minimum ladder:
+
+1. compare file size and SHA-256 against the official aarch64 runtime;
+2. run `readelf` to catch truncated or malformed ELF sections;
+3. run a direct `ctypes.CDLL("/usr/lib/librknnrt.so")` smoke test;
+4. run a minimal C API `rknn_init` smoke test;
+5. only then blame the model, Python Lite2 wheel, driver, or OS image.
+
+Evidence: CleanScout OrangePi AI on 2026-06-09 found `/usr/lib/librknnrt.so` reported RKNN Runtime 2.3.2 but was 28 bytes shorter than the official v2.3.2 file and segfaulted on direct `dlopen`. Replacing it with the official `airockchip/rknn_model_zoo` v2.3.2 aarch64 runtime made C API and Python RKNNLite inference succeed.
