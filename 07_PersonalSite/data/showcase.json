@@ -1,0 +1,170 @@
+{
+  "site": {
+    "name": "YUSU",
+    "version": "0.3-local-preview",
+    "tagline": "项目、证据、知识库的本地入口",
+    "updated": "2026-06-18"
+  },
+  "materials": {
+    "rawRoot": "记得整理",
+    "videoReference": "个人站.mp4",
+    "inventory": "07_PersonalSite/notes/materials-inventory.md",
+    "designBrief": "07_PersonalSite/notes/design-brief.md"
+  },
+  "achievements": [
+    {
+      "id": "cleanscout-electric-cup-2026",
+      "title": "实验室清扫巡检车",
+      "award": "2026 北京交通大学“电气杯”科技创新大赛二等奖",
+      "date": "2026-04",
+      "project": "CleanScout Rover",
+      "people": ["李浩天", "刘敬丹", "胡振恒"],
+      "source": "26北交电气杯校赛-二等奖.jpg",
+      "media": "/media/raw/26%E5%8C%97%E4%BA%A4%E7%94%B5%E6%B0%94%E6%9D%AF%E6%A0%A1%E8%B5%9B-%E4%BA%8C%E7%AD%89%E5%A5%96.jpg",
+      "tags": ["机器人", "嵌入式", "校赛"]
+    },
+    {
+      "id": "cleanscout-energy-saving-campus-2026",
+      "title": "实验室清扫巡检车",
+      "award": "2026 北京交通大学大学生节能减排社会实践与科技竞赛二等奖",
+      "date": "2026-04",
+      "project": "CleanScout Rover",
+      "people": ["李浩天", "胡振恒", "刘敬丹"],
+      "source": "26北交节能减排校赛-二等奖.jpg",
+      "media": "/media/raw/26%E5%8C%97%E4%BA%A4%E8%8A%82%E8%83%BD%E5%87%8F%E6%8E%92%E6%A0%A1%E8%B5%9B-%E4%BA%8C%E7%AD%89%E5%A5%96.jpg",
+      "tags": ["低碳", "机器人", "校赛"]
+    },
+    {
+      "id": "cleanscout-challenge-cup-2026",
+      "title": "实验室清扫巡检车",
+      "award": "2026 北京交通大学“挑战杯”大学生创业计划竞赛铜奖",
+      "date": "2026",
+      "project": "CleanScout Rover",
+      "people": ["李浩天", "胡振恒", "刘敬丹"],
+      "source": "26北交挑战杯校赛-铜奖.jpg",
+      "media": "/media/raw/26%E5%8C%97%E4%BA%A4%E6%8C%91%E6%88%98%E6%9D%AF%E6%A0%A1%E8%B5%9B-%E9%93%9C%E5%A5%96.jpg",
+      "tags": ["创业计划", "机器人", "校赛"]
+    },
+    {
+      "id": "bjtu-math-modeling-2026",
+      "title": "大学生数学建模竞赛",
+      "award": "2026 北京交通大学大学生数学建模竞赛二等奖",
+      "date": "2026-06",
+      "project": "数学建模",
+      "people": ["李浩天", "袁书琦", "唐梓钧"],
+      "source": "26北交数模校赛-二等奖.jpg",
+      "media": "/media/raw/26%E5%8C%97%E4%BA%A4%E6%95%B0%E6%A8%A1%E6%A0%A1%E8%B5%9B-%E4%BA%8C%E7%AD%89%E5%A5%96.jpg",
+      "tags": ["建模", "数据分析", "校赛"]
+    },
+    {
+      "id": "bjtu-math-modeling-2025",
+      "title": "大学生数学建模竞赛",
+      "award": "2025 北京交通大学大学生数学建模竞赛二等奖",
+      "date": "2025-06",
+      "project": "数学建模",
+      "people": ["李浩天", "钟立文", "胡振恒"],
+      "source": "25北交数模校赛-二等奖.jpg",
+      "media": "/media/raw/25%E5%8C%97%E4%BA%A4%E6%95%B0%E6%A8%A1%E6%A0%A1%E8%B5%9B-%E4%BA%8C%E7%AD%89%E5%A5%96.jpg",
+      "tags": ["建模", "数据分析", "校赛"],
+      "rotate": 90
+    },
+    {
+      "id": "internet-plus-beijing-2025",
+      "title": "融合素质教育课程体系建设",
+      "award": "中国国际大学生创新大赛（2025）北京赛区三等奖",
+      "date": "2025-08",
+      "project": "创新创业",
+      "people": ["李浩天"],
+      "source": "25国创赛北京赛区-三等奖.pdf",
+      "media": "/media/raw/25%E5%9B%BD%E5%88%9B%E8%B5%9B%E5%8C%97%E4%BA%AC%E8%B5%9B%E5%8C%BA-%E4%B8%89%E7%AD%89%E5%A5%96.pdf",
+      "tags": ["创新创业", "市赛", "证书PDF"]
+    },
+    {
+      "id": "beijing-energy-saving-c832-2026",
+      "title": "面向实验室场景的低碳智能清扫巡检系统",
+      "award": "第八届北京市大学生节能节水低碳减排社会实践与科技竞赛三等奖",
+      "date": "2026",
+      "project": "CleanScout Rover",
+      "people": ["李浩天", "胡振恒", "钟立文", "刘敬丹", "魏浩文"],
+      "source": "P020260526399177509374.docx",
+      "media": "/media/raw/P020260526399177509374.docx",
+      "tags": ["低碳", "市赛名单", "机器人"]
+    },
+    {
+      "id": "beijing-energy-saving-a450-2026",
+      "title": "双碳智答",
+      "award": "第八届北京市大学生节能节水低碳减排社会实践与科技竞赛二等奖",
+      "date": "2026",
+      "project": "CarbonRAG",
+      "people": ["李浩天", "钟立文", "魏浩文", "胡振恒"],
+      "source": "P020260526399177509374.docx",
+      "media": "/media/raw/P020260526399177509374.docx",
+      "tags": ["CarbonRAG", "大模型", "碳管理", "市赛名单"]
+    }
+  ],
+  "projects": [
+    {
+      "id": "cleanscout-rover",
+      "name": "CleanScout Rover",
+      "type": "机器人系统",
+      "status": "active",
+      "summary": "STM32 下位机、OrangePi AI、Vue3 前后端和机械臂视觉伺服共同组成的实验室清扫巡检项目。",
+      "memory": "01_Projects/cleanscout-rover/README.md",
+      "tags": ["STM32", "RK3588", "Vue3", "机器人"]
+    },
+    {
+      "id": "simple-oscilloscope",
+      "name": "Simple Oscilloscope",
+      "type": "嵌入式 + 桌面上位机",
+      "status": "released",
+      "summary": "STM32F103C8T6 Keil firmware 与 PySide6/PyQtGraph Windows 上位机组合的简易示波器项目。",
+      "memory": "01_Projects/simple-oscilloscope/README.md",
+      "tags": ["STM32", "PySide6", "Keil"]
+    },
+    {
+      "id": "kaoyan-bjtu-ee",
+      "name": "27 考研 - 北交电气学硕",
+      "type": "长期资料与数据看板",
+      "status": "active",
+      "summary": "北京交通大学 080800 电气工程学硕官方招生信息、历年复试录取数据和本地看板工作区。",
+      "memory": "01_Projects/kaoyan-bjtu-ee/README.md",
+      "tags": ["数据整理", "官方源", "长期规划"]
+    },
+    {
+      "id": "hyperframes",
+      "name": "HyperFrames",
+      "type": "视频生成工作流",
+      "status": "active",
+      "summary": "HTML/GSAP 视频制作与渲染工作区，已验证 10 秒 1920x1080 本地渲染。",
+      "memory": "01_Projects/hyperframes/README.md",
+      "tags": ["HTML", "GSAP", "视频"]
+    },
+    {
+      "id": "invoice-archive-manager",
+      "name": "发票管理归档软件",
+      "type": "Windows 本地桌面工具",
+      "status": "active",
+      "summary": "FastAPI + React/Vite + PyWebView 的本地发票、合同、回款凭证归档软件。",
+      "memory": "01_Projects/invoice-archive-manager/README.md",
+      "tags": ["FastAPI", "React", "PyWebView"]
+    },
+    {
+      "id": "carbonrag",
+      "name": "CarbonRAG",
+      "type": "大模型应用",
+      "status": "pending full ingestion",
+      "summary": "与“双碳智答”相关的碳管理和政策智能服务系统；当前只建立轻量占位，完整项目史等待 CarbonRAG 项目工程师入库。",
+      "memory": "01_Projects/carbonrag/README.md",
+      "tags": ["RAG", "Carbon", "LLM"]
+    },
+    {
+      "id": "yusu-kb",
+      "name": "YUSU Knowledge Vault",
+      "type": "共享知识库",
+      "status": "active",
+      "summary": "跨 Windows、Ubuntu 和多项目 Codex 的共享 Markdown 知识库，当前站点直接读取它作为检索底座。",
+      "memory": "01_Projects/yusu-codex-knowledge-vault/README.md",
+      "tags": ["Codex", "Obsidian", "Marginalia"]
+    }
+  ]
+}

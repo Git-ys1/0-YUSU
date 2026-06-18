@@ -20,8 +20,19 @@
 - [[01_Projects/README]]
 - [[01_Projects/auto-play/README]]
 - [[01_Projects/simple-oscilloscope/README]]
+- [[01_Projects/cleanscout-rover/README]]
 - [[01_Projects/cleanscout-rover-vue3/README]]
+- [[01_Projects/carbonrag/README]]
+- [[01_Projects/invoice-archive-manager/README]]
+- [[01_Projects/kaoyan-bjtu-ee/README]]
+- [[01_Projects/yusu-personal-site/README]]
 - [[06_Maps/project-map]]
+
+## 本地站点
+
+- [[07_PersonalSite/README]]
+- [[07_PersonalSite/notes/design-brief]]
+- [[07_PersonalSite/notes/materials-inventory]]
 
 ## 跨项目经验
 

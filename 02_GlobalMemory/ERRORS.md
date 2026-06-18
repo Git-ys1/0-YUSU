@@ -542,6 +542,63 @@ Invoke-RestMethod http://127.0.0.1:8011/health
 
 Then POST one sample to `/v1/embeddings` and require a 1024-dimensional vector before rebuilding the semantic index.
 
+## [ERR-20260617-001] python_py_compile_pyc_permission
+**Logged**: 2026-06-17
+**Priority**: low
+**Status**: resolved
+
+### Summary
+
+On Windows, `python -m py_compile ...` can fail with `WinError 5` while replacing an existing `__pycache__/*.pyc`, even when the source syntax is valid.
+
+### Error
+
+```text
+[WinError 5] 拒绝访问。: '...__pycache__\\file.cpython-312.pyc.<tmp>' -> '...__pycache__\\file.cpython-312.pyc'
+```
+
+### Context
+
+- OS: Windows
+- Project/path: `F:\AcademicHub\000资料相关\000考研`
+- Command: `.\.venv\Scripts\python.exe -m py_compile ...`
+
+### Suggested Fix
+
+For syntax-only checks, avoid writing pyc files and use a small `compile(Path(...).read_text(...), path, "exec")` check instead. Treat this specific `py_compile` error as a pycache/file-lock issue unless a separate syntax traceback appears.
+
+## [ERR-20260618-001] marginalia_llm_proxy_token_expired
+**Logged**: 2026-06-18
+**Priority**: high
+**Status**: open
+
+### Summary
+
+The local Marginalia LLM shim can start on `127.0.0.1:8010`, and the CLI proxy `/models` endpoint can return model IDs, but actual chat completions fail because the upstream proxy token is expired.
+
+### Error
+
+```text
+Provided authentication token is expired. Please try signing in again.
+```
+
+Earlier direct `gpt-5.4` calls also returned:
+
+```text
+auth_unavailable: no auth available
+```
+
+### Context
+
+- Local shim health: OK.
+- Current proxy model list includes `gpt-5.2`, `gpt-5`, `gpt-5-codex`, and `gpt-5.1`; `gpt-5.4` is no longer in `/models`.
+- CarbonRAG BGE-M3 embedding shim on `127.0.0.1:8011` still works and returns 1024-dimensional embeddings.
+- `sync-yusu-kb-to-marginalia.ps1 -Check` works without LLM and showed the Markdown mirror is ahead of Marginalia DB/index.
+
+### Suggested Fix
+
+Refresh the upstream CLI proxy authentication token in the user-local config, then update the Marginalia local model setting to a model currently returned by `/models`. Smoke-test `http://127.0.0.1:8010/v1/chat/completions` before running `sync-yusu-kb-to-marginalia.ps1 -Ingest`.
+
 ## Entry Template
 
 ```md

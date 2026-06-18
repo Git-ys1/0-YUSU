@@ -16,9 +16,11 @@ A legacy `librknn_api.so` existed, but LD_DEBUG showed the Python Lite2 path loa
 
 On this board `/dev/video0` is the real UVC Video Capture node, while `/dev/video1` is metadata. Camera scripts must auto-fallback and print actual node/backend/fourcc.
 
-## Issue: `pyserial` is not installed in the RKNN Lite venv yet
+## Resolved: `pyserial` was missing from the RKNN Lite venv
 
-C-5.0.1 dry-run works without pyserial because `ArmDriver` imports `serial` only in real-output mode. Real arm output must first install/confirm pyserial in `~/rk3588_ai/rknn_lite_env` and then use `tools/scan_serial.py`.
+C-5.0.1 initially worked only in dry-run because `pyserial` was absent. On
+2026-06-11 the RKNN environment successfully imported `serial`, opened
+`/dev/ttyUSB0`, sent real commands, and read bus-servo replies.
 
 ## Issue: do not assume ROS2 `0x90` binary frames are the current arm firmware protocol
 
@@ -39,3 +41,44 @@ The full upstream repo belongs to `airockchip`. CleanScout owns the overlay and 
 ## Issue: do not store device password in memory
 
 The JSONL includes initial access context, but the KB must not preserve passwords. Use SSH alias and key-based access notes only.
+
+## Issue: mechanical-arm work must start from the bus-servo table and A1 vision-to-serial reference
+
+For CleanScout C-5.x mechanical-arm work, do not start by describing the arm as a generic PWM-servo-only system, and do not jump first to the ROS2 `0x80/0x90` binary-frame reference.
+
+Default lookup order:
+
+1. Read `F:\Project\CleanScout_rover\docs\001-总线舵机资料\1.使用手册\附件1《总线舵机指令表》.docx`.
+2. Read the A1/Yeahbot visual-recognition-to-serial arm example before designing the tracking loop. Even if that reference is ROS2, the useful pattern is still: vision detection -> target error -> serial command -> arm movement.
+3. Then inspect the current CleanScout implementation under `OrangePi/rk3588_ai/arm_tracking_demo/` and the frozen STM32 baseline under `firmware/mechanical_arm_official_baseline/`.
+
+Current verified command layer is bus-servo-style ASCII text:
+
+- single motion: `#000P1500T1000!`
+- single stop: `#000PDST!`
+- multi-servo bundle: `{#000P1500T1000!#001P1500T1000!}`
+
+2026-06-11 live result:
+
+- `/dev/ttyUSB0` is the working CH340 path.
+- Servo000/001/002 returned version and position data.
+- Servo003/004/005 did not return bus data in the current wiring state.
+- The official STM32 firmware simultaneously forwards commands to UART buses
+  and drives six local software-PWM outputs.
+- Servo003 motion was verified by end-camera image displacement even without
+  a `PRAD` response.
+- Two processes can otherwise open the same Linux tty and split replies.
+  `ArmDriver` and `bus_servo_probe.py` now request exclusive serial ownership.
+
+Do not collapse these facts into either "all six are readable bus servos" or
+"the protocol is only PWM". The command layer is the vendor bus-servo ASCII
+protocol; the current STM32 baseline adapts it to both bus forwarding and
+local PWM execution.
+
+Evidence:
+
+- `docs/001-总线舵机资料/1.使用手册/附件1《总线舵机指令表》.docx`
+- `firmware/mechanical_arm_official_baseline/User/Components/y_global/y_global.c`
+- `firmware/mechanical_arm_official_baseline/User/Components/y_usart/y_usart.c`
+- `OrangePi/rk3588_ai/arm_tracking_demo/tools/bus_servo_probe.py`
+- User correction on 2026-06-11: always remember the bus-servo command table and A1 visual-to-serial arm example.

@@ -135,6 +135,35 @@ RF1：
 3. `firmware/mechanical_arm_official_baseline/User/main.c`
 4. `firmware/mechanical_arm_official_baseline/User/Components/y_global/y_global.c`
 
+## Mechanical Arm Manual Pose Tuning
+
+当末端相机负载改变、`001/002/003` 姿态需要重新找平衡时，不要继续靠代码侧猜关节方向。
+先让操作者在 OrangePi 远程桌面看着实物调姿：
+
+```bash
+cd ~/rk3588_ai/arm_tracking_demo
+~/rk3588_ai/rknn_lite_env/bin/python3 tools/arm_servo_tune.py
+```
+
+常用交互命令：
+
+```text
+read 0-5
+set 2=2000,3=1480 1500
+nudge 2=-50 1000
+nudge 3=50 1000
+save 1-3
+```
+
+如果 `003` 这类舵机能动作但 `PRAD` 偶发无回包，用显式值保存：
+
+```bash
+~/rk3588_ai/rknn_lite_env/bin/python3 tools/save_arm_start_pose.py \
+  --values 1=1700,2=2000,3=1480
+```
+
+保存会更新 `arm_tracking_demo/config/arm_track_config.yaml` 的启动姿态，并同步 `pitch_pwm_neutral`。
+
 ## Last Verified
 
 - RF1 正式工程收口：2026-06-07

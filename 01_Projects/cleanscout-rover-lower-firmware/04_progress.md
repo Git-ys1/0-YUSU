@@ -2,7 +2,7 @@
 
 ## Current Status
 
-**State**: active, lower-firmware scope mostly caught up  
+**State**: active, lower-firmware scope mostly caught up
 **Current phase**: RF1 正式主线稳定维护 + `C-3.7.0` 机械臂独立起步
 
 ## What Is Stable Today
@@ -20,6 +20,8 @@
 - 最新官方 STM32 机械臂例程已归位到 `firmware/mechanical_arm_official_baseline/`
 - 板级芯片/容量/烧录链路已做实测核验
 - `firmware/mechanical_arm_controller/` 已创建为后续独立开发占位
+- `C-5.0.3` 已完成只读审计阶段，确认官方基线解析的是总线舵机 ASCII 文本协议，而 `mechanical_arm_controller/` 目前仍为空壳
+- `C-5.0.3` 追踪任务书已收敛为“固定前向姿态 + 局部视觉伺服”，完整 IK 暂只作为后续姿态/抓取层
 
 ## What Is Explicitly Not Finished
 
@@ -37,6 +39,7 @@
 | 2026-06-07 | RF1 正式 Keil 工程收口 | `docs/SOFTWARE/C-3.6.0_openrf1_firmware_normalization.md` |
 | 2026-06-07 | RF1 固件目录清理并合并到 `main` | commit `2f37c82` |
 | 2026-06-07 | 机械臂官方基线冻结并与 RF1 分线 | `docs/SOFTWARE/C-3.7.0_mechanical_arm_baseline_freeze.md` |
+| 2026-06-10 | `C-5.0.3` 机械臂专用网关进入只读审计 | `firmware/mechanical_arm_controller/docs/00_CODE_AUDIT.md`, `docs/PLAN/C-5.0.2_arm_bus_servo_protocol_note.md` |
 
 ## Risks That Still Matter
 

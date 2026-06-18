@@ -1,4 +1,4 @@
-﻿# Project Memories
+# Project Memories
 
 每个项目使用一个稳定 slug，例如：
 
@@ -17,8 +17,13 @@
 | Auto Play 宏录制器 | `auto-play` | `F:\Project\auto play` | Windows 游戏宏录制器/连点器；图像识别实验保留为次级路径 |
 | Simple Oscilloscope | `simple-oscilloscope` | `F:\Project\Simple Oscilloscope` | STM32F103C8T6 Keil firmware + PySide6/PyQtGraph Windows upper-computer; V0.9.5 hand-in release |
 | HyperFrames | `hyperframes` | `F:\Project\HyperFrames` | HyperFrames HTML/GSAP video production workspace; first verified 10-second 1920x1080 render |
+| CarbonRAG | `carbonrag` | `F:\Project\CarbonRag` | 与“双碳智答”相关；当前只建轻量占位，完整项目史待项目工程师入库 |
+| 发票管理归档软件 | `invoice-archive-manager` | `F:\AcademicHub\发票管理归档软件` | Windows 本地发票/合同归档桌面软件；FastAPI + React/Vite + PyWebView |
+| CleanScout Rover 总项目 | `cleanscout-rover` | `F:\Project\CleanScout_rover` | 实验室清扫巡检车聚合条目；总项目身份、奖项证据和各工程切片导航 |
 | CleanScout_rover 下位机 | `cleanscout-rover-lower-firmware` | `F:\Project\CleanScout_rover` | STM32 lower-firmware slice only: formal OpenRF1 motion controller plus frozen mechanical-arm vendor baseline |
 | CleanScout Rover 前后端 | `cleanscout-rover-vue3` | `Git-ys1/CleanScout_rover/vue3`; env root `%CLEANSCOUT_VUE3_ROOT%` / `$CLEANSCOUT_VUE3_ROOT`; HDS evidence `F:\Project\CSc——uniapp\vue3` | CSR/V 线软件交互系统；uni-app frontend + Express backend + edge-relay/OpenClaw/camera workers |
+| 27 考研 - 北交电气学硕 | `kaoyan-bjtu-ee` | `F:\AcademicHub\000资料相关\000考研` | Long-term exam-prep workspace for 北京交通大学 080800 电气工程学硕 |
+| YUSU Personal Site | `yusu-personal-site` | `F:\AcademicHub\0#YUSU\07_PersonalSite` | 本地个人展示墙 + YUSU 知识库检索入口；V0.3 local preview |
 
 ## 新项目入库
 

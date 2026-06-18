@@ -23,6 +23,18 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\path\to\script.ps1
 
 用于文件名的时间戳不要包含冒号。尤其是 PowerShell 的 `K` 时区格式会生成 `+08:00`，在 NTFS 上会触发 alternate data stream 语义。跨系统日志文件名应使用 `2026-06-03T22-48-50+08-00.md` 这类格式。
 
+### PowerShell Start-Process redirection needs separate files
+
+`Start-Process` 不能让 `-RedirectStandardOutput` 和 `-RedirectStandardError` 指向同一个文件；否则会报错：
+
+```text
+This command cannot be run because "RedirectStandardOutput" and "RedirectStandardError" are same.
+```
+
+启动后台服务时给 stdout/stderr 分别指定不同日志，或只重定向其中一个。
+
+Evidence: 2026-06-16 在 `kaoyan-bjtu-ee` 为本地 dashboard 启动 `python -m http.server` 时触发；改为 `dashboard-server.out.log` 和 `dashboard-server.err.log` 后成功。
+
 ### Codex skill YAML frontmatter
 
 `SKILL.md` frontmatter 只写 `name` 和 `description`。如果 `description` 含冒号，必须加双引号；否则 YAML 会把冒号当成映射语法，导致 skill 校验失败。创建或更新 skill 后运行：
@@ -94,6 +106,12 @@ git rev-parse --abbrev-ref --symbolic-full-name '@{u}'
 
 Windows 下避免 `sqlite3 .read C:\...\tmp.sql` 这种反斜杠路径 dot-command；路径里的 `\t` 可能被当作制表符。优先通过 stdin 管道给 sqlite3 输入 SQL。
 
+### Python py_compile pycache permission on Windows
+
+Windows 上 `python -m py_compile ...` 可能在替换已有 `__pycache__/*.pyc` 时因为文件锁或权限报 `WinError 5`，但源码语法本身没问题。只做语法检查时，可改用 `compile(Path(...).read_text(...), path, "exec")`，避免写 pyc。
+
+Evidence: `kaoyan-bjtu-ee` on 2026-06-17; see [[02_GlobalMemory/ERRORS#ERR-20260617-001-python_py_compile_pyc_permission]].
+
 ### Playwright file upload allowed roots
 
 Playwright 文件上传工具可能只能从声明的 allowed roots 选文件。若目标仓库文件不在允许目录，先复制临时文件到 allowed root，再测试上传，避免误判为上传功能坏了。
@@ -102,9 +120,18 @@ Playwright 文件上传工具可能只能从声明的 allowed roots 选文件。
 
 交付 Windows GUI/自动化工具时，不要让用户双击 `app.py`。系统文件关联可能调用旧 Python 并一闪而过。应提供 `.bat` 启动入口，直接调用项目虚拟环境里的 `python.exe`，并提供 debug 启动脚本、日志和 `pause`。
 
+如果桌面工具是 PyWebView / FastAPI / React 这类本地网页壳，启动器还应检查后端依赖导入、前端 `dist` 是否比源码旧、以及后端端口是否 ready；把启动过程写到 `scratch/startup.log` 或等价日志里。验证时不要只按父进程 PID 查端口，因为 PyWebView 可能派生子 Python 进程承载窗口和本地服务。
+
 Evidence:
 
 - Auto Play evidence: `start.bat`, `start_debug.bat`, `stop_running_scripts.ps1`, `logs/startup.log`.
+- 发票管理归档软件 evidence: `启动软件.bat --check`, `run_desktop.py`, `scratch/startup.log`; fixed stale Vite dist and global Python 3.7 launch failure on 2026-06-17.
+
+### FastAPI static frontend builds can go stale
+
+当 FastAPI 后端直接托管 React/Vite 的 `dist` 时，源码正确不代表用户看到的包正确。若浏览器错误指向旧 hash bundle，先重建 `frontend/dist`，并让启动器用时间戳或构建脚本避免继续托管旧包。
+
+Evidence: 发票管理归档软件 on 2026-06-17 had `scratch/frontend_error.log` showing `duplicateWarning is not defined` in old `assets/index-B-eGjsZg.js`, while current source already defined the state. `npm run build` regenerated `dist`, and the launcher now rebuilds when source files are newer than `frontend/dist/index.html`.
 
 ### Windows GUI automation input stack
 
@@ -364,3 +391,15 @@ Minimum ladder:
 5. only then blame the model, Python Lite2 wheel, driver, or OS image.
 
 Evidence: CleanScout OrangePi AI on 2026-06-09 found `/usr/lib/librknnrt.so` reported RKNN Runtime 2.3.2 but was 28 bytes shorter than the official v2.3.2 file and segfaulted on direct `dlopen`. Replacing it with the official `airockchip/rknn_model_zoo` v2.3.2 aarch64 runtime made C API and Python RKNNLite inference succeed.
+
+### PowerPoint COM targeted slide edits
+
+Windows 上定点修改现有 PPTX 时，如果用户给的是已完成视觉稿截图，优先考虑把该图作为整页图片替换目标页，而不是重建复杂科技风元素。重建会消耗时间且容易出现风格、对齐、分层和素材质感偏差。
+
+如果必须用 PowerPoint COM 改可编辑元素，注意：
+
+1. `slide.Shapes.Item(n)` 按集合序号取对象，不按 `Shape.Id` 取对象；按 ID 删除或改形状时要倒序遍历 `slide.Shapes` 并比较 `$shape.Id`。
+2. `Line.Weight`、`Line.Transparency`、`Fill.Transparency` 等 COM 属性在 PowerShell 中要显式传 `[double]`，`TextRange.Font.Size` 要传 `[int]`，否则可能出现 `Unable to cast object`。
+3. 修改前先复制原 PPTX，修改后用 PowerPoint 导出目标页 PNG 做视觉校验，确认页数、尺寸、文件大小正常。
+
+Evidence: 2026-06-13 大创立项 PPT 第 8 页修改中，手工拼接参考页效果差；改为从原 PPT 复制后清空第 8 页并铺满用户给定 PNG，输出 `实验室具身智能与近场作业平台_第8页图片版.pptx`，11 页和 960x540 尺寸校验通过。

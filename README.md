@@ -20,6 +20,7 @@
 - Marginalia 深度研究层：[04_Runbooks/super-yusu-v0.3-marginalia.md](04_Runbooks/super-yusu-v0.3-marginalia.md)
 - Windows/Ubuntu 共享指南：[04_Runbooks/windows-ubuntu-shared-folder.md](04_Runbooks/windows-ubuntu-shared-folder.md)
 - 全局 `AGENTS.md` 接入片段：[04_Runbooks/global-agents-snippet.md](04_Runbooks/global-agents-snippet.md)
+- 本地个人站 / 展示墙：[07_PersonalSite/README.md](07_PersonalSite/README.md)
 
 ## 目录结构
 
@@ -32,6 +33,8 @@
 ├── 04_Runbooks/           # 给 Codex 和用户执行的操作指南
 ├── 05_Templates/          # 新项目入库模板
 ├── 06_Maps/               # Obsidian MOC/索引，给大库导航
+├── 07_PersonalSite/       # V0.3 本地个人站：项目展示墙 + 知识库检索
+├── 记得整理/               # 个人站原始证书、视频和待整理素材
 ├── 99_Archive/            # 废弃、过时、保留但不再默认读取的材料
 ├── vendor/                 # 外部依赖子模块，例如 Marginalia
 └── tools/                 # 辅助定位脚本

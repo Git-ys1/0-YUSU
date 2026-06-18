@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>YUSU Local Archive</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="topbar" aria-label="Site navigation">
+      <a class="brand" href="#top" aria-label="YUSU home">
+        <span class="brand-mark">Y</span>
+        <span>YUSU</span>
+      </a>
+      <nav>
+        <a href="#proof">证据墙</a>
+        <a href="#projects">项目线</a>
+        <a href="#search">知识库</a>
+      </nav>
+      <a class="top-action" href="#search">检索</a>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-bg" aria-hidden="true"></div>
+        <div class="hero-copy reveal">
+          <p class="eyebrow">LOCAL KNOWLEDGE VAULT / V0.3</p>
+          <h1 id="hero-title">YUSU</h1>
+          <p class="hero-line">项目、竞赛证据和 Codex 知识库收束到一个本地入口。</p>
+          <div class="hero-actions">
+            <a class="primary-button" href="#proof">查看证据墙</a>
+            <a class="ghost-button" href="#search">搜索知识库</a>
+          </div>
+        </div>
+        <aside class="hero-panel reveal" aria-label="Local status">
+          <p>LIVE VAULT</p>
+          <strong id="status-md">--</strong>
+          <span>Markdown files scanned locally</span>
+        </aside>
+      </section>
+
+      <section class="band intro-band" aria-labelledby="intro-title">
+        <div>
+          <p class="section-kicker">WHY THIS EXISTS</p>
+          <h2 id="intro-title">不是作品集壳子，是本地事实入口。</h2>
+        </div>
+        <p class="intro-copy">
+          这里展示的是已经进入 YUSU 知识库或待整理素材的项目、证书、公开名单和运行经验。Codex 可以从同一个仓库读取，用户也可以直接浏览。
+        </p>
+      </section>
+
+      <section id="proof" class="section" aria-labelledby="proof-title">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">PROOF WALL</p>
+            <h2 id="proof-title">竞赛与项目证据</h2>
+          </div>
+          <p>素材来自仓库内 `记得整理/`，原件通过本地服务读取。</p>
+        </div>
+        <div id="achievement-strip" class="achievement-strip" aria-live="polite"></div>
+      </section>
+
+      <section id="projects" class="section project-section" aria-labelledby="projects-title">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">PROJECT SPINE</p>
+            <h2 id="projects-title">长期项目主线</h2>
+          </div>
+          <p>每一项都指向共享知识库中的项目记忆。</p>
+        </div>
+        <div id="project-list" class="project-list"></div>
+      </section>
+
+      <section id="search" class="search-section" aria-labelledby="search-title">
+        <div class="search-copy">
+          <p class="section-kicker">LIVE KB SEARCH</p>
+          <h2 id="search-title">直接搜 YUSU 知识库</h2>
+          <p>本页调用 `/api/search` 扫描 Markdown，不依赖 Obsidian，也不要求 Marginalia 索引已更新。</p>
+        </div>
+        <form id="search-form" class="search-form">
+          <label for="kb-query">关键词</label>
+          <div class="search-row">
+            <input id="kb-query" name="q" type="search" placeholder="例如：CSR 机械臂 总线舵机" autocomplete="off">
+            <button type="submit" aria-label="搜索知识库">搜索</button>
+          </div>
+        </form>
+        <div id="search-results" class="search-results" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span id="site-version">YUSU local preview</span>
+      <span>Powered by live Markdown scan</span>
+    </footer>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

@@ -235,6 +235,84 @@ Open:
 http://127.0.0.1:5173/
 ```
 
+## Open Marginalia Locally
+
+最常用的打开顺序是四个本地服务：
+
+```powershell
+.\tools\run-codex-proxy-llm-shim.ps1
+.\tools\run-carbonrag-bge-embedding-server.ps1
+.\tools\run-marginalia-api-yusu.ps1
+.\tools\run-marginalia-ui-yusu.ps1
+```
+
+Then open:
+
+```text
+http://127.0.0.1:5173/
+```
+
+Ports:
+
+| Port | Service | Purpose |
+|---:|---|---|
+| 8010 | Codex proxy LLM shim | Converts the configured upstream LLM route into non-streaming OpenAI-compatible chat completions for Marginalia. |
+| 8011 | CarbonRAG BGE-M3 embedding shim | Exposes local BGE-M3 as OpenAI-compatible `/v1/embeddings`. |
+| 8000 | Marginalia API | Backend API, health, library/search/agent endpoints. |
+| 5173 | Marginalia UI | Browser UI. |
+
+If `http://127.0.0.1:5173/` cannot answer, first check whether these ports are actually listening. Marginalia is not a background Windows service; it only runs after the scripts above start it.
+
+## Where To Adjust API Parameters
+
+Do not edit committed Markdown or scripts to store real keys. Runtime parameters live in ignored local files or environment variables:
+
+| Setting | File / Env | Notes |
+|---|---|---|
+| Marginalia provider/base/model | `.marginalia-yusu/.env` | Ignored by Git. Safe place for local provider names and loopback base URLs. |
+| Upstream LLM key for the shim | `C:\Users\yusu\.codex\myself-api\config-self.toml` or `YUSU_LLM_UPSTREAM_API_KEY` | The shim reads this; do not copy the real key into the vault. |
+| LLM shim upstream URL/model | `tools/codex-proxy-chat-completions-shim.py` defaults plus env vars | Prefer env overrides if the proxy route changes. |
+| Embedding model path | `CARBONRAG_ROOT`, `CARBONRAG_PYTHON`, or script defaults | Windows default points to `F:\Project\CarbonRag`. |
+
+Current intended Marginalia `.env` shape:
+
+```ini
+LLM_DEFAULT_PROVIDER=openai-compatible
+LLM_DEFAULT_BASE_URL=http://127.0.0.1:8010/v1
+LLM_DEFAULT_API_KEY=local-llm-key
+LLM_DEFAULT_MODEL=gpt-5.4
+
+EMBEDDING_PROVIDER=openai-compatible
+EMBEDDING_BASE_URL=http://127.0.0.1:8011/v1
+EMBEDDING_API_KEY=local-bge-key
+EMBEDDING_MODEL=BAAI/bge-m3
+EMBEDDING_DIMENSIONS=1024
+SEMANTIC_RECALL_ENABLED=true
+```
+
+If the upstream LLM proxy changes again, update the ignored local upstream config or environment variables, restart `run-codex-proxy-llm-shim.ps1`, then smoke-test `http://127.0.0.1:8010/v1/chat/completions` before ingest.
+
+2026-06-18 live status:
+
+- `http://127.0.0.1:8010/health` works.
+- CLI proxy `/models` works, but the list no longer includes `gpt-5.4`.
+- Chat completions currently fail with token-expired/auth-unavailable errors.
+- Do not run `-Ingest` until the user-local upstream token is refreshed and the local model is changed to a currently listed model.
+- `sync-yusu-kb-to-marginalia.ps1 -Check` projects 195 Markdown/TXT files and reports `in_sync=129`, `new=47`, `modified=18`, `missing=0`, `moved=0`; this is why Marginalia search/agent can lag behind current Markdown even while the personal site live search already sees new files.
+- See [[02_GlobalMemory/ERRORS#ERR-20260618-001-marginalia_llm_proxy_token_expired]].
+
+## Why The Index Can Lag Behind Markdown
+
+The Markdown vault is canonical. Marginalia is a derived mirror plus SQLite database plus optional semantic index. New commits, local edits, or incoming project memory are not visible to Marginalia chat/semantic recall until this chain is rerun:
+
+```powershell
+.\tools\sync-yusu-kb-to-marginalia.ps1 -Check
+.\tools\sync-yusu-kb-to-marginalia.ps1 -Ingest
+.\tools\build-marginalia-semantic-index-yusu.ps1 -UseLocalBge -Resume
+```
+
+`-Check` only projects files and reports differences. It does not update summaries or embeddings. The local personal site at `07_PersonalSite/` intentionally uses live Markdown scanning, so it can find newly written vault files even when Marginalia has not caught up.
+
 Why the UI script copies files first: Vite fails when the project root path contains `#` (`F:\AcademicHub\0#YUSU`). The script copies the desktop source to `F:\AcademicHub\YUSU-Marginalia-Desktop-Run`, installs Node dependencies there, and runs Vite from the no-`#` path. It also uses `node@22` through npm cache under `.tools/npm-cache`, because the system Node 24 triggered a Vite dependency pre-optimization crash during the initial UI test.
 
 Sync this Markdown vault into Marginalia mirror storage:
