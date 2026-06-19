@@ -43,5 +43,6 @@ http://127.0.0.1:8787/
 - Reads structured achievements and project links from `data/showcase.json`.
 - Serves raw local media from `记得整理/` through `/media/raw/<filename>`.
 - Searches live Markdown under the YUSU vault through `/api/search?q=...`.
+- Opens matched Markdown entries through the read-only `/api/doc?path=...` endpoint.
 
 The search API reads files only. It does not write memories, alter Codex sessions, or update Marginalia.

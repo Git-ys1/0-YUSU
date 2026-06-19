@@ -3,6 +3,11 @@ const projectsEl = document.querySelector("#project-list");
 const searchForm = document.querySelector("#search-form");
 const searchInput = document.querySelector("#kb-query");
 const searchResultsEl = document.querySelector("#search-results");
+const docViewerEl = document.querySelector("#doc-viewer");
+const docTitleEl = document.querySelector("#doc-title");
+const docPathEl = document.querySelector("#doc-path");
+const docContentEl = document.querySelector("#doc-content");
+const docCloseEl = document.querySelector("#doc-close");
 const statusMd = document.querySelector("#status-md");
 const siteVersion = document.querySelector("#site-version");
 
@@ -46,13 +51,14 @@ function renderAchievements(items) {
 function renderProjects(items) {
   projectsEl.innerHTML = items.map((item) => {
     const tags = (item.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
+    const memoryPath = escapeHtml(item.memory);
     return `
       <article class="project reveal">
         <p class="project-type">${escapeHtml(item.type)} / ${escapeHtml(item.status)}</p>
         <h3>${escapeHtml(item.name)}</h3>
         <p>${escapeHtml(item.summary)}</p>
         <div class="tags">${tags}</div>
-        <a class="memory-link" href="/api/search?q=${encodeURIComponent(item.id)}">知识条目：${escapeHtml(item.memory)}</a>
+        <button class="memory-link doc-button" type="button" data-path="${memoryPath}">打开知识条目：${memoryPath}</button>
       </article>
     `;
   }).join("");
@@ -87,6 +93,7 @@ function renderSearchResults(results, query) {
       <strong>${escapeHtml(item.title)}</strong>
       <code>${escapeHtml(item.path)}:${escapeHtml(item.line)}</code>
       <p>${escapeHtml(item.snippet)}</p>
+      <button class="doc-button" type="button" data-path="${escapeHtml(item.path)}" data-line="${escapeHtml(item.line)}">打开正文</button>
     </article>
   `).join("");
 }
@@ -96,6 +103,24 @@ async function runSearch(query) {
   const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
   const data = await response.json();
   renderSearchResults(data.results || [], query);
+}
+
+async function openDoc(path, line = "") {
+  docViewerEl.hidden = false;
+  docTitleEl.textContent = "读取中...";
+  docPathEl.textContent = path;
+  docContentEl.textContent = "";
+  const response = await fetch(`/api/doc?path=${encodeURIComponent(path)}`);
+  if (!response.ok) {
+    docTitleEl.textContent = "无法打开知识条目";
+    docContentEl.textContent = `HTTP ${response.status}`;
+    return;
+  }
+  const doc = await response.json();
+  docTitleEl.textContent = doc.title;
+  docPathEl.textContent = `${doc.path}${line ? `:${line}` : ""}`;
+  docContentEl.textContent = doc.content;
+  docViewerEl.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 async function boot() {
@@ -120,6 +145,26 @@ async function boot() {
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
   runSearch(searchInput.value);
+});
+
+document.addEventListener("click", (event) => {
+  const button = event.target.closest(".doc-button");
+  if (!button) {
+    return;
+  }
+  const path = button.getAttribute("data-path");
+  const line = button.getAttribute("data-line") || "";
+  if (path) {
+    openDoc(path, line).catch((error) => {
+      docViewerEl.hidden = false;
+      docTitleEl.textContent = "无法打开知识条目";
+      docContentEl.textContent = error.message;
+    });
+  }
+});
+
+docCloseEl.addEventListener("click", () => {
+  docViewerEl.hidden = true;
 });
 
 boot().catch((error) => {

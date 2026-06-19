@@ -599,6 +599,32 @@ auth_unavailable: no auth available
 
 Refresh the upstream CLI proxy authentication token in the user-local config, then update the Marginalia local model setting to a model currently returned by `/models`. Smoke-test `http://127.0.0.1:8010/v1/chat/completions` before running `sync-yusu-kb-to-marginalia.ps1 -Ingest`.
 
+## [ERR-20260619-001] in_app_browser_local_url_blocked
+**Logged**: 2026-06-19
+**Priority**: medium
+**Status**: open
+
+### Summary
+
+Codex Desktop 的内置浏览器在一次本地个人站验收中拒绝访问 `http://127.0.0.1:8787/#projects`，并给出 Browser Use URL policy 拦截。这个限制不代表本地服务或前端接口失败。
+
+### Error
+
+```text
+Browser Use cannot visit the requested page because its URL is blocked by the Browser Use URL policy.
+```
+
+### Context
+
+- OS: Windows
+- Project/path: `F:\AcademicHub\0#YUSU\07_PersonalSite`
+- Local server: `127.0.0.1:8787`
+- The HTTP API smoke tests for `/api/status`, `/api/search`, and `/api/doc` passed in the same run.
+
+### Suggested Fix
+
+When this browser policy appears, do not bypass it with another browser automation surface. Verify the local site with API smoke tests, source-level checks, and manual user opening at `http://127.0.0.1:8787/` when visual confirmation is needed.
+
 ## Entry Template
 
 ```md

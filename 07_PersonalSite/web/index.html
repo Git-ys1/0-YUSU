@@ -85,6 +85,17 @@
           </div>
         </form>
         <div id="search-results" class="search-results" aria-live="polite"></div>
+        <article id="doc-viewer" class="doc-viewer" hidden>
+          <div class="doc-toolbar">
+            <div>
+              <p class="section-kicker">OPENED MEMORY</p>
+              <h3 id="doc-title">知识条目</h3>
+              <code id="doc-path"></code>
+            </div>
+            <button id="doc-close" type="button" aria-label="关闭知识条目">关闭</button>
+          </div>
+          <pre id="doc-content"></pre>
+        </article>
       </section>
     </main>
 

@@ -50,6 +50,22 @@ def _iter_markdown_files() -> list[Path]:
     return sorted(files)
 
 
+def _resolve_markdown_doc(rel_path: str) -> Path | None:
+    clean = unquote(rel_path).replace("\\", "/").strip()
+    if not clean or clean.startswith("/") or "\x00" in clean:
+        return None
+    if any(part == ".." for part in clean.split("/")):
+        return None
+
+    target = (ROOT / clean).resolve()
+    if target.suffix.lower() != ".md":
+        return None
+    allowed = {path.resolve() for path in _iter_markdown_files()}
+    if target not in allowed:
+        return None
+    return target
+
+
 def _first_heading(text: str, fallback: str) -> str:
     for line in text.splitlines():
         line = line.strip()
@@ -143,6 +159,23 @@ class PersonalSiteHandler(SimpleHTTPRequestHandler):
             params = parse_qs(parsed.query)
             query = params.get("q", [""])[0]
             self._send_json({"query": query, "results": search_markdown(query)})
+            return
+
+        if path == "/api/doc":
+            params = parse_qs(parsed.query)
+            rel_path = params.get("path", [""])[0]
+            target = _resolve_markdown_doc(rel_path)
+            if target is None:
+                self.send_error(HTTPStatus.NOT_FOUND, "markdown document not found")
+                return
+            text = _read_text(target)
+            rel = target.relative_to(ROOT).as_posix()
+            self._send_json({
+                "title": _first_heading(text, target.stem),
+                "path": rel,
+                "content": text,
+                "lines": len(text.splitlines()),
+            })
             return
 
         if path.startswith("/media/raw/"):

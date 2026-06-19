@@ -34,6 +34,7 @@ http://127.0.0.1:8787/
 python -m py_compile .\07_PersonalSite\server.py
 Invoke-RestMethod http://127.0.0.1:8787/api/status
 Invoke-RestMethod "http://127.0.0.1:8787/api/search?q=CleanScout"
+Invoke-RestMethod "http://127.0.0.1:8787/api/doc?path=01_Projects/cleanscout-rover/README.md"
 ```
 
 ## Update Content

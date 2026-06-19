@@ -18,8 +18,10 @@ Local V0.3 preview scaffold is in place.
   - `/api/showcase`
   - `/api/status`
   - `/api/search`
+  - `/api/doc`
   - `/media/raw/<filename>`
 - Added the first structured showcase data file.
+- Added read-only Markdown document opening from project links and search results, so the personal site can directly inspect old YUSU KB entries instead of only showing paths.
 
 ## Last Meaningful Update
 
