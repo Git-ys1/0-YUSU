@@ -44,5 +44,26 @@ http://127.0.0.1:8787/
 - Serves raw local media from `记得整理/` through `/media/raw/<filename>`.
 - Searches live Markdown under the YUSU vault through `/api/search?q=...`.
 - Opens matched Markdown entries through the read-only `/api/doc?path=...` endpoint.
+- Provides a full-page Marginalia-backed Agent view at `#agent` through `/api/agent/session` and `/api/agent/chat`.
+- Provides a dedicated near-full-viewport Marginalia UI workspace at `#marginalia` when `http://127.0.0.1:5173/` is running.
 
-The search API reads files only. It does not write memories, alter Codex sessions, or update Marginalia.
+The search and document APIs read files only. Agent chat writes only to Marginalia's local session/journal database under the ignored `.marginalia-yusu/` runtime.
+
+## Marginalia / DeepSeek
+
+Configure the local, ignored Marginalia `.env` with:
+
+```powershell
+$env:DEEPSEEK_API_KEY = "<your key>"
+.\tools\configure-marginalia-deepseek.ps1
+```
+
+Then start the supporting services:
+
+```powershell
+.\tools\run-carbonrag-bge-embedding-server.ps1
+.\tools\run-marginalia-api-yusu.ps1
+.\tools\run-marginalia-ui-yusu.ps1
+```
+
+The committed scripts never contain the real API key.

@@ -32,6 +32,12 @@ From `P020260526399177509374.docx`:
 
 User routing note on 2026-06-18: `双碳智答` belongs to CarbonRAG. The current vault only records a lightweight CarbonRAG placeholder; the full CarbonRAG project history still needs a project-owner ingestion.
 
+## Generated Display Derivatives
+
+| File | Source | Purpose |
+|---|---|---|
+| `07_PersonalSite/web/assets/achievements/25-bjtu-math-modeling-2025-landscape.jpg` | `记得整理/25北交数模校赛-二等奖.jpg` | Rotated landscape preview for the proof wall. The raw original remains linked by `打开原件`. |
+
 ## Extracted PDF Text Note
 
 From `25国创赛北京赛区-三等奖.pdf`:

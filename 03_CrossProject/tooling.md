@@ -210,6 +210,19 @@ Run a smoke before ingest. If the upstream proxy returns `502 unknown provider f
 
 Evidence: 2026-06-05 direct CLI proxy streaming returned `OK`, non-streaming returned empty content; later the same proxy returned `502 unknown provider for model gpt-5.4` and empty `/models`.
 
+### DeepSeek official API is the current Marginalia LLM route
+
+For YUSU Marginalia, prefer DeepSeek's official OpenAI-compatible API over the old Codex proxy route. Configure only the ignored local runtime file:
+
+```powershell
+$env:DEEPSEEK_API_KEY = "<real key>"
+F:\AcademicHub\0#YUSU\tools\configure-marginalia-deepseek.ps1
+```
+
+Use `deepseek-v4-flash` as the first-run model because it returned non-empty `message.content` in a non-streaming smoke test. `deepseek-v4-pro` can return reasoning text but empty content when the response token budget is too small; do not use that failure mode as proof the key or DeepSeek endpoint is broken.
+
+Evidence: On 2026-06-19, DeepSeek `/models` returned `deepseek-v4-flash` and `deepseek-v4-pro`; `deepseek-v4-flash` returned `OK`; `deepseek-v4-pro` returned empty content under a short `max_tokens` smoke. Marginalia ingest then applied 47 new and 18 modified files, and the final BGE rebuild contained 179 entries.
+
 ### Marginalia scripted ingest must auto-confirm and wait
 
 Marginalia `/ingest --all` prompts for confirmation and then queues per-file background tasks. Automation should use:
@@ -225,6 +238,8 @@ Otherwise a script can report success after file projection while DB ingest task
 Evidence: On 2026-06-05, yusu vault ingest applied 98 entries only after `--yes`; waiting completed 98 `ingest_file` tasks and left 98 files `done`.
 
 After Git merges into the Markdown vault, do not assume Marginalia sees the new files. Run `sync-yusu-kb-to-marginalia.ps1 -Check`, then `-Ingest`, then rebuild the semantic index. Markdown/Git is canonical; Marginalia SQLite and `semantic-index/default` are derived state.
+
+Treat a full BGE semantic rebuild as slow background maintenance, not a prerequisite for unrelated UI or documentation work. Keep Markdown canonical, bring SQLite ingest current first, and schedule the all-entry vector rebuild at a deliberate checkpoint; on 2026-06-19 a 179-entry local BGE-M3 build took about 55 minutes.
 
 If a file remains `ingest_status=pending` even though its `ingest_file` task is `done`, prefer the official reprocess path. The modified-file ingest path can leave `ingested_at` set, causing the handler to skip the file and never flip it back to `done`.
 

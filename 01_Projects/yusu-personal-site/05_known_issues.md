@@ -2,11 +2,11 @@
 
 ## Raw certificate images are not yet normalized
 
-Some certificate photos are rotated or captured with perspective distortion. The first version displays raw evidence directly; a later pass should generate web-optimized corrected derivatives while preserving originals.
+Some certificate photos are rotated or captured with perspective distortion. The display layer now uses readable `contain` previews and one generated landscape preview for the 2025 math-modeling certificate, while preserving raw originals. A later pass can still generate fully cropped, perspective-corrected derivatives for every certificate.
 
 ## Search is lexical, not semantic
 
-The built-in `/api/search` endpoint scans Markdown with keyword matching. Marginalia remains the semantic/deep-research layer and must be synced separately.
+The built-in `/api/search` endpoint scans Markdown with keyword matching. Marginalia Agent is available under `#agent` and the full upstream UI under `#marginalia`, but both still depend on the derived Marginalia DB and semantic index being synced separately after Markdown merges.
 
 ## The site is local-only
 

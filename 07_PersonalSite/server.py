@@ -3,7 +3,10 @@ from __future__ import annotations
 import argparse
 import json
 import mimetypes
+import os
 import re
+import urllib.error
+import urllib.request
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -15,6 +18,9 @@ APP_ROOT = Path(__file__).resolve().parent
 WEB_ROOT = APP_ROOT / "web"
 DATA_FILE = APP_ROOT / "data" / "showcase.json"
 RAW_MEDIA_ROOT = ROOT / "记得整理"
+MARGINALIA_API_BASE = os.environ.get("YUSU_MARGINALIA_API", "http://127.0.0.1:8000/v1").rstrip("/")
+MARGINALIA_UI_BASE = os.environ.get("YUSU_MARGINALIA_UI", "http://127.0.0.1:5173").rstrip("/")
+HTTP_TIMEOUT_SECONDS = 12
 
 SEARCH_ROOTS = [
     ROOT / "01_Projects",
@@ -123,6 +129,23 @@ def search_markdown(query: str, limit: int = 14) -> list[dict]:
     return results[:limit]
 
 
+def _marginalia_json(path: str, *, method: str = "GET", payload: dict | None = None) -> dict:
+    data = None
+    headers = {"Accept": "application/json"}
+    if payload is not None:
+        data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        headers["Content-Type"] = "application/json"
+    request = urllib.request.Request(
+        f"{MARGINALIA_API_BASE}{path}",
+        data=data,
+        method=method,
+        headers=headers,
+    )
+    with urllib.request.urlopen(request, timeout=HTTP_TIMEOUT_SECONDS) as response:
+        raw = response.read()
+    return json.loads(raw.decode("utf-8")) if raw else {}
+
+
 class PersonalSiteHandler(SimpleHTTPRequestHandler):
     server_version = "YusuPersonalSite/0.3"
 
@@ -135,6 +158,12 @@ class PersonalSiteHandler(SimpleHTTPRequestHandler):
         if not _is_relative_to(target, WEB_ROOT):
             return str(WEB_ROOT / "index.html")
         return str(target)
+
+    def end_headers(self) -> None:
+        path = urlparse(self.path).path
+        if not path.startswith("/api/") and not path.startswith("/media/raw/"):
+            self.send_header("Cache-Control", "no-store, max-age=0")
+        super().end_headers()
 
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
@@ -151,8 +180,12 @@ class PersonalSiteHandler(SimpleHTTPRequestHandler):
                 "projectDirectories": len([p for p in (ROOT / "01_Projects").iterdir() if p.is_dir()]),
                 "rawMediaFiles": len([p for p in RAW_MEDIA_ROOT.iterdir() if p.is_file()]) if RAW_MEDIA_ROOT.exists() else 0,
                 "searchMode": "live markdown scan",
-                "semanticIndex": "Marginalia is optional and separate"
+                "semanticIndex": "Marginalia is embedded through /api/marginalia/* when its local API is running"
             })
+            return
+
+        if path == "/api/marginalia/status":
+            self._send_json(self._marginalia_status())
             return
 
         if path == "/api/search":
@@ -184,10 +217,124 @@ class PersonalSiteHandler(SimpleHTTPRequestHandler):
 
         super().do_GET()
 
-    def _send_json(self, payload: dict | list) -> None:
+    def do_POST(self) -> None:
+        parsed = urlparse(self.path)
+        path = parsed.path
+
+        if path == "/api/agent/session":
+            try:
+                body = self._read_json_body()
+                init = str(body.get("initiatingUserMessage", "") or "")
+                session = _marginalia_json(
+                    "/sessions",
+                    method="POST",
+                    payload={"initiating_user_message": init},
+                )
+                self._send_json(session)
+            except Exception as exc:
+                self._send_json({"error": str(exc), "online": False}, status=HTTPStatus.BAD_GATEWAY)
+            return
+
+        if path == "/api/agent/chat":
+            try:
+                body = self._read_json_body(max_bytes=96 * 1024)
+                session_id = str(body.get("sessionId", "") or "").strip()
+                query = str(body.get("query", "") or "").strip()
+                mode = str(body.get("mode", "deep") or "deep").strip()
+                if mode not in {"deep", "quick"}:
+                    mode = "deep"
+                if not session_id or not query:
+                    self.send_error(HTTPStatus.BAD_REQUEST, "sessionId and query are required")
+                    return
+                self._proxy_agent_chat(session_id=session_id, query=query, mode=mode)
+            except Exception as exc:
+                self._send_sse_error(str(exc))
+            return
+
+        self.send_error(HTTPStatus.NOT_FOUND, "api endpoint not found")
+
+    def _read_json_body(self, max_bytes: int = 64 * 1024) -> dict:
+        try:
+            length = int(self.headers.get("Content-Length", "0") or "0")
+        except ValueError as exc:
+            raise ValueError("invalid Content-Length") from exc
+        if length > max_bytes:
+            raise ValueError("request body too large")
+        if length <= 0:
+            return {}
+        raw = self.rfile.read(length)
+        return json.loads(raw.decode("utf-8"))
+
+    def _send_json(self, payload: dict | list, *, status: HTTPStatus = HTTPStatus.OK) -> None:
         data = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
-        self.send_response(HTTPStatus.OK)
+        self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Cache-Control", "no-store")
+        self.end_headers()
+        self.wfile.write(data)
+
+    def _marginalia_status(self) -> dict:
+        try:
+            server = _marginalia_json("/settings/server")
+            llm = _marginalia_json("/settings/llm")
+            defaults = llm.get("defaults", {})
+            return {
+                "online": True,
+                "apiBase": MARGINALIA_API_BASE,
+                "uiBase": MARGINALIA_UI_BASE,
+                "semanticRecall": bool(server.get("semantic_recall_enabled")),
+                "semanticConfigured": bool(server.get("semantic_recall_configured")),
+                "embeddingModel": server.get("embedding_model"),
+                "llmProvider": defaults.get("provider"),
+                "llmModel": defaults.get("model"),
+                "llmBaseUrl": defaults.get("base_url"),
+                "llmKeySet": bool(defaults.get("api_key_set")),
+            }
+        except Exception as exc:
+            return {
+                "online": False,
+                "apiBase": MARGINALIA_API_BASE,
+                "uiBase": MARGINALIA_UI_BASE,
+                "error": str(exc),
+            }
+
+    def _proxy_agent_chat(self, *, session_id: str, query: str, mode: str) -> None:
+        payload = json.dumps({"query": query, "mode": mode}, ensure_ascii=False).encode("utf-8")
+        request = urllib.request.Request(
+            f"{MARGINALIA_API_BASE}/chat/{session_id}",
+            data=payload,
+            method="POST",
+            headers={
+                "Accept": "text/event-stream",
+                "Content-Type": "application/json",
+            },
+        )
+        try:
+            upstream = urllib.request.urlopen(request, timeout=300)
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="replace")
+            self._send_sse_error(f"Marginalia HTTP {exc.code}: {detail}")
+            return
+
+        with upstream:
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache")
+            self.send_header("X-Accel-Buffering", "no")
+            self.end_headers()
+            while True:
+                chunk = upstream.read(4096)
+                if not chunk:
+                    break
+                self.wfile.write(chunk)
+                self.wfile.flush()
+
+    def _send_sse_error(self, message: str) -> None:
+        data = f"event: error\ndata: {message}\n\n".encode("utf-8", errors="replace")
+        self.send_response(HTTPStatus.OK)
+        self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+        self.send_header("Cache-Control", "no-cache")
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
         self.wfile.write(data)

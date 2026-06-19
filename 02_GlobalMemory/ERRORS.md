@@ -492,7 +492,7 @@ Use the official reprocess path for stuck modified files so `ingested_at` is cle
 
 ### Summary
 
-Running Marginalia recovery/reprocess code from a bare Python process without loading `.marginalia-yusu/.env` makes `TaskRunner` think no LLM key is configured. It marks pending LLM-dependent tasks `dead`, even though the normal local LLM shim is working.
+Running Marginalia recovery/reprocess code from a bare Python process without loading `.marginalia-yusu/.env` makes `TaskRunner` think no LLM key is configured. It marks pending LLM-dependent tasks `dead`, even though the configured local LLM route is working.
 
 ### Error
 
@@ -504,11 +504,11 @@ marked 6 pending LLM-dependent task(s) dead: no api_key configured
 
 - OS: Windows
 - Project/path: `F:\AcademicHub\0#YUSU`
-- Correct local LLM route: `http://127.0.0.1:8010/v1`
+- Correct local LLM route is whatever `.marginalia-yusu/.env` resolves to; as of 2026-06-19 this is DeepSeek `https://api.deepseek.com`.
 
 ### Suggested Fix
 
-Before any embedded Python runner or repair script imports Marginalia settings, load `.marginalia-yusu/.env`, set `MARGINALIA_HOME`, and set `WORKER_ENABLED=true` only for the short repair run. Smoke `http://127.0.0.1:8010/v1/chat/completions` first.
+Before any embedded Python runner or repair script imports Marginalia settings, load `.marginalia-yusu/.env`, set `MARGINALIA_HOME`, and set `WORKER_ENABLED=true` only for the short repair run. Smoke the currently configured LLM route first, for example through `http://127.0.0.1:8787/api/marginalia/status` and a short Agent call.
 
 ## [ERR-20260608-004] bge_shim_stale_process_invalid_argument
 **Logged**: 2026-06-08
@@ -570,7 +570,7 @@ For syntax-only checks, avoid writing pyc files and use a small `compile(Path(..
 ## [ERR-20260618-001] marginalia_llm_proxy_token_expired
 **Logged**: 2026-06-18
 **Priority**: high
-**Status**: open
+**Status**: resolved
 
 ### Summary
 
@@ -598,6 +598,64 @@ auth_unavailable: no auth available
 ### Suggested Fix
 
 Refresh the upstream CLI proxy authentication token in the user-local config, then update the Marginalia local model setting to a model currently returned by `/models`. Smoke-test `http://127.0.0.1:8010/v1/chat/completions` before running `sync-yusu-kb-to-marginalia.ps1 -Ingest`.
+
+2026-06-19 update: this is no longer the active Marginalia blocker because the vault switched to DeepSeek's official OpenAI-compatible API. Keep this entry as historical troubleshooting for the old proxy route.
+
+## [ERR-20260619-002] deepseek_v4_pro_short_budget_empty_content
+**Logged**: 2026-06-19
+**Priority**: medium
+**Status**: active
+
+### Summary
+
+DeepSeek official API can be healthy while `deepseek-v4-pro` returns empty `message.content` in a very short non-streaming smoke test. In the observed response, the model emitted reasoning text and hit the length limit before producing final content.
+
+### Error
+
+```text
+model: deepseek-v4-pro
+message.content: ""
+finish_reason: length
+reasoning_content: non-empty
+```
+
+### Context
+
+- OS: Windows
+- Project/path: `F:\AcademicHub\0#YUSU`
+- Endpoint: `https://api.deepseek.com/chat/completions`
+- `deepseek-v4-flash` returned non-empty `OK` in the same smoke test.
+
+### Suggested Fix
+
+Use `deepseek-v4-flash` as the default first-run Marginalia model. If switching to `deepseek-v4-pro`, give it enough output budget and check both `reasoning_content` and `message.content` before deciding the provider or key is broken.
+
+## [ERR-20260619-003] marginalia_bge_semantic_rebuild_long_timeout
+**Logged**: 2026-06-19
+**Priority**: medium
+**Status**: active
+
+### Summary
+
+Marginalia semantic-index rebuilds through the CarbonRAG BGE-M3 shim can exceed 15-30 minute command timeouts after large Markdown files such as `03_CrossProject/tooling.md` or `04_Runbooks/super-yusu-v0.3-marginalia.md` change. A timeout does not necessarily mean the index is corrupt; inspect tmp files, BGE health, and the final manifest.
+
+### Error
+
+```text
+command timed out after 904542 milliseconds
+command timed out after 1804169 milliseconds
+```
+
+### Context
+
+- OS: Windows
+- Project/path: `F:\AcademicHub\0#YUSU`
+- Command: `.\tools\build-marginalia-semantic-index-yusu.ps1 -UseLocalBge -Resume`
+- BGE shim remained healthy and returned 1024-dimensional embeddings, but individual embedding calls could take several minutes.
+
+### Suggested Fix
+
+Restart the `8011` BGE shim if a request appears stuck, warm it with a single `/v1/embeddings` smoke, then rerun the semantic build with a long timeout. In the final verified recovery run, `-Resume -ProgressEvery 1` completed in about 55 minutes and wrote a 179-entry `semantic-index/default` manifest. Do not block unrelated UI work on this all-entry maintenance job.
 
 ## [ERR-20260619-001] in_app_browser_local_url_blocked
 **Logged**: 2026-06-19

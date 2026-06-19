@@ -20,8 +20,9 @@
 | SuperYUSU session inventory | vault administrator audit | `tools/build-superyusu-session-inventory.ps1` scans local Codex session metadata/topic counts for this management vault without copying raw conversation text |
 | Find own Codex session | mature project ingestion | use `tools/find-own-codex-session.*` to resolve `CODEX_THREAD_ID` to the current engineer JSONL |
 | Mature project retro audit | mature project ingestion | use `tools/mature-project-retro-audit.*` with one explicit engineer JSONL as a read-only quality gate before completion |
-| Marginalia | deep KB research | optional cited investigation layer; yusu vault has 146 ingested entries and BGE semantic index as of 2026-06-08; Markdown merges require separate ingest/reindex, and chat depends on working LLM proxy |
-| Codex proxy LLM shim | local LLM API adapter | `tools/run-codex-proxy-llm-shim.*` converts streaming CLI proxy output into non-streaming chat-completions for Marginalia |
+| Marginalia | deep KB research | optional cited investigation layer; yusu vault has 194 in-sync library files and 179 BGE semantic-index entries as of 2026-06-19; Markdown merges require separate ingest/reindex, with personal-site Agent at `#agent` and the full workspace at `#marginalia` |
+| DeepSeek API | Marginalia LLM route | configure ignored `.marginalia-yusu/.env` with `tools/configure-marginalia-deepseek.*`; default model is `deepseek-v4-flash` |
+| Codex proxy LLM shim | historical local LLM API adapter | `tools/run-codex-proxy-llm-shim.*` converts streaming CLI proxy output into non-streaming chat-completions for Marginalia, but it is backup/historical after the DeepSeek route was verified |
 | CarbonRAG BGE-M3 embedding shim | local semantic recall | `tools/run-carbonrag-bge-embedding-server.*` exposes CarbonRAG local BGE-M3 as OpenAI-compatible `/v1/embeddings` for Marginalia |
 | HyperFrames | HTML video rendering | use Codex plugin `HyperFrames by HeyGen`; local repo wrapper injects FFmpeg/FFprobe for stable render commands |
 | Edge TTS | Chinese video voiceover | useful no-key Mandarin narration route for HyperFrames demos; preserve source text and verify final audio stream |

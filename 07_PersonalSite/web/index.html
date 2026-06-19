@@ -4,24 +4,27 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>YUSU Local Archive</title>
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="/styles.css?v=20260619-2">
   </head>
   <body>
     <header class="topbar" aria-label="Site navigation">
-      <a class="brand" href="#top" aria-label="YUSU home">
+      <a class="brand" href="#home" data-view-link="home" aria-label="YUSU home">
         <span class="brand-mark">Y</span>
         <span>YUSU</span>
       </a>
-      <nav>
-        <a href="#proof">证据墙</a>
-        <a href="#projects">项目线</a>
-        <a href="#search">知识库</a>
+      <nav aria-label="Workspace views">
+        <a href="#home" data-view-link="home">主页</a>
+        <a href="#search" data-view-link="home">知识库</a>
+        <a href="#agent" data-view-link="agent">Agent</a>
+        <a href="#marginalia" data-view-link="marginalia">Marginalia</a>
       </nav>
-      <a class="top-action" href="#search">检索</a>
+      <a class="top-action" href="#marginalia" data-view-link="marginalia">打开工作台</a>
     </header>
 
-    <main id="top">
-      <section class="hero" aria-labelledby="hero-title">
+    <main>
+      <div id="home" class="site-view home-view" data-view="home">
+      <section id="top" class="hero" aria-labelledby="hero-title">
         <div class="hero-bg" aria-hidden="true"></div>
         <div class="hero-copy reveal">
           <p class="eyebrow">LOCAL KNOWLEDGE VAULT / V0.3</p>
@@ -75,7 +78,7 @@
         <div class="search-copy">
           <p class="section-kicker">LIVE KB SEARCH</p>
           <h2 id="search-title">直接搜 YUSU 知识库</h2>
-          <p>本页调用 `/api/search` 扫描 Markdown，不依赖 Obsidian，也不要求 Marginalia 索引已更新。</p>
+          <p>本页调用 `/api/search` 扫描 Markdown；需要综合推理时，切换到顶部 Agent 视图。</p>
         </div>
         <form id="search-form" class="search-form">
           <label for="kb-query">关键词</label>
@@ -97,6 +100,61 @@
           <pre id="doc-content"></pre>
         </article>
       </section>
+      </div>
+
+      <section id="agent" class="site-view agent-section" data-view="agent" aria-labelledby="agent-title" hidden>
+        <div class="section-head agent-head">
+          <div>
+            <p class="section-kicker">MARGINALIA AGENT</p>
+            <h2 id="agent-title">和知识库对话</h2>
+          </div>
+          <p id="agent-status">连接本地 Marginalia...</p>
+        </div>
+
+        <div class="agent-grid">
+          <div class="agent-console" aria-live="polite">
+            <div id="agent-messages" class="agent-messages">
+              <article class="agent-message assistant">
+                <span>Agent</span>
+                <p>问一个跨项目问题，我会调用本地 Marginalia 读取 YUSU 知识库。</p>
+              </article>
+            </div>
+            <form id="agent-form" class="agent-form">
+              <label for="agent-prompt">问题</label>
+              <textarea id="agent-prompt" rows="4" placeholder="例如：CSR 下位机和 CleanScout Vue3 联调时，最应该先查哪些记录？"></textarea>
+              <div class="agent-controls">
+                <select id="agent-mode" aria-label="Agent mode">
+                  <option value="deep">Deep</option>
+                  <option value="quick">Quick</option>
+                </select>
+                <button id="agent-send" type="submit">发送</button>
+              </div>
+            </form>
+          </div>
+
+          <aside class="agent-side" aria-label="Agent activity">
+            <div class="agent-side-head">
+              <p class="section-kicker">ACTIVITY</p>
+              <strong>检索与推理过程</strong>
+            </div>
+            <div id="agent-events" class="agent-events"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="marginalia" class="site-view marginalia-workspace" data-view="marginalia" aria-labelledby="marginalia-title" hidden>
+        <div class="workspace-bar">
+          <div>
+            <p class="section-kicker">FULL WORKSPACE</p>
+            <h2 id="marginalia-title">Marginalia</h2>
+          </div>
+          <div class="workspace-actions">
+            <span id="workspace-status">连接本地服务...</span>
+            <a href="http://127.0.0.1:5173/" target="_blank" rel="noreferrer">新窗口打开</a>
+          </div>
+        </div>
+        <iframe src="http://127.0.0.1:5173/" title="Marginalia local workspace" loading="eager"></iframe>
+      </section>
     </main>
 
     <footer class="footer">
@@ -104,6 +162,6 @@
       <span>Powered by live Markdown scan</span>
     </footer>
 
-    <script src="/app.js" type="module"></script>
+    <script src="/app.js?v=20260619-2" type="module"></script>
   </body>
 </html>
