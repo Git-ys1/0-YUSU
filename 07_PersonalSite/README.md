@@ -1,69 +1,68 @@
 # YUSU Personal Site
 
-本目录是 YUSU 知识库 V0.3 的本地个人站第一版：既展示项目和竞赛证据，也把共享知识库检索入口放进同一个前台。
+YUSU 知识库的本地个人站与原生 Marginalia 工作台。运行时由一个 FastAPI 进程在 `127.0.0.1:8787` 同时提供个人主页、知识库 API、Marginalia `/v1` API 和 React UI。
 
-## Stack
+## Architecture
 
-- Frontend: zero-build HTML/CSS/JavaScript under `web/`
-- Backend: Python standard-library HTTP server in `server.py`
-- Data: `data/showcase.json`
-- Raw media: repository folder `记得整理/`
+- Personal showcase UI: zero-build HTML/CSS/JavaScript under `web/`.
+- Integrated Marginalia UI source: React/Vite under `marginalia-ui/`.
+- Committed runtime UI: production build under `marginalia-dist/`.
+- Integrated Marginalia backend source: Python package under `marginalia-backend/marginalia/`.
+- Backend host: `server.py` loads the local backend source first, then registers YUSU routes directly on Marginalia's FastAPI app.
+- Data/runtime: ignored `.marginalia-yusu/` SQLite, mirror library, journal and semantic index.
+- Optional semantic compute: CarbonRAG BGE-M3 shim on `127.0.0.1:8011`.
 
-选择零构建前端是为了让 Windows、WSL、Ubuntu clone 后都能立即运行，避免 Node 依赖、Vite `dist` 陈旧和多端环境不一致。后续如果页面复杂到需要组件系统，再迁移到 React/Vite 或 Vue。
+There is no iframe, frontend proxy, `5173` Vite server, or separate `8000` Marginalia API in normal use. `vendor/marginalia` remains the upstream reference copy; the integrated runtime uses `07_PersonalSite/marginalia-backend` and `07_PersonalSite/marginalia-ui`.
+
+## First Setup
+
+```powershell
+.\tools\setup-marginalia-yusu.ps1 -SyncProjection
+$env:DEEPSEEK_API_KEY = "<your key>"
+.\tools\configure-marginalia-deepseek.ps1
+.\tools\build-yusu-integrated-marginalia-ui.ps1
+```
+
+The API key is written only to ignored `.marginalia-yusu/.env`.
 
 ## Run
 
 Windows:
 
 ```powershell
-python .\07_PersonalSite\server.py --host 127.0.0.1 --port 8787
-```
-
-If the system Python is unsuitable, use the Codex bundled Python:
-
-```powershell
-& 'C:\Users\yusu\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe' .\07_PersonalSite\server.py --host 127.0.0.1 --port 8787
+.\tools\run-carbonrag-bge-embedding-server.ps1  # optional semantic recall
+.\tools\run-yusu-personal-site.ps1
 ```
 
 Ubuntu/Linux:
 
 ```bash
-python3 07_PersonalSite/server.py --host 127.0.0.1 --port 8787
+bash tools/run-carbonrag-bge-embedding-server.sh  # optional semantic recall
+bash tools/run-yusu-personal-site.sh
 ```
 
 Open:
 
-```text
-http://127.0.0.1:8787/
-```
+- Personal site: `http://127.0.0.1:8787/`
+- Native Agent: `http://127.0.0.1:8787/marginalia/chat`
+- Library: `http://127.0.0.1:8787/marginalia/library`
+- Search: `http://127.0.0.1:8787/marginalia/search`
+- Settings: `http://127.0.0.1:8787/marginalia/settings`
+- API/health: `http://127.0.0.1:8787/v1/*`, `http://127.0.0.1:8787/health`
 
-## What It Does
+## Rebuild The Integrated UI
 
-- Serves a full-bleed personal showcase wall.
-- Reads structured achievements and project links from `data/showcase.json`.
-- Serves raw local media from `记得整理/` through `/media/raw/<filename>`.
-- Searches live Markdown under the YUSU vault through `/api/search?q=...`.
-- Opens matched Markdown entries through the read-only `/api/doc?path=...` endpoint.
-- Provides a full-page Marginalia-backed Agent view at `#agent` through `/api/agent/session` and `/api/agent/chat`.
-- Provides a dedicated near-full-viewport Marginalia UI workspace at `#marginalia` when `http://127.0.0.1:5173/` is running.
-
-The search and document APIs read files only. Agent chat writes only to Marginalia's local session/journal database under the ignored `.marginalia-yusu/` runtime.
-
-## Marginalia / DeepSeek
-
-Configure the local, ignored Marginalia `.env` with:
+Only run this after editing `marginalia-ui/`:
 
 ```powershell
-$env:DEEPSEEK_API_KEY = "<your key>"
-.\tools\configure-marginalia-deepseek.ps1
+.\tools\build-yusu-integrated-marginalia-ui.ps1
 ```
 
-Then start the supporting services:
+The Windows builder copies source to a temporary path without `#`, runs TypeScript and Vite with Node 22, then mirrors `dist` back into this directory. Node/Vite do not remain running.
 
-```powershell
-.\tools\run-carbonrag-bge-embedding-server.ps1
-.\tools\run-marginalia-api-yusu.ps1
-.\tools\run-marginalia-ui-yusu.ps1
-```
+## Upstream And License
 
-The committed scripts never contain the real API key.
+The integrated source is derived from `vendor/marginalia` at commit `70f28bc381aafd86f047f9fe422c594c86d4330e`.
+
+- React UI provenance and AGPL license: `marginalia-ui/UPSTREAM.md`, `marginalia-ui/UPSTREAM_LICENSE.txt`
+- Backend provenance and AGPL license: `marginalia-backend/UPSTREAM.md`, `marginalia-backend/UPSTREAM_LICENSE.txt`

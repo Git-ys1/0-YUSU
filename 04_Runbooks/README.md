@@ -9,7 +9,7 @@
 - `codex-ingestion-guide.md`: 普通项目和通用经验的入库流程。
 - `mature-project-ingestion.md`: 成熟项目的多轮证据复盘流程。
 - `super-yusu-v0.2-ingestion.md`: 成熟项目最终总结与 `Memory Routing Audit` 协议。
-- `super-yusu-v0.3-marginalia.md`: Marginalia 深度研究层的接入、DeepSeek LLM 路由、CarbonRAG 本地 BGE-M3 embedding shim、个人站 Agent 嵌入和使用边界。
+- `super-yusu-v0.3-marginalia.md`: Marginalia 深度研究层、DeepSeek/BGE 路由、个人站源码级单进程集成和使用边界。
 
 ## Supporting Runbooks
 

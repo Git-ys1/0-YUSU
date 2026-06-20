@@ -1,0 +1,242 @@
+"""search_journal - DESIGN.md section 10.1.
+
+Low-level journal lookup for focused follow-up and debugging.
+
+The journal is two tiers in one table (see [[journal-tiers]]):
+  - `insight`: durable cross-session distillations.
+  - `reflect_turn`: per-turn bullets from one specific session.
+
+Defaults to `kinds=["insight", "reflect_turn"]` so a fresh user message can
+see both durable memory and recent per-turn breadcrumbs. Pass
+`kinds=["insight"]` for durable-only recall, or `kinds=["reflect_turn"]`
+together with a `conversation_id` to skim one session.
+
+Superseded insight rows (whose `superseded_by_id IS NOT NULL`) are hidden by
+default; the chain replacement is the answer. Set `include_superseded=true`
+to see history.
+
+Text lookup accepts a string or an array. Multi-term text is ORed, so broad
+recall should use `text=["term1", "term2"]` instead of one packed phrase.
+"""
+from __future__ import annotations
+
+from datetime import datetime, timedelta, timezone
+from typing import Any, Mapping
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from marginalia.agent.text_query import normalize_text_queries
+from marginalia.agent.tools import ToolContext, tool
+from marginalia.db.models import Journal
+from marginalia.repositories import entries as entries_repo
+from marginalia.repositories import journal as journal_repo
+
+
+SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [],
+    "properties": {
+        "text": {
+            "anyOf": [
+                {"type": "string"},
+                {"type": "array", "items": {"type": "string"}},
+            ],
+            "description": (
+                "One query string or an array of query terms/phrases. Array "
+                "items are ORed against journal notes. For multi-keyword "
+                "fallback after tags, prefer an array."
+            ),
+        },
+        "entry_id": {
+            "type": "string",
+            "description": (
+                "Only return notes whose entry_ids list includes this id. "
+                "Must be a UUID or short hex prefix (>= 8 chars), NOT a file name."
+            ),
+        },
+        "tags": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Match notes carrying ANY of these tags (OR).",
+        },
+        "kinds": {
+            "type": "array",
+            "items": {"type": "string", "enum": ["insight", "reflect_turn"]},
+            "description": (
+                "Which journal tiers to search. Default "
+                "['insight', 'reflect_turn']: both durable "
+                "cross-session memory and per-turn bullets."
+            ),
+        },
+        "conversation_id": {
+            "type": "string",
+            "description": "Restrict to notes attached to this conversation.",
+        },
+        "include_superseded": {
+            "type": "boolean",
+            "description": (
+                "If true, include insight rows that have been replaced by a "
+                "newer version. Default false; only the current version of "
+                "each chain is returned."
+            ),
+        },
+        "since_days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 365,
+            "description": "Limit to notes written within the last N days. Default 90.",
+        },
+        "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50,
+            "description": "Max notes returned. Default 10.",
+        },
+        "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": (
+                "Skip first N matches that satisfy all filters (text + "
+                "entry_id + any tag + kinds + conversation + since/super). "
+                "Default 0. Use with `next_offset` to page."
+            ),
+        },
+        "order": {
+            "type": "string",
+            "enum": ["recent_first", "oldest_first"],
+            "description": "Default 'recent_first'.",
+        },
+    },
+}
+
+
+@tool(
+    name="search_journal",
+    description=(
+        "Low-level journal lookup for focused follow-up, prior-work checks, "
+        "or debugging prior notes. Searches durable "
+        "insights and reflect_turn notes by default. Text array terms are "
+        "ORed; other filters narrow the result."
+    ),
+    schema=SCHEMA,
+)
+async def search_journal(
+    db: AsyncSession,
+    ctx: ToolContext,
+    args: Mapping[str, Any],
+) -> dict[str, Any]:
+    return await run_search_journal(db, args, match="all")
+
+
+async def run_search_journal(
+    db: AsyncSession,
+    args: Mapping[str, Any],
+    *,
+    match: str = "all",
+) -> dict[str, Any]:
+    """Shared implementation for the public tool and recall wrappers.
+
+    Public `search_journal` keeps the historical "all filters must match"
+    contract. `recall_knowledge` uses `match="any"` so text/tag seeds widen
+    the journal pass without adding a public schema knob.
+    """
+    text_q = normalize_text_queries(args.get("text")) or None
+    entry_id = args.get("entry_id")
+    tags = args.get("tags") or []
+    kinds = list(args.get("kinds") or ["insight", "reflect_turn"])
+    conversation_id = args.get("conversation_id")
+    include_superseded = bool(args.get("include_superseded") or False)
+    since_days = int(args.get("since_days") or 90)
+    limit = min(int(args.get("limit") or 10), 50)
+    offset = max(0, int(args.get("offset") or 0))
+    order = args.get("order") or "recent_first"
+
+    resolved_entry_id = str(entry_id).strip() if entry_id else None
+    if resolved_entry_id:
+        resolved_entry_id, err = await entries_repo.resolve_entry_id_prefix(
+            db, resolved_entry_id,
+        )
+        if err:
+            return {
+                "notes": [],
+                "count": 0,
+                "has_more": False,
+                "entry_id_error": err,
+            }
+
+    cutoff = datetime.now(timezone.utc) - timedelta(days=since_days)
+    python_text_filter = match == "any" and bool(text_q) and bool(tags)
+    repo_text_q = None if python_text_filter else text_q
+
+    # The journal's JSON filters (entry_id + tags) cannot be expressed in
+    # SQLite cleanly, so we post-filter in Python. To honor a true offset
+    # we walk the SQL window forward (chunks of `limit*4`) until we have
+    # collected `offset + limit` post-filtered hits or exhausted rows.
+    needed = offset + limit
+    collected: list[Journal] = []
+    cursor = 0
+    chunk = max(limit * 4, 20)
+    exhausted = False
+    while len(collected) < needed:
+        rows = await journal_repo.search(
+            db,
+            cutoff=cutoff,
+            kinds=kinds,
+            conversation_id=conversation_id,
+            include_superseded=include_superseded,
+            text=repo_text_q,
+            order=order,
+            limit=chunk,
+            offset=cursor,
+        )
+        if not rows:
+            exhausted = True
+            break
+        for j in rows:
+            if resolved_entry_id and resolved_entry_id not in (j.entry_ids or []):
+                continue
+            note_tags = set(j.tags or [])
+            if match == "any" and (text_q or tags):
+                text_ok = bool(text_q) and _note_matches_text(j.note, text_q)
+                tags_ok = bool(tags) and bool(note_tags.intersection(tags))
+                if not (text_ok or tags_ok):
+                    continue
+            elif tags:
+                if not note_tags.intersection(tags):
+                    continue
+            collected.append(j)
+            if len(collected) >= needed:
+                break
+        cursor += len(rows)
+        if len(rows) < chunk:
+            exhausted = True
+            break
+
+    page = collected[offset: offset + limit]
+    has_more = (not exhausted) or (len(collected) > offset + len(page))
+    out: dict[str, Any] = {
+        "notes": [
+            {
+                "id": j.id,
+                "conversation_id": j.conversation_id,
+                "note": j.note,
+                "entry_ids": list(j.entry_ids or []),
+                "tags": list(j.tags or []),
+                "source_kind": j.source_kind,
+                "superseded_by_id": j.superseded_by_id,
+                "created_at": j.created_at.isoformat() if j.created_at else None,
+            }
+            for j in page
+        ],
+        "count": len(page),
+        "has_more": has_more,
+    }
+    if has_more:
+        out["next_offset"] = offset + len(page)
+    return out
+
+
+def _note_matches_text(note: str | None, terms: list[str]) -> bool:
+    haystack = (note or "").casefold()
+    return any(term.casefold() in haystack for term in terms)

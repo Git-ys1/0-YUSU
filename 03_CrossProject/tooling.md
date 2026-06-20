@@ -94,6 +94,17 @@ Windows 上存在 `F:\...` 不能证明 Ubuntu 原生双系统能看见它。只
 
 导入或修复 Codex 会话时，不能只复制 `sessions/**/rollout-*.jsonl`。还要检查 `state_5.sqlite` 中的 thread 记录、`cwd` 过滤、`rollout_path`、`updated_at`、`agent_role`，以及 JSONL 第一条 `session_meta.payload.id` 是否与目标 thread id 对齐。
 
+### Codex home junction and disk pressure
+
+On this Windows machine, `C:\Users\yusu\.codex` is a junction to `F:\AcademicHub\.codex`. Seeing the C-path in logs or tools does not prove Codex data is physically on C. Verify with:
+
+```powershell
+Get-Item C:\Users\yusu\.codex -Force | Select FullName,Attributes,LinkType,Target
+fsutil reparsepoint query C:\Users\yusu\.codex
+```
+
+When deleting huge Codex temp directories through the junction, Windows may send the files to Recycle Bin; free space may not return until Recycle Bin is emptied. Use `tools\check-yusu-disk-footprint.ps1 -IncludeAppDataCaches` from the YUSU vault to check C/F free space, the Codex junction target, repo-local caches, and common AppData caches.
+
 ### PowerShell and Git special syntax
 
 在 PowerShell 里使用 Git 上游引用必须给 `@{u}` 加引号：
@@ -240,6 +251,10 @@ Evidence: On 2026-06-05, yusu vault ingest applied 98 entries only after `--yes`
 After Git merges into the Markdown vault, do not assume Marginalia sees the new files. Run `sync-yusu-kb-to-marginalia.ps1 -Check`, then `-Ingest`, then rebuild the semantic index. Markdown/Git is canonical; Marginalia SQLite and `semantic-index/default` are derived state.
 
 Treat a full BGE semantic rebuild as slow background maintenance, not a prerequisite for unrelated UI or documentation work. Keep Markdown canonical, bring SQLite ingest current first, and schedule the all-entry vector rebuild at a deliberate checkpoint; on 2026-06-19 a 179-entry local BGE-M3 build took about 55 minutes.
+
+For the YUSU personal site, normal Marginalia runtime is now source-integrated rather than proxied: `07_PersonalSite/server.py` loads `07_PersonalSite/marginalia-backend` first, registers YUSU routes on the local Marginalia FastAPI app, and the copied React source under `07_PersonalSite/marginalia-ui/` builds to same-origin `/marginalia/*`. `tools/run-yusu-personal-site.*` replaces the old three-process `8787 + 8000 + 5173` startup. Keep `vendor/marginalia`, `run-marginalia-api-yusu.*`, and `run-marginalia-ui-yusu.*` only for upstream reference or isolated debugging.
+
+Marginalia ingest can fail if a pipeline returns duplicate tag suggestions for a single entry and the handler inserts duplicate `(entry_id, tag_id)` rows in one transaction. Fix this at the backend source level by tracking seen tag ids before `EntryTag` inserts and by incrementing `Tag.doc_count` only when a new relation is actually attached. Evidence: YUSU integrated backend patch on 2026-06-20 plus `07_PersonalSite/tests/test_marginalia_ingest_tags.py`.
 
 If a file remains `ingest_status=pending` even though its `ingest_file` task is `done`, prefer the official reprocess path. The modified-file ingest path can leave `ingested_at` set, causing the handler to skip the file and never flip it back to `done`.
 

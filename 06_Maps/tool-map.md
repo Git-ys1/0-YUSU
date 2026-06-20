@@ -20,7 +20,7 @@
 | SuperYUSU session inventory | vault administrator audit | `tools/build-superyusu-session-inventory.ps1` scans local Codex session metadata/topic counts for this management vault without copying raw conversation text |
 | Find own Codex session | mature project ingestion | use `tools/find-own-codex-session.*` to resolve `CODEX_THREAD_ID` to the current engineer JSONL |
 | Mature project retro audit | mature project ingestion | use `tools/mature-project-retro-audit.*` with one explicit engineer JSONL as a read-only quality gate before completion |
-| Marginalia | deep KB research | optional cited investigation layer; yusu vault has 194 in-sync library files and 179 BGE semantic-index entries as of 2026-06-19; Markdown merges require separate ingest/reindex, with personal-site Agent at `#agent` and the full workspace at `#marginalia` |
+| Marginalia | deep KB research | source-integrated into the YUSU personal site: local backend source under `07_PersonalSite/marginalia-backend` and React source under `07_PersonalSite/marginalia-ui`; one `8787` FastAPI process serves `/v1` and `/marginalia/*`; optional BGE compute remains on `8011`; Markdown merges still require ingest/reindex |
 | DeepSeek API | Marginalia LLM route | configure ignored `.marginalia-yusu/.env` with `tools/configure-marginalia-deepseek.*`; default model is `deepseek-v4-flash` |
 | Codex proxy LLM shim | historical local LLM API adapter | `tools/run-codex-proxy-llm-shim.*` converts streaming CLI proxy output into non-streaming chat-completions for Marginalia, but it is backup/historical after the DeepSeek route was verified |
 | CarbonRAG BGE-M3 embedding shim | local semantic recall | `tools/run-carbonrag-bge-embedding-server.*` exposes CarbonRAG local BGE-M3 as OpenAI-compatible `/v1/embeddings` for Marginalia |
@@ -32,7 +32,7 @@
 | PyInstaller | Windows desktop packaging | stop running packaged exe before rebuilding onedir dist |
 | Windows desktop launchers | Windows GUI tools | provide .bat launcher, project-local venv, startup logs, readiness checks, and old-process cleanup; Auto Play and invoice-archive-manager evidence |
 | FastAPI static React/Vite dist | local web-desktop apps | rebuild or freshness-check `frontend/dist` before serving; stale bundles can survive fixed source |
-| YUSU Personal Site | local vault UI | `07_PersonalSite/server.py` serves the personal showcase wall and live Markdown search at `http://127.0.0.1:8787/` |
+| YUSU Personal Site | local vault UI | `tools/run-yusu-personal-site.*` starts one FastAPI process serving the showcase, live Markdown search, native Marginalia API and source-integrated React UI at `http://127.0.0.1:8787/` |
 | Windows GUI automation input stack | game automation | use RegisterHotKey, optional PyDirectInput, admin launcher, and window-mode fallback guidance |
 | CleanScout backend deploy scripts | cloud backend operations | load env before Prisma; record `.deploy-revision`; use bootstrap/check/update split |
 | Raw MJPEG relay | camera stream display | preserve ESP32-CAM native stream through worker/backend; avoid parse/repack if native page is smooth |

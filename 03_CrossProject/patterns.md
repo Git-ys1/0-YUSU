@@ -188,6 +188,38 @@ This keeps the creative work useful without accidentally laundering invented ach
 
 - HyperFrames production `003-tian-binxian-profile`: `assets/research/research-notes.md` records public energy-sector sources, while `index.html` and `README.md` label the result as `概念人物志 / 虚构演绎`.
 
+## Pattern: Distinguish source integration from iframe embedding
+**Status**: active
+**Seen In**: yusu-personal-site / Marginalia
+
+### Use When
+
+The user asks to embed or merge an existing application's UI, especially when they mention moving code, sharing navigation, unifying frontend/backend, or avoiding separate startup.
+
+### Avoid When
+
+The user explicitly wants a read-only preview of an external site, isolation is a security boundary, or upstream must remain independently deployed.
+
+### Notes
+
+An iframe only embeds pixels and interaction; it preserves a separate frontend origin, build, server and often a proxy backend. It is not source integration.
+
+Source integration requires evidence at all relevant layers:
+
+1. UI source lives in or is built by the host project.
+2. The host router reaches the UI without an iframe.
+3. API calls are same-origin or mounted in the host backend.
+4. One normal startup path owns application lifecycle.
+5. Upstream provenance and license are preserved.
+
+If the request says “前后端融入我们的代码” or “直接把 UI 接进来”, do not substitute iframe/reverse-proxy composition merely because it is quicker.
+
+### Evidence
+
+- Project: `yusu-personal-site`
+- Source: `07_PersonalSite/server.py`, `07_PersonalSite/marginalia-ui/`, `tools/run-yusu-personal-site.*`
+- Verified: 2026-06-20, one `8787` process served native `/v1` and `/marginalia/*`; ports `8000/5173` were not listening.
+
 ## Pattern: Outbound relay/worker behind NAT
 **Status**: active
 **Seen In**: cleanscout-rover-vue3

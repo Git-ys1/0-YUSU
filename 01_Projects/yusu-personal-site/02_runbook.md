@@ -1,86 +1,102 @@
 # Runbook
 
-## Start Locally
-
-Windows:
+## First Setup
 
 ```powershell
 cd F:\AcademicHub\0#YUSU
-python .\07_PersonalSite\server.py --host 127.0.0.1 --port 8787
+.\tools\setup-marginalia-yusu.ps1 -SyncProjection
+$env:DEEPSEEK_API_KEY = "<your key>"
+.\tools\configure-marginalia-deepseek.ps1
+.\tools\build-yusu-integrated-marginalia-ui.ps1
 ```
 
-Bundled Python fallback:
+Do not commit `.marginalia-yusu/.env` or print its key.
+
+## Start Locally
+
+Normal Windows startup is one application process:
 
 ```powershell
-& 'C:\Users\yusu\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe' .\07_PersonalSite\server.py --host 127.0.0.1 --port 8787
+.\tools\run-yusu-personal-site.ps1
+```
+
+If semantic recall is required, also start the optional local model service:
+
+```powershell
+.\tools\run-carbonrag-bge-embedding-server.ps1
 ```
 
 Ubuntu/Linux:
 
 ```bash
-cd "$YUSU_KB_ROOT"
-python3 07_PersonalSite/server.py --host 127.0.0.1 --port 8787
+bash tools/run-yusu-personal-site.sh
 ```
 
 Open:
 
 ```text
 http://127.0.0.1:8787/
+http://127.0.0.1:8787/marginalia/chat
+http://127.0.0.1:8787/marginalia/library
 ```
 
-## Start With Marginalia Agent
-
-The personal site can embed both a native Agent console and the full Marginalia UI. Configure the local ignored `.env` first:
-
-```powershell
-$env:DEEPSEEK_API_KEY = "<your key>"
-.\tools\configure-marginalia-deepseek.ps1
-```
-
-Start the supporting services in separate terminals or background processes:
-
-```powershell
-.\tools\run-carbonrag-bge-embedding-server.ps1
-.\tools\run-marginalia-api-yusu.ps1
-.\tools\run-marginalia-ui-yusu.ps1
-```
-
-Then start the personal site and open:
-
-```text
-http://127.0.0.1:8787/#agent
-```
-
-Current default LLM route is DeepSeek official OpenAI-compatible API with `deepseek-v4-flash`. The real key belongs only in `.marginalia-yusu/.env` or `DEEPSEEK_API_KEY`; never commit it.
+Do not start `run-marginalia-api-yusu.*` or `run-marginalia-ui-yusu.*` for the integrated personal site. Those scripts are retained only for isolated upstream debugging.
 
 ## Validate
 
 ```powershell
-python -m py_compile .\07_PersonalSite\server.py
+& .\.tools\marginalia-venv\Scripts\python.exe -m py_compile .\07_PersonalSite\server.py
+Invoke-RestMethod http://127.0.0.1:8787/health
 Invoke-RestMethod http://127.0.0.1:8787/api/status
-Invoke-RestMethod "http://127.0.0.1:8787/api/search?q=CleanScout"
-Invoke-RestMethod "http://127.0.0.1:8787/api/doc?path=01_Projects/cleanscout-rover/README.md"
 Invoke-RestMethod http://127.0.0.1:8787/api/marginalia/status
+Invoke-RestMethod "http://127.0.0.1:8787/api/search?q=CleanScout"
+Invoke-WebRequest http://127.0.0.1:8787/marginalia/chat
 ```
 
-Agent end-to-end smoke:
+Expected status fields:
+
+- `integration=same-process`
+- `backendSource=F:\AcademicHub\0#YUSU\07_PersonalSite\marginalia-backend`
+- `apiBase=/v1`
+- `uiBase=/marginalia`
+- `workerEnabled=true`
+
+Agent SSE smoke uses native routes:
 
 ```powershell
-$session = Invoke-RestMethod http://127.0.0.1:8787/api/agent/session -Method Post -ContentType application/json -Body '{"initiatingUserMessage":"smoke"}'
-$body = @{ sessionId=$session.session_id; query="根据知识库，CleanScout Rover 已有哪些竞赛证据？请只列2条。"; mode="deep" } | ConvertTo-Json
-Invoke-WebRequest http://127.0.0.1:8787/api/agent/chat -Method Post -ContentType application/json -Body $body
+$session = Invoke-RestMethod http://127.0.0.1:8787/v1/sessions -Method Post -ContentType application/json -Body '{"initiating_user_message":"smoke"}'
+$body = @{ query="请只回复 OK"; mode="quick" } | ConvertTo-Json
+Invoke-WebRequest "http://127.0.0.1:8787/v1/chat/$($session.session_id)" -Method Post -ContentType application/json -Body $body
 ```
 
-Expected evidence: SSE output contains `event: tool_call`, `event: answer`, and `event: done`.
+Expected SSE includes `event: answer` and `event: done`.
 
-## Update Content
+## Update UI Source
 
-1. Add or verify raw files under `记得整理/`.
-2. Update `07_PersonalSite/notes/materials-inventory.md`.
-3. Update `07_PersonalSite/data/showcase.json`.
-4. Start the server and visually inspect the page.
-5. Update this project memory if the site behavior or structure changes.
+1. Edit `07_PersonalSite/marginalia-ui/`.
+2. Run `tools/build-yusu-integrated-marginalia-ui.*`.
+3. Verify `marginalia-dist/index.html` references `/marginalia/assets/`.
+4. Test desktop `1280x720` and mobile `390x844` with Playwright.
+5. Commit both source and built dist.
 
-## Retrieval Note
+## Update Integrated Backend Source
 
-The site search uses live Markdown scanning. It can find newly written vault files before Marginalia semantic indexing catches up.
+1. Edit `07_PersonalSite/marginalia-backend/marginalia/`, not `vendor/marginalia`, for YUSU runtime patches.
+2. Keep patches small and document why they differ from upstream.
+3. Run the targeted regression test:
+
+```powershell
+& .\.tools\marginalia-venv\Scripts\python.exe .\07_PersonalSite\tests\test_marginalia_ingest_tags.py
+```
+
+4. Verify `http://127.0.0.1:8787/api/marginalia/status` reports the local `backendSource`.
+
+`vendor/marginalia` remains the upstream reference/submodule for comparison and isolated debugging.
+
+## Update Knowledge Content
+
+1. Update Markdown in the canonical vault.
+2. Run `sync-yusu-kb-to-marginalia.ps1 -Ingest`.
+3. Rebuild the semantic index only at a deliberate maintenance checkpoint.
+
+The personal site's `/api/search` scans live Markdown and can see new files before semantic reindexing completes.

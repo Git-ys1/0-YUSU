@@ -40,4 +40,4 @@ Observed direction:
 
 ## First-Version Stack Decision
 
-Use zero-build frontend plus Python standard-library backend for V0.3 local preview. This keeps the site portable across Windows and Ubuntu and avoids repeating the known FastAPI/Vite stale-dist failure pattern too early.
+The first V0.3 preview used a zero-build frontend plus Python standard-library backend. After Marginalia became a first-class workspace, this decision was superseded: the showcase remains zero-build, while the Marginalia React source and FastAPI app are integrated under one `8787` runtime with committed, freshness-checked dist assets.

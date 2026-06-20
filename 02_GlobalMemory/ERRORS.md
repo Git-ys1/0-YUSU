@@ -683,6 +683,61 @@ Browser Use cannot visit the requested page because its URL is blocked by the Br
 
 When this browser policy appears, do not bypass it with another browser automation surface. Verify the local site with API smoke tests, source-level checks, and manual user opening at `http://127.0.0.1:8787/` when visual confirmation is needed.
 
+## [ERR-20260620-001] iframe_mistaken_for_source_integration
+**Logged**: 2026-06-20
+**Priority**: high
+**Status**: resolved
+
+### Summary
+
+The first YUSU personal-site Marginalia integration used a custom Agent page plus an iframe pointing at a separately running `5173` UI and proxy calls to a separately running `8000` API. The user correctly rejected this: “embed” meant moving and adapting UI code so frontend and backend belong to the personal site, not placing another application inside a frame.
+
+### Error
+
+```text
+Runtime required 8787 + 8000 + 5173, and the visible Marginalia surface was an iframe.
+```
+
+### Context
+
+- Project/path: `F:\AcademicHub\0#YUSU\07_PersonalSite`
+- Upstream: `vendor/marginalia`
+- Correction date: 2026-06-20
+
+### Suggested Fix
+
+Treat “源码移过来 / 前后端融入 / 直接把 UI 接进来” as source integration. Mount native API routes in the host backend, build UI source under the host router, preserve upstream licensing, and prove the old frontend/backend ports are no longer required. The resolved YUSU runtime uses one `8787` FastAPI process; optional `8011` is only BGE model compute.
+
+## [ERR-20260620-002] marginalia_duplicate_entry_tags_ingest_crash
+**Logged**: 2026-06-20
+**Priority**: high
+**Status**: resolved
+
+### Summary
+
+Marginalia ingest can fail and repeatedly retry a file when one pipeline result contains duplicate tag suggestions for the same entry. A query for an existing `entry_tags` relation does not see a pending unflushed relation in the same transaction, so the handler may add duplicate `(entry_id, tag_id)` rows and hit the composite primary key.
+
+### Error
+
+```text
+sqlite3.IntegrityError: UNIQUE constraint failed: entry_tags.entry_id, entry_tags.tag_id
+```
+
+### Context
+
+- OS: Windows
+- Project/path: `F:\AcademicHub\0#YUSU`
+- Integrated backend: `07_PersonalSite/marginalia-backend/marginalia/tasks/handlers/ingest_file.py`
+- Observed blocker: `materials-inventory.md` ingest task repeatedly failed while the Markdown mirror was otherwise current.
+
+### Suggested Fix
+
+Deduplicate tag ids inside the ingest transaction before adding `EntryTag` rows. Only increment `Tag.doc_count` and `last_used_at` after a new relation is actually attached. Keep a regression test that calls `_persist` with duplicate `TagSuggestion` values:
+
+```powershell
+& .\.tools\marginalia-venv\Scripts\python.exe .\07_PersonalSite\tests\test_marginalia_ingest_tags.py
+```
+
 ## Entry Template
 
 ```md
