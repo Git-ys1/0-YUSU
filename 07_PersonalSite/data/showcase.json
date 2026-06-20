@@ -1,9 +1,9 @@
 {
   "site": {
     "name": "YUSU",
-    "version": "0.4-local-showcase",
+    "version": "0.5-video-method-showcase",
     "tagline": "项目、证据、知识库的本地入口",
-    "updated": "2026-06-20"
+    "updated": "2026-06-21"
   },
   "materials": {
     "rawRoot": "07_PersonalSite/media/raw",

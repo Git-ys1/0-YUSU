@@ -41,7 +41,29 @@ Observed direction after full time-axis sampling:
 - Hero elements enter with staggered opacity and vertical motion.
 - Lenis smooth scroll improves page traversal while keeping the site no-build and local.
 - Proof/project/workspace items reveal as they enter the viewport and lift on hover.
+- A top scroll-progress line and cursor-follow glow on key surfaces make the local dashboard feel alive without adding a heavy animation stack.
 - Search results update without leaving the page and link directly to vault-relative paths.
+
+## V0.5 Video-Driven Visual Pass
+
+Date: 2026-06-21
+
+The V0.5 pass was driven by direct visual inspection of the extracted reference frames, not only by transcript notes. Key evidence:
+
+- Contact sheet inspected: `.tools/video-analysis/personal-site-reference/contact-sheet.jpg`
+- Representative frames inspected: `frame_001.jpg`, `frame_012.jpg`, `frame_024.jpg`, `frame_033.jpg`
+- Local verification screenshots:
+  - `.tools/playwright-artifacts/yusu-v05d-desktop-method.png`
+  - `.tools/playwright-artifacts/yusu-v05c-mobile-home.png`
+  - `.tools/playwright-artifacts/yusu-v05c-mobile-method.png`
+
+Changes made:
+
+- Promoted the video interpretation into first-class site structure: top navigation now includes `方法` and `运行`.
+- Replaced the old small reference embed with a large contact-sheet method board plus four extracted steps: define purpose, set style, split modules, iterate.
+- Added a local-operation ending section instead of a public-contact ending, matching this vault's real use.
+- Tightened mobile navigation into one horizontal top bar and added anchor offset so fixed navigation no longer covers section titles.
+- Added a top dark mask to keep fixed-anchor jumps visually clean when previous-section content is underneath the floating nav.
 
 ## First-Version Stack Decision
 

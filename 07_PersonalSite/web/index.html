@@ -6,9 +6,10 @@
     <title>YUSU Local Archive</title>
     <link rel="icon" href="data:,">
     <link rel="stylesheet" href="/vendor/lenis/lenis-1.3.23.css">
-    <link rel="stylesheet" href="/styles.css?v=20260620-8">
+    <link rel="stylesheet" href="/styles.css?v=20260621-1">
   </head>
   <body>
+    <div id="scroll-progress" class="scroll-progress" aria-hidden="true"></div>
     <header class="topbar" aria-label="Site navigation">
       <a class="brand" href="/" aria-label="YUSU home">
         <span class="brand-mark">Y</span>
@@ -18,7 +19,9 @@
         <a href="#top">首页</a>
         <a href="#proof">证据</a>
         <a href="#projects">项目</a>
+        <a href="#method">方法</a>
         <a href="#search">搜索</a>
+        <a href="#operate">运行</a>
         <a href="/kaoyan/">考研看板</a>
         <a href="/marginalia/chat">Agent</a>
       </nav>
@@ -31,13 +34,20 @@
         <div class="hero-bg" aria-hidden="true"></div>
         <div class="hero-scan" aria-hidden="true"></div>
         <div class="hero-copy reveal">
-          <p class="eyebrow">LOCAL EVIDENCE SYSTEM / V0.4</p>
+          <p class="eyebrow">LOCAL EVIDENCE SYSTEM / V0.5</p>
           <h1 id="hero-title">YUSU</h1>
-          <p class="hero-line">把项目事实、竞赛证据、考研数据和 Codex 知识库收束到一个本地工作台。</p>
+          <p class="hero-line">把项目事实、竞赛证据、考研数据和 Codex 知识库收束到一个会持续进化的本地作品集工作台。</p>
           <div class="hero-actions">
             <a class="primary-button" href="#proof">查看证据墙</a>
             <a class="ghost-button" href="#search">搜索知识库</a>
             <a class="ghost-button" href="/kaoyan/">考研看板</a>
+          </div>
+          <div class="hero-method" aria-label="Video-derived build method">
+            <span>用途</span>
+            <span>风格</span>
+            <span>模块</span>
+            <span>迭代</span>
+            <span>上线</span>
           </div>
           <div class="hero-status-grid" aria-label="Local workspace status">
             <span><strong id="status-md">--</strong> Markdown</span>
@@ -45,7 +55,7 @@
             <span><strong id="status-media">--</strong> Media</span>
           </div>
         </div>
-        <aside class="hero-panel reveal" aria-label="Workspace dock">
+        <aside class="hero-panel glow-surface reveal" aria-label="Workspace dock">
           <p>WORKSPACE DOCK</p>
           <a href="/marginalia/chat">Marginalia Agent</a>
           <a href="/kaoyan/">北交电气考研看板</a>
@@ -63,6 +73,14 @@
         </p>
       </section>
 
+      <section class="method-ribbon" aria-label="Video method translated into site structure">
+        <span>Purpose -> local evidence hub</span>
+        <span>Style -> dark control desk</span>
+        <span>Modules -> proof, projects, search</span>
+        <span>Iteration -> screenshots and logs</span>
+        <span>Publish -> local runbook and sync</span>
+      </section>
+
       <section class="workspace-band" aria-labelledby="workspace-title">
         <div class="section-head">
           <div>
@@ -72,22 +90,22 @@
           <p>这些入口都由同一个 `8787` 本地服务承载，不再跳进孤立页面。</p>
         </div>
         <div class="workspace-grid">
-          <a class="workspace-link accent-green reveal" href="/marginalia/chat">
+          <a class="workspace-link glow-surface accent-green reveal" href="/marginalia/chat">
             <span>01</span>
             <strong>知识库 Agent</strong>
             <em>跨项目问答、引用调查、长期记忆检索</em>
           </a>
-          <a class="workspace-link accent-gold reveal" href="/kaoyan/">
+          <a class="workspace-link glow-surface accent-gold reveal" href="/kaoyan/">
             <span>02</span>
             <strong>考研数据看板</strong>
             <em>080800 学硕、复试录取、源文件与目标线</em>
           </a>
-          <a class="workspace-link accent-blue reveal" href="/marginalia/library">
+          <a class="workspace-link glow-surface accent-blue reveal" href="/marginalia/library">
             <span>03</span>
             <strong>资料库</strong>
             <em>Markdown 镜像、文件状态、资料阅读</em>
           </a>
-          <a class="workspace-link accent-red reveal" href="#search">
+          <a class="workspace-link glow-surface accent-red reveal" href="#search">
             <span>04</span>
             <strong>实时搜索</strong>
             <em>直接扫本仓库 Markdown，不等语义索引</em>
@@ -117,16 +135,40 @@
         <div id="project-list" class="project-list"></div>
       </section>
 
-      <section class="reference-section" aria-labelledby="reference-title">
-        <div class="reference-copy">
+      <section id="method" class="method-section" aria-labelledby="reference-title">
+        <div class="reference-copy sticky-copy">
           <p class="section-kicker">REFERENCE READ</p>
           <h2 id="reference-title">完整视频被拆成时间轴参考，而不是几张截图。</h2>
           <p>原视频是 4 分 25 秒的个人站方法论教程：先定义用途、风格、模块，再做深色首屏、精选项目、能力区、参考库和上线流程。YUSU 版本保留这个方法，不照搬其中虚构人设。</p>
         </div>
-        <a class="reference-frame reveal" href="/media/raw/reference/个人站.mp4" target="_blank" rel="noreferrer">
-          <img src="/assets/reference/personal-site-reference-contact-sheet.jpg" alt="个人站参考视频时间轴抽帧">
-          <span>打开原始参考视频</span>
-        </a>
+        <div class="method-board">
+          <a class="reference-frame glow-surface reveal" href="/media/raw/reference/个人站.mp4" target="_blank" rel="noreferrer">
+            <img src="/assets/reference/personal-site-reference-contact-sheet.jpg" alt="个人站参考视频时间轴抽帧">
+            <span>打开原始参考视频</span>
+          </a>
+          <div class="method-steps">
+            <article class="method-step reveal">
+              <span>01</span>
+              <strong>定义用途</strong>
+              <p>从“个人简历”转向“本地证据中枢”，先说明它替谁做判断。</p>
+            </article>
+            <article class="method-step reveal">
+              <span>02</span>
+              <strong>确定风格</strong>
+              <p>深色控制台、真实照片、荧光动作色和证书质感并置。</p>
+            </article>
+            <article class="method-step reveal">
+              <span>03</span>
+              <strong>拆成模块</strong>
+              <p>证据墙、项目主线、参考读片、实时搜索、运行信号各自承担一件事。</p>
+            </article>
+            <article class="method-step reveal">
+              <span>04</span>
+              <strong>持续迭代</strong>
+              <p>截图、OCR、ASR、关键帧复核和知识库记录成为下一轮改版证据。</p>
+            </article>
+          </div>
+        </div>
       </section>
 
       <section id="search" class="search-section" aria-labelledby="search-title">
@@ -155,6 +197,38 @@
           <pre id="doc-content"></pre>
         </article>
       </section>
+
+      <section id="operate" class="operate-section" aria-labelledby="operate-title">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">RUN / SYNC / VERIFY</p>
+            <h2 id="operate-title">本地中枢的收尾不做“联系我”，做运行状态。</h2>
+          </div>
+          <p>参考视频的部署结尾在这里翻译成可维护的本地操作面：启动、同步、检查、复盘。</p>
+        </div>
+        <div class="ops-grid">
+          <article class="ops-command glow-surface reveal">
+            <span>start</span>
+            <strong>Local Hub</strong>
+            <code>.\tools\run-yusu-personal-site.ps1</code>
+          </article>
+          <article class="ops-command glow-surface reveal">
+            <span>search</span>
+            <strong>Live Markdown</strong>
+            <code>/api/search?q=CleanScout</code>
+          </article>
+          <article class="ops-command glow-surface reveal">
+            <span>agent</span>
+            <strong>Marginalia</strong>
+            <code>/marginalia/chat</code>
+          </article>
+          <article class="ops-command glow-surface reveal">
+            <span>sync</span>
+            <strong>GitHub Vault</strong>
+            <code>git pull && git push</code>
+          </article>
+        </div>
+      </section>
       </div>
 
     </main>
@@ -165,6 +239,6 @@
     </footer>
 
     <script src="/vendor/lenis/lenis-1.3.23.min.js"></script>
-    <script src="/app.js?v=20260620-8" type="module"></script>
+    <script src="/app.js?v=20260621-1" type="module"></script>
   </body>
 </html>

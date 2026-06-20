@@ -12,6 +12,7 @@ const statusMd = document.querySelector("#status-md");
 const statusProjects = document.querySelector("#status-projects");
 const statusMedia = document.querySelector("#status-media");
 const siteVersion = document.querySelector("#site-version");
+const scrollProgress = document.querySelector("#scroll-progress");
 
 const escapeHtml = (value) => String(value ?? "")
   .replaceAll("&", "&amp;")
@@ -40,7 +41,7 @@ function initSmoothScroll() {
 }
 
 function renderAchievements(items) {
-  achievementsEl.innerHTML = items.map((item) => {
+  achievementsEl.innerHTML = items.map((item, index) => {
     const preview = item.previewMedia || item.media;
     const imageFit = item.imageFit === "cover" ? "cover" : "contain";
     const media = isImage(item.source)
@@ -51,9 +52,10 @@ function renderAchievements(items) {
     const tags = (item.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
 
     return `
-      <article class="achievement reveal">
+      <article class="achievement glow-surface reveal">
         <div class="achievement-media">${media}</div>
         <div class="achievement-body">
+          <span class="item-index">${String(index + 1).padStart(2, "0")}</span>
           <h3>${escapeHtml(item.title)}</h3>
           <p class="award">${escapeHtml(item.award)}</p>
           <div class="meta">
@@ -70,15 +72,18 @@ function renderAchievements(items) {
 }
 
 function renderProjects(items) {
-  projectsEl.innerHTML = items.map((item) => {
+  projectsEl.innerHTML = items.map((item, index) => {
     const tags = (item.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
     const memoryPath = escapeHtml(item.memory);
     const links = (item.links || []).map((link) => `
       <a class="memory-link" href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>
     `).join("");
     return `
-      <article class="project reveal">
-        <p class="project-type">${escapeHtml(item.type)} / ${escapeHtml(item.status)}</p>
+      <article class="project glow-surface reveal">
+        <div class="project-topline">
+          <span class="project-number">${String(index + 1).padStart(2, "0")}</span>
+          <p class="project-type">${escapeHtml(item.type)} / ${escapeHtml(item.status)}</p>
+        </div>
         <h3>${escapeHtml(item.name)}</h3>
         <p>${escapeHtml(item.summary)}</p>
         <div class="tags">${tags}</div>
@@ -121,6 +126,30 @@ function wireActiveNavigation() {
     });
   }, { rootMargin: "-24% 0px -58% 0px", threshold: [0.08, 0.2, 0.5] });
   sections.forEach((section) => observer.observe(section));
+}
+
+function wireScrollProgress() {
+  if (!scrollProgress) {
+    return;
+  }
+  const update = () => {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    const ratio = max > 0 ? window.scrollY / max : 0;
+    scrollProgress.style.transform = `scaleX(${Math.min(1, Math.max(0, ratio))})`;
+  };
+  update();
+  window.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update);
+}
+
+function wireGlowSurfaces() {
+  document.querySelectorAll(".glow-surface").forEach((node) => {
+    node.addEventListener("pointermove", (event) => {
+      const rect = node.getBoundingClientRect();
+      node.style.setProperty("--glow-x", `${event.clientX - rect.left}px`);
+      node.style.setProperty("--glow-y", `${event.clientY - rect.top}px`);
+    });
+  });
 }
 
 function renderSearchResults(results, query) {
@@ -188,6 +217,8 @@ async function boot() {
   initSmoothScroll();
   wireReveal();
   wireActiveNavigation();
+  wireScrollProgress();
+  wireGlowSurfaces();
 
   renderSearchResults([], "");
 }

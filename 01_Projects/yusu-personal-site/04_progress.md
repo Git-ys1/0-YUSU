@@ -2,7 +2,7 @@
 
 ## Current State
 
-Local V0.3 source-integrated personal site and Marginalia runtime are in place.
+Local V0.5 source-integrated personal site and Marginalia runtime are in place.
 
 ## Completed
 
@@ -48,8 +48,15 @@ Local V0.3 source-integrated personal site and Marginalia runtime are in place.
   - `/api/kaoyan/status` exposes availability, source path, byte size, and update time.
   - The personal-site top navigation and the Kaoyan project card now link to the dashboard.
   - The generated dashboard HTML remains in the source exam project and is not copied into the YUSU vault.
+- Reworked the personal-site visual system into V0.5 after direct inspection of the extracted reference-video frames:
+  - added `方法` and `运行` top navigation anchors
+  - translated the video method into a large contact-sheet board and four-step method grid
+  - added top scroll progress and pointer-follow glow surfaces
+  - added a local run/sync/verify ending section
+  - tightened mobile navigation into a single horizontal top bar with anchor offset
+  - verified the result with system Chrome screenshots under `.tools/playwright-artifacts/`, including `yusu-v05d-desktop-method.png`, `yusu-v05c-mobile-home.png`, and `yusu-v05c-mobile-method.png`
 
 ## Last Meaningful Update
 
-- Date: 2026-06-20
-- Source: administrator source-integration pass in the YUSU vault; Kaoyan static dashboard mount added
+- Date: 2026-06-21
+- Source: administrator V0.5 visual pass in the YUSU vault; reference-video frames and browser screenshots used as evidence
