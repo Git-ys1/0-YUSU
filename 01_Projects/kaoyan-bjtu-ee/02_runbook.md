@@ -38,6 +38,22 @@ If the workspace `.venv` exists, this equivalent command is now verified:
 .\.venv\Scripts\python.exe .\scripts\build_admission_dashboard.py --workspace 'F:\AcademicHub\000资料相关\000考研'
 ```
 
+## YUSU Personal Site Integration
+
+The dashboard is mounted into the YUSU personal site at:
+
+```text
+http://127.0.0.1:8787/kaoyan/
+```
+
+Integration boundary:
+
+- Source of truth remains `F:\AcademicHub\000资料相关\000考研`.
+- The personal site serves `00_打开-北交电气考研数据看板.html` from that source workspace in the same `8787` FastAPI process.
+- The generated HTML and raw `output/` roster exports are not copied into `F:\AcademicHub\0#YUSU`, because they may contain score/name/verification data that should stay in the exam project.
+- After updating analysis CSV/Markdown in this project, rerun `scripts\build_admission_dashboard.py`; the YUSU route reflects the updated file after browser refresh.
+- If the workspace path changes on another machine, set `YUSU_KAOYAN_WORKSPACE` before starting `tools\run-yusu-personal-site.ps1`.
+
 ## Verification Workflow
 
 1. Open the研招办硕士招生栏目.

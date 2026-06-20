@@ -36,6 +36,7 @@ Open:
 
 ```text
 http://127.0.0.1:8787/
+http://127.0.0.1:8787/kaoyan/
 http://127.0.0.1:8787/marginalia/chat
 http://127.0.0.1:8787/marginalia/library
 ```
@@ -49,8 +50,10 @@ Do not start `run-marginalia-api-yusu.*` or `run-marginalia-ui-yusu.*` for the i
 Invoke-RestMethod http://127.0.0.1:8787/health
 Invoke-RestMethod http://127.0.0.1:8787/api/status
 Invoke-RestMethod http://127.0.0.1:8787/api/marginalia/status
+Invoke-RestMethod http://127.0.0.1:8787/api/kaoyan/status
 Invoke-RestMethod "http://127.0.0.1:8787/api/search?q=CleanScout"
 Invoke-WebRequest http://127.0.0.1:8787/marginalia/chat
+Invoke-WebRequest http://127.0.0.1:8787/kaoyan/
 ```
 
 Expected status fields:
@@ -60,6 +63,13 @@ Expected status fields:
 - `apiBase=/v1`
 - `uiBase=/marginalia`
 - `workerEnabled=true`
+
+For the Kaoyan dashboard, expected status fields:
+
+- `integration=same-process static dashboard from source workspace`
+- `uiBase=/kaoyan/`
+- `online=true`
+- `workspace=F:\AcademicHub\000资料相关\000考研` unless `YUSU_KAOYAN_WORKSPACE` was overridden.
 
 Agent SSE smoke uses native routes:
 
@@ -100,3 +110,20 @@ Expected SSE includes `event: answer` and `event: done`.
 3. Rebuild the semantic index only at a deliberate maintenance checkpoint.
 
 The personal site's `/api/search` scans live Markdown and can see new files before semantic reindexing completes.
+
+## Update External Static Dashboards
+
+The Kaoyan dashboard is served from the original exam-prep workspace rather than copied into this vault:
+
+```text
+F:\AcademicHub\000资料相关\000考研\00_打开-北交电气考研数据看板.html
+```
+
+If the source workspace path changes:
+
+```powershell
+$env:YUSU_KAOYAN_WORKSPACE = "D:\path\to\000考研"
+.\tools\run-yusu-personal-site.ps1
+```
+
+After the exam project updates CSV/Markdown/source data, rebuild the dashboard in that project and refresh `/kaoyan/`. Do not commit the generated dashboard HTML or raw `output/` roster exports into the YUSU vault.

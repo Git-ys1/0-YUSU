@@ -54,13 +54,19 @@ function renderProjects(items) {
   projectsEl.innerHTML = items.map((item) => {
     const tags = (item.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
     const memoryPath = escapeHtml(item.memory);
+    const links = (item.links || []).map((link) => `
+      <a class="memory-link" href="${escapeHtml(link.href)}">${escapeHtml(link.label)}</a>
+    `).join("");
     return `
       <article class="project reveal">
         <p class="project-type">${escapeHtml(item.type)} / ${escapeHtml(item.status)}</p>
         <h3>${escapeHtml(item.name)}</h3>
         <p>${escapeHtml(item.summary)}</p>
         <div class="tags">${tags}</div>
-        <button class="memory-link doc-button" type="button" data-path="${memoryPath}">打开知识条目：${memoryPath}</button>
+        <div class="project-actions">
+          <button class="memory-link doc-button" type="button" data-path="${memoryPath}">打开知识条目：${memoryPath}</button>
+          ${links}
+        </div>
       </article>
     `;
   }).join("");

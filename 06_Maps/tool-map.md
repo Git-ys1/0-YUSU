@@ -32,7 +32,8 @@
 | PyInstaller | Windows desktop packaging | stop running packaged exe before rebuilding onedir dist |
 | Windows desktop launchers | Windows GUI tools | provide .bat launcher, project-local venv, startup logs, readiness checks, and old-process cleanup; Auto Play and invoice-archive-manager evidence |
 | FastAPI static React/Vite dist | local web-desktop apps | rebuild or freshness-check `frontend/dist` before serving; stale bundles can survive fixed source |
-| YUSU Personal Site | local vault UI | `tools/run-yusu-personal-site.*` starts one FastAPI process serving the showcase, live Markdown search, native Marginalia API and source-integrated React UI at `http://127.0.0.1:8787/` |
+| YUSU Personal Site | local vault UI | `tools/run-yusu-personal-site.*` starts one FastAPI process serving the showcase, live Markdown search, native Marginalia API, source-integrated React UI, and the external Kaoyan dashboard at `http://127.0.0.1:8787/` |
+| Sensitive generated dashboard mount | local portal integration | serve generated HTML from its source workspace through the portal process; do not copy raw score/roster dashboards into the shared vault |
 | Windows GUI automation input stack | game automation | use RegisterHotKey, optional PyDirectInput, admin launcher, and window-mode fallback guidance |
 | CleanScout backend deploy scripts | cloud backend operations | load env before Prisma; record `.deploy-revision`; use bootstrap/check/update split |
 | Raw MJPEG relay | camera stream display | preserve ESP32-CAM native stream through worker/backend; avoid parse/repack if native page is smooth |

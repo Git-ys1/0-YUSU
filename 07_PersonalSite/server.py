@@ -17,6 +17,20 @@ RAW_MEDIA_ROOT = ROOT / "记得整理"
 MARGINALIA_RUNTIME = ROOT / ".marginalia-yusu"
 MARGINALIA_DIST = APP_ROOT / "marginalia-dist"
 MARGINALIA_BACKEND = APP_ROOT / "marginalia-backend"
+KAOYAN_WORKSPACE = Path(
+    os.environ.get(
+        "YUSU_KAOYAN_WORKSPACE",
+        str(ROOT.parent / "000资料相关" / "000考研"),
+    )
+)
+KAOYAN_DASHBOARD = KAOYAN_WORKSPACE / "00_打开-北交电气考研数据看板.html"
+KAOYAN_ALLOWED_ROOTS = [
+    KAOYAN_WORKSPACE / "北京交通大学资料",
+]
+KAOYAN_ALLOWED_FILES = {
+    KAOYAN_DASHBOARD,
+    KAOYAN_WORKSPACE / "00_SUPERYUSU考研项目总览.md",
+}
 
 SEARCH_ROOTS = [
     ROOT / "01_Projects",
@@ -97,6 +111,36 @@ def _resolve_markdown_doc(rel_path: str) -> Path | None:
     return target if target in allowed else None
 
 
+def _resolve_kaoyan_asset(asset_path: str) -> Path | None:
+    clean = unquote(asset_path).replace("\\", "/").lstrip("/")
+    if not clean or "\x00" in clean:
+        return KAOYAN_DASHBOARD if KAOYAN_DASHBOARD.is_file() else None
+    if any(part == ".." for part in clean.split("/")):
+        return None
+
+    target = (KAOYAN_WORKSPACE / clean).resolve()
+    if not target.is_file():
+        return None
+
+    allowed_files = {path.resolve() for path in KAOYAN_ALLOWED_FILES}
+    if target in allowed_files:
+        return target
+
+    for allowed_root in KAOYAN_ALLOWED_ROOTS:
+        root = allowed_root.resolve()
+        if root.exists() and _is_relative_to(target, root):
+            return target
+    return None
+
+
+def _file_timestamp(path: Path) -> str | None:
+    if not path.is_file():
+        return None
+    from datetime import datetime
+
+    return datetime.fromtimestamp(path.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
+
+
 def _first_heading(text: str, fallback: str) -> str:
     for line in text.splitlines():
         line = line.strip()
@@ -170,6 +214,7 @@ async def site_status() -> dict:
         else 0,
         "searchMode": "live markdown scan",
         "marginaliaMode": "same-process FastAPI + source-integrated React UI/backend",
+        "kaoyanDashboardAvailable": KAOYAN_DASHBOARD.is_file(),
     }
 
 
@@ -241,6 +286,38 @@ async def marginalia_ui(asset_path: str) -> FileResponse:
             detail="Marginalia UI is not built. Run tools/build-yusu-integrated-marginalia-ui.ps1",
         )
     return FileResponse(index, headers={"Cache-Control": "no-store, max-age=0"})
+
+
+@app.get("/api/kaoyan/status", tags=["yusu"])
+async def kaoyan_status() -> dict:
+    return {
+        "online": KAOYAN_DASHBOARD.is_file(),
+        "integration": "same-process static dashboard from source workspace",
+        "workspace": str(KAOYAN_WORKSPACE),
+        "dashboard": str(KAOYAN_DASHBOARD),
+        "dashboardUpdated": _file_timestamp(KAOYAN_DASHBOARD),
+        "dashboardBytes": KAOYAN_DASHBOARD.stat().st_size if KAOYAN_DASHBOARD.is_file() else 0,
+        "uiBase": "/kaoyan/",
+        "privacyBoundary": "generated dashboard data stays in the exam project workspace and is not copied into this vault",
+    }
+
+
+@app.get("/kaoyan", include_in_schema=False)
+async def kaoyan_root_redirect() -> RedirectResponse:
+    return RedirectResponse(url="/kaoyan/", status_code=307)
+
+
+@app.get("/kaoyan/{asset_path:path}", include_in_schema=False)
+async def kaoyan_dashboard(asset_path: str = "") -> FileResponse:
+    target = _resolve_kaoyan_asset(asset_path)
+    if target is None:
+        detail = (
+            "Kaoyan dashboard not found. Set YUSU_KAOYAN_WORKSPACE to the exam project root."
+            if not KAOYAN_DASHBOARD.is_file()
+            else "Kaoyan asset is not available or not allowed."
+        )
+        raise HTTPException(status_code=404, detail=detail)
+    return FileResponse(target, headers={"Cache-Control": "no-store, max-age=0"})
 
 
 @app.get("/styles.css", include_in_schema=False)

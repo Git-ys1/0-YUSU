@@ -134,6 +134,12 @@
       "status": "active",
       "summary": "北京交通大学 080800 电气工程学硕官方招生信息、历年复试录取数据和本地看板工作区。",
       "memory": "01_Projects/kaoyan-bjtu-ee/README.md",
+      "links": [
+        {
+          "label": "打开考研看板",
+          "href": "/kaoyan/"
+        }
+      ],
       "tags": ["数据整理", "官方源", "长期规划"]
     },
     {

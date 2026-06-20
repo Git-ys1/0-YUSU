@@ -88,7 +88,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 34px;
+  gap: 26px;
   color: rgba(243, 245, 232, 0.78);
   font-size: 14px;
 }
@@ -428,6 +428,12 @@ h2 {
   font: inherit;
   text-align: left;
   cursor: pointer;
+}
+
+.project-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
 }
 
 .result .doc-button {

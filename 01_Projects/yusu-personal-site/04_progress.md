@@ -40,8 +40,13 @@ Local V0.3 source-integrated personal site and Marginalia runtime are in place.
 - Left the BGE-M3 semantic vector index at 179 entries intentionally; rebuild it later as slow maintenance rather than blocking UI/source integration.
 - Improved certificate display so image scans use `object-fit: contain` and no longer crop certificate text.
 - Generated a corrected landscape preview for the 2025 math-modeling certificate while preserving the raw original under `记得整理/`.
+- Added a same-process Kaoyan dashboard route:
+  - `/kaoyan/` serves the current exam-prep dashboard from `F:\AcademicHub\000资料相关\000考研`.
+  - `/api/kaoyan/status` exposes availability, source path, byte size, and update time.
+  - The personal-site top navigation and the Kaoyan project card now link to the dashboard.
+  - The generated dashboard HTML remains in the source exam project and is not copied into the YUSU vault.
 
 ## Last Meaningful Update
 
 - Date: 2026-06-20
-- Source: administrator source-integration pass in the YUSU vault
+- Source: administrator source-integration pass in the YUSU vault; Kaoyan static dashboard mount added

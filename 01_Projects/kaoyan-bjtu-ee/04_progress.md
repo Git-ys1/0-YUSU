@@ -93,6 +93,10 @@ Project initialized as a long-term exam-prep workspace. 2026 BJTU official admis
   - The dashboard now has a main-table `本校` column, seeds the home-check workbench from CSV fields, and uses `22`-prefix matching for browser-local roster import.
   - No full exported roster student IDs are written into project CSVs; only status, source, date, notes, same-name count, and 22-prefix same-name count are stored.
   - Caveat: final export log reported 103,794 exported rows versus webpage total 103,899, so non-home should be read as “not found in current export” unless the roster export is later repaired.
+- Integrated the dashboard into the YUSU personal site on 2026-06-20:
+  - `http://127.0.0.1:8787/kaoyan/` serves the current root dashboard from the exam-prep workspace.
+  - The integration is same-process/static-file mounting, not an iframe and not a second frontend service.
+  - The generated dashboard and raw roster export files remain outside the shared YUSU vault to preserve the project privacy boundary.
 
 ## Milestones
 
@@ -108,6 +112,7 @@ Project initialized as a long-term exam-prep workspace. 2026 BJTU official admis
 | 2026-06-17 | Student-list 3-page export test passed | `start_edge_cdp.ps1`; `export_all.py --max-pages 3 --overwrite`; output row-count checks | Edge CDP startup fixed by clearing background Edge; 300 raw rows and 297 dedup rows generated; full export still requires user confirmation |
 | 2026-06-17 | Student-list resume recovery hardened | `export_all.py`; `README.md`; one-page resume test | Recovered stale state from partial CSV row count; continued from page 319; raw rows reached 31,900; full export should resume with `--confirm-full-export` and no `--overwrite` |
 | 2026-06-17 | 2026 home-student status marked | `scripts/mark_home_students_2026.py`; updated CSV/XLSX/dashboard; static HTML checks | 201 retest rows and 157 proposed-admission rows marked from local roster same-name + `22` student-ID prefix rule |
+| 2026-06-20 | Dashboard mounted in YUSU personal site | `07_PersonalSite/server.py`; `/api/kaoyan/status`; `/kaoyan/` browser smoke | Same `8787` process serves the dashboard from the source workspace; generated data is not copied into the vault |
 
 ## In Progress
 
@@ -124,4 +129,4 @@ Project initialized as a long-term exam-prep workspace. 2026 BJTU official admis
 ## Last Meaningful Update
 
 - Date: 2026-06-17
-- Source: home-student marking pass; 2026 candidates now have home/non-home status in CSV, workbook, and dashboard using same-name + `22` student-ID prefix
+- Source: YUSU personal-site mount added after home-student marking pass; 2026 candidates now have home/non-home status in CSV, workbook, and dashboard using same-name + `22` student-ID prefix

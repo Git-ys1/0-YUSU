@@ -144,6 +144,14 @@ Evidence:
 
 Evidence: 发票管理归档软件 on 2026-06-17 had `scratch/frontend_error.log` showing `duplicateWarning is not defined` in old `assets/index-B-eGjsZg.js`, while current source already defined the state. `npm run build` regenerated `dist`, and the launcher now rebuilds when source files are newer than `frontend/dist/index.html`.
 
+### Mount sensitive generated dashboards from source workspaces
+
+If a local dashboard is a generated, self-contained HTML artifact containing names, scores, localStorage workflows, or private verification context, do not automatically copy it into a shared knowledge vault just to make a unified portal. Prefer a same-process FastAPI route that reads the artifact from its original project workspace on `127.0.0.1`, plus a status endpoint that exposes the source path and update time.
+
+This keeps the user experience integrated without making the knowledge vault the owner of raw generated data. The source project remains responsible for rebuilding the dashboard after CSV/Markdown changes.
+
+Evidence: YUSU personal site on 2026-06-20 serves `F:\AcademicHub\000资料相关\000考研\00_打开-北交电气考研数据看板.html` at `/kaoyan/` and reports it through `/api/kaoyan/status`, while avoiding committing the generated dashboard or raw roster exports into `0#YUSU`.
+
 ### Windows GUI automation input stack
 
 游戏或桌面自动化在独占全屏、管理员权限游戏、DirectInput 场景下，普通 `pynput` 监听和标准输入注入可能失效。优先考虑 Windows `RegisterHotKey`、PyDirectInput、管理员启动入口，并提示用户必要时切到无边框窗口或窗口化全屏。
