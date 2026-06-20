@@ -115,6 +115,27 @@ Use:
 
 Do not recreate the retired temporary `记得整理/` folder. Update `07_PersonalSite/notes/materials-inventory.md` and `07_PersonalSite/data/showcase.json` whenever new material is added.
 
+## Update From Reference Videos
+
+Do not start from isolated screenshots. Follow the shared protocol:
+
+```powershell
+.\tools\analyze-video-reference.ps1 `
+  -Video .\07_PersonalSite\media\raw\reference\个人站.mp4 `
+  -Slug personal-site-reference `
+  -ExtractAudio `
+  -Force
+```
+
+Then read and update:
+
+- `04_Runbooks/video-understanding-protocol.md`
+- `05_Templates/video-understanding-taskbook.md`
+- `07_PersonalSite/notes/reference-video-deep-read.md`
+- `07_PersonalSite/notes/design-brief.md`
+
+Future V0.5+ design passes must map video conclusions to concrete UI changes before editing `web/styles.css`.
+
 ## Update Integrated Backend Source
 
 1. Edit `07_PersonalSite/marginalia-backend/marginalia/`, not `vendor/marginalia`, for YUSU runtime patches.

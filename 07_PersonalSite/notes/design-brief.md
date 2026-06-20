@@ -10,6 +10,8 @@ Source: `07_PersonalSite/media/raw/reference/个人站.mp4`
 
 Storyboard contact sheet: `07_PersonalSite/media/derived/reference/personal-site-reference-contact-sheet.jpg`
 
+Deep read: `07_PersonalSite/notes/reference-video-deep-read.md`
+
 Technical facts:
 
 - Duration: 00:04:25.10
@@ -46,3 +48,5 @@ Observed direction after full time-axis sampling:
 The first V0.3 preview used a zero-build frontend plus Python standard-library backend. After Marginalia became a first-class workspace, this decision was superseded: the showcase remains zero-build, while the Marginalia React source and FastAPI app are integrated under one `8787` runtime with committed, freshness-checked dist assets.
 
 The V0.4 visual pass keeps the showcase zero-build and vendors only the small MIT-licensed Lenis runtime for scroll quality. Full portfolio templates were rejected because they optimize for public resume sites rather than this local evidence-vault workflow.
+
+After the 2026-06-20 user correction, this video should be treated as a process reference, not only a visual reference. Future V0.5+ design passes must start from the deep-read timeline and taskbook workflow before editing CSS.

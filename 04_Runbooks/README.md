@@ -10,6 +10,8 @@
 - `mature-project-ingestion.md`: 成熟项目的多轮证据复盘流程。
 - `super-yusu-v0.2-ingestion.md`: 成熟项目最终总结与 `Memory Routing Audit` 协议。
 - `super-yusu-v0.3-marginalia.md`: Marginalia 深度研究层、DeepSeek/BGE 路由、个人站源码级单进程集成和使用边界。
+- `video-understanding-protocol.md`: 参考视频理解协议，要求 metadata、contact sheet、时间轴观察、音频/字幕处理、项目映射和渲染验收。
+- `video-to-codex-spec-refactor-taskbook.md`: Azure 视频分析示例重构为 `video-to-codex-spec` 的权威任务书。
 
 ## Supporting Runbooks
 

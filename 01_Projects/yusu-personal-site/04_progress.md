@@ -41,6 +41,7 @@ Local V0.3 source-integrated personal site and Marginalia runtime are in place.
 - Improved certificate display so image scans use `object-fit: contain` and no longer crop certificate text.
 - Generated a corrected landscape preview for the 2025 math-modeling certificate while preserving the raw original under `07_PersonalSite/media/raw/awards/`.
 - Re-read the full 4:25 reference video through a generated contact sheet, added the formal media library, and improved the showcase visual system with a workspace dock, reference panel, hover/reveal motion, and vendored Lenis smooth scrolling.
+- After user correction that the visual result still showed shallow video understanding, added `tools/analyze-video-reference.ps1`, `04_Runbooks/video-understanding-protocol.md`, `05_Templates/video-understanding-taskbook.md`, and `07_PersonalSite/notes/reference-video-deep-read.md`; the personal-site reference video now has a 33-frame timeline read plus audio-preview evidence under `.tools/video-analysis/personal-site-reference/`.
 - Added a fixed `返回 YUSU` control to the `/kaoyan/` route by injecting it only in the personal-site response, leaving the source dashboard HTML unchanged.
 - Added a same-process Kaoyan dashboard route:
   - `/kaoyan/` serves the current exam-prep dashboard from `F:\AcademicHub\000资料相关\000考研`.

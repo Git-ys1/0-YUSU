@@ -17,6 +17,7 @@
 - [[05_known_issues]]
 - App: `07_PersonalSite/README.md`
 - Design brief: `07_PersonalSite/notes/design-brief.md`
+- Reference video deep read: `07_PersonalSite/notes/reference-video-deep-read.md`
 - Materials inventory: `07_PersonalSite/notes/materials-inventory.md`
 
 ## Current Shape

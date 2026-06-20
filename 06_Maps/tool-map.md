@@ -26,6 +26,8 @@
 | Codex proxy LLM shim | historical local LLM API adapter | `tools/run-codex-proxy-llm-shim.*` converts streaming CLI proxy output into non-streaming chat-completions for Marginalia, but it is backup/historical after the DeepSeek route was verified |
 | CarbonRAG BGE-M3 embedding shim | local semantic recall | `tools/run-carbonrag-bge-embedding-server.*` exposes CarbonRAG local BGE-M3 as OpenAI-compatible `/v1/embeddings` for Marginalia |
 | HyperFrames | HTML video rendering | use Codex plugin `HyperFrames by HeyGen`; local repo wrapper injects FFmpeg/FFprobe for stable render commands |
+| Video reference analyzer | video understanding | `tools\analyze-video-reference.ps1` creates `.tools/video-analysis/<slug>/` with metadata, sampled frames, contact sheet, optional audio preview, and a fillable analysis table; use with `04_Runbooks/video-understanding-protocol.md` before design changes based on video |
+| video-to-codex-spec | video -> agent context | `F:\AcademicHub\video-analysis-with-aoai`; use for tutorial/reference videos that need OCR, ASR, keyframes, segment JSON, timeline, video index, and `agent_context/`; if visual provider is blocked, inspect keyframes and merge `manual_visual_review.json` |
 | Edge TTS | Chinese video voiceover | useful no-key Mandarin narration route for HyperFrames demos; preserve source text and verify final audio stream |
 | 宏录制器 | Windows 游戏自动化 | 固定流程优先于图像识别；必须保留绝对起点并提供中断快捷键 |
 | Keil MDK | STM32 firmware build | keep Keil-first workflow where the repo already depends on it, but do not trust historical build logs as proof the current machine can still compile; rediscover the real `UV4.exe` first |

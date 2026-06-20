@@ -9,6 +9,20 @@
 
 ## Active Notes
 
+### video-to-codex-spec
+
+`F:\AcademicHub\video-analysis-with-aoai` 是教程/参考视频转 `agent_context/` 的工具仓库。需要让 Codex 从视频继续工程构建时，优先使用 `python -m video_to_codex_spec analyze`，而不是只抽 contact sheet。
+
+运行时缓存放目标仓库 `.tools/`：
+
+```powershell
+$env:PIP_CACHE_DIR = "$PWD\.tools\pip-cache"
+$env:HF_HOME = "$PWD\.tools\hf-cache"
+$env:HF_HUB_CACHE = "$PWD\.tools\hf-cache\hub"
+```
+
+如果真实视觉 provider 失败，`mock` 只能用于导出 keyframes/OCR/ASR。Codex 要直接看 keyframes，写 `manual_visual_review.json`，再用 `apply-manual-review` 合并，不能把 mock 当最终视觉理解。
+
 ### Windows PowerShell profile noise
 
 在 Windows 上如果需要启动额外的 Windows PowerShell 5.1 进程，优先使用：
@@ -77,6 +91,20 @@ For HTML-to-video workflows, successful encode metadata is necessary but not eno
 Evidence: HyperFrames first demo used `npm run check`, FFprobe metadata, and `npm run hf -- snapshot --at 0.8,2.6,4.0,5.6,8.0 --describe false`; the contact sheet confirmed the title and three lines appeared in sequence.
 
 If the video is supposed to have sound, also verify FFprobe shows an `audio` stream. HyperFrames v0.6.72 on `F:\Project\HyperFrames` reported `audioCount: 1` during render, but the MP4 initially contained only video. The stable workaround was to render an intermediate video-only MP4 and then mux the audio with FFmpeg (`scripts/mux-audio.mjs`), producing a final file with H.264 video and AAC audio.
+
+### Reference-video understanding needs a taskbook and timeline
+
+When a user gives a video as design/product reference, do not treat a few screenshots or a contact sheet as understanding. Generate a video-analysis workspace, fill a timeline table, consider audio/subtitles, and write a synthesis that separates reusable patterns from content that must not be copied.
+
+Use:
+
+```powershell
+.\tools\analyze-video-reference.ps1 -Video <video> -Slug <slug> -ExtractAudio -Force
+```
+
+Then follow `04_Runbooks/video-understanding-protocol.md` and `05_Templates/video-understanding-taskbook.md`.
+
+Evidence: On 2026-06-20, the YUSU personal-site reference video was re-read after the user correction that the earlier pass had not really understood it. The new workflow generated `.tools/video-analysis/personal-site-reference/`, produced 33 sampled frames plus audio preview, and wrote `07_PersonalSite/notes/reference-video-deep-read.md`.
 
 ### GitHub repository names may be normalized
 
