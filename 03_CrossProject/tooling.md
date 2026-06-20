@@ -152,6 +152,32 @@ This keeps the user experience integrated without making the knowledge vault the
 
 Evidence: YUSU personal site on 2026-06-20 serves `F:\AcademicHub\000资料相关\000考研\00_打开-北交电气考研数据看板.html` at `/kaoyan/` and reports it through `/api/kaoyan/status`, while avoiding committing the generated dashboard or raw roster exports into `0#YUSU`.
 
+### Promote temporary media inboxes into project-owned media libraries
+
+If a user drops raw visual/source material into a temporary root folder, do not let that folder become part of the long-term repository shape. Move the materials into a project-owned media library, separate `raw/` originals from `derived/` display assets, and update all project-memory evidence paths.
+
+Evidence: On 2026-06-20, the YUSU personal site retired the temporary `记得整理/` folder by moving certificates, public award documents, and the reference video into `07_PersonalSite/media/`; `07_PersonalSite/notes/materials-inventory.md` became the canonical manifest.
+
+### Codex runtime caches can bypass CODEX_HOME
+
+Moving `C:\Users\<user>\.codex` or setting `CODEX_HOME` does not automatically move every Codex Desktop cache. The bundled runtime cache can still live under `C:\Users\<user>\.cache\codex-runtimes`, so inspect `.cache` separately when C drive space drops.
+
+On this machine, keep `C:\Users\yusu\.codex` as a junction to `F:\AcademicHub\.codex`, and keep `C:\Users\yusu\.cache\codex-runtimes` as a junction to `F:\AcademicHub\.cache\codex-runtimes`. Seeing a C path in tool output is normal after the junction; check `LinkType`/`Target` before assuming data is physically on C.
+
+Evidence: On 2026-06-20, `.codex` was confirmed as a junction to F, while `.cache\codex-runtimes` still consumed about 1.41GB on C. The cache was copied to `F:\AcademicHub\.cache\codex-runtimes`, the C path was replaced with a junction, and C free space remained stable.
+
+### Do not base shared tooling venvs on another active project venv
+
+A management repo or shared tool should not permanently create its venv from another project venv. Python can record that source as `home`/`executable` in `pyvenv.cfg`; child processes may then launch through the other project's interpreter and inherit hidden coupling.
+
+Use a standalone interpreter or a repo-owned runtime path, then verify with:
+
+```powershell
+.\.tools\<venv>\Scripts\python.exe -c "import sys; print(sys.executable); print(getattr(sys, '_base_executable', None)); print(sys.base_prefix)"
+```
+
+Evidence: On 2026-06-20, YUSU Personal Site/Marginalia initially spawned a child Python from `F:\Project\Simple Oscilloscope\.venv\python.exe` because `.tools\marginalia-venv\pyvenv.cfg` had been created from that venv. The venv was rebuilt with `F:\AcademicHub\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe`, and the launcher now refuses a venv that still references Simple Oscilloscope.
+
 ### Windows GUI automation input stack
 
 游戏或桌面自动化在独占全屏、管理员权限游戏、DirectInput 场景下，普通 `pynput` 监听和标准输入注入可能失效。优先考虑 Windows `RegisterHotKey`、PyDirectInput、管理员启动入口，并提示用户必要时切到无边框窗口或窗口化全屏。

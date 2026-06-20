@@ -33,8 +33,7 @@
 ├── 04_Runbooks/           # 给 Codex 和用户执行的操作指南
 ├── 05_Templates/          # 新项目入库模板
 ├── 06_Maps/               # Obsidian MOC/索引，给大库导航
-├── 07_PersonalSite/       # V0.3 本地个人站：项目展示墙 + 知识库检索
-├── 记得整理/               # 个人站原始证书、视频和待整理素材
+├── 07_PersonalSite/       # 本地个人站：项目展示墙 + 知识库检索 + 正式媒体库
 ├── 99_Archive/            # 废弃、过时、保留但不再默认读取的材料
 ├── vendor/                 # 外部依赖子模块，例如 Marginalia
 └── tools/                 # 辅助定位脚本

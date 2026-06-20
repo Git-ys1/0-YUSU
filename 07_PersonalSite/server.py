@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 APP_ROOT = Path(__file__).resolve().parent
 WEB_ROOT = APP_ROOT / "web"
 DATA_FILE = APP_ROOT / "data" / "showcase.json"
-RAW_MEDIA_ROOT = ROOT / "记得整理"
+RAW_MEDIA_ROOT = APP_ROOT / "media" / "raw"
 MARGINALIA_RUNTIME = ROOT / ".marginalia-yusu"
 MARGINALIA_DIST = APP_ROOT / "marginalia-dist"
 MARGINALIA_BACKEND = APP_ROOT / "marginalia-backend"
@@ -69,7 +69,7 @@ if MARGINALIA_BACKEND.is_dir():
     sys.path.insert(0, str(MARGINALIA_BACKEND))
 
 from fastapi import HTTPException, Query  # noqa: E402
-from fastapi.responses import FileResponse, RedirectResponse  # noqa: E402
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse  # noqa: E402
 from fastapi.staticfiles import StaticFiles  # noqa: E402
 from marginalia.config import get_settings, resolve_profile  # noqa: E402
 from marginalia.main import app  # noqa: E402
@@ -141,6 +141,49 @@ def _file_timestamp(path: Path) -> str | None:
     return datetime.fromtimestamp(path.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
 
 
+def _inject_kaoyan_return_button(html: str) -> str:
+    if '<a data-yusu-return-link' in html:
+        return html
+    control = """
+  <style>
+    .yusu-return-link {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 9999;
+      display: inline-flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 0 14px;
+      border: 1px solid rgba(15, 107, 99, 0.28);
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.92);
+      color: #0f2b2a;
+      box-shadow: 0 12px 30px rgba(19, 30, 37, 0.14);
+      backdrop-filter: blur(12px);
+      font: 700 14px/1 "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+      text-decoration: none;
+    }
+    .yusu-return-link:hover {
+      border-color: rgba(15, 107, 99, 0.5);
+      color: #0f6b63;
+      transform: translateY(-1px);
+    }
+    @media (max-width: 720px) {
+      .yusu-return-link {
+        top: 12px;
+        right: 12px;
+        min-height: 34px;
+        padding: 0 10px;
+        font-size: 12px;
+      }
+    }
+  </style>
+  <a data-yusu-return-link class="yusu-return-link" href="/" aria-label="返回 YUSU 主页">← 返回 YUSU</a>
+"""
+    return html.replace("</body>", f"{control}\n</body>", 1)
+
+
 def _first_heading(text: str, fallback: str) -> str:
     for line in text.splitlines():
         line = line.strip()
@@ -209,7 +252,7 @@ async def site_status() -> dict:
         "vaultRoot": str(ROOT),
         "markdownFiles": len(_iter_markdown_files()),
         "projectDirectories": len([path for path in projects_root.iterdir() if path.is_dir()]),
-        "rawMediaFiles": len([path for path in RAW_MEDIA_ROOT.iterdir() if path.is_file()])
+        "rawMediaFiles": len([path for path in RAW_MEDIA_ROOT.rglob("*") if path.is_file()])
         if RAW_MEDIA_ROOT.exists()
         else 0,
         "searchMode": "live markdown scan",
@@ -308,7 +351,7 @@ async def kaoyan_root_redirect() -> RedirectResponse:
 
 
 @app.get("/kaoyan/{asset_path:path}", include_in_schema=False)
-async def kaoyan_dashboard(asset_path: str = "") -> FileResponse:
+async def kaoyan_dashboard(asset_path: str = ""):
     target = _resolve_kaoyan_asset(asset_path)
     if target is None:
         detail = (
@@ -317,6 +360,12 @@ async def kaoyan_dashboard(asset_path: str = "") -> FileResponse:
             else "Kaoyan asset is not available or not allowed."
         )
         raise HTTPException(status_code=404, detail=detail)
+    if target.resolve() == KAOYAN_DASHBOARD.resolve():
+        html = target.read_text(encoding="utf-8-sig", errors="replace")
+        return HTMLResponse(
+            _inject_kaoyan_return_button(html),
+            headers={"Cache-Control": "no-store, max-age=0"},
+        )
     return FileResponse(target, headers={"Cache-Control": "no-store, max-age=0"})
 
 
@@ -339,6 +388,7 @@ async def site_root() -> FileResponse:
 
 
 app.mount("/assets", StaticFiles(directory=WEB_ROOT / "assets"), name="yusu-assets")
+app.mount("/vendor", StaticFiles(directory=WEB_ROOT / "vendor"), name="yusu-vendor")
 
 
 def main() -> None:

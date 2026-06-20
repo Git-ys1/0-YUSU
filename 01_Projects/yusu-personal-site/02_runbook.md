@@ -83,11 +83,37 @@ Expected SSE includes `event: answer` and `event: done`.
 
 ## Update UI Source
 
+Showcase layer:
+
+1. Edit `07_PersonalSite/web/index.html`, `web/styles.css`, or `web/app.js`.
+2. Keep vendored browser libraries under `07_PersonalSite/web/vendor/` with their license files.
+3. Run `node --check .\07_PersonalSite\web\app.js`.
+4. Verify desktop and mobile with Playwright.
+
+Marginalia layer:
+
 1. Edit `07_PersonalSite/marginalia-ui/`.
 2. Run `tools/build-yusu-integrated-marginalia-ui.*`.
 3. Verify `marginalia-dist/index.html` references `/marginalia/assets/`.
 4. Test desktop `1280x720` and mobile `390x844` with Playwright.
 5. Commit both source and built dist.
+
+## Update Personal-Site Media
+
+Formal media lives under:
+
+```text
+07_PersonalSite/media/
+```
+
+Use:
+
+- `media/raw/awards/` for original certificate images.
+- `media/raw/documents/` for original public source PDFs/DOCX.
+- `media/raw/reference/` for original reference videos.
+- `media/derived/` and `web/assets/` for browser-facing derivatives.
+
+Do not recreate the retired temporary `记得整理/` folder. Update `07_PersonalSite/notes/materials-inventory.md` and `07_PersonalSite/data/showcase.json` whenever new material is added.
 
 ## Update Integrated Backend Source
 
@@ -127,3 +153,5 @@ $env:YUSU_KAOYAN_WORKSPACE = "D:\path\to\000考研"
 ```
 
 After the exam project updates CSV/Markdown/source data, rebuild the dashboard in that project and refresh `/kaoyan/`. Do not commit the generated dashboard HTML or raw `output/` roster exports into the YUSU vault.
+
+The `/kaoyan/` route injects a fixed `返回 YUSU` link into the served response. Do not edit the source dashboard HTML just to add the portal return control.

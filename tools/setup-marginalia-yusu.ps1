@@ -41,12 +41,20 @@ function Find-Python311 {
         return (Resolve-Path -LiteralPath $env:YUSU_MARGINALIA_PYTHON).Path
     }
     $known = @(
-        "F:\Project\Simple Oscilloscope\.venv\python.exe"
+        "F:\AcademicHub\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe",
+        "C:\Users\yusu\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
     )
     foreach ($candidate in $known) {
         if (Test-Python311 $candidate) { return (Resolve-Path -LiteralPath $candidate).Path }
     }
-    throw "No repo-safe Python 3.11+ found. Set -Python or YUSU_MARGINALIA_PYTHON to a non-C-drive interpreter."
+    if ($env:YUSU_ALLOW_PROJECT_PYTHON_FALLBACK -eq "1") {
+        $legacy = "F:\Project\Simple Oscilloscope\.venv\python.exe"
+        if (Test-Python311 $legacy) {
+            Write-Warning "Using legacy project venv fallback. Prefer setting YUSU_MARGINALIA_PYTHON to a standalone Python."
+            return (Resolve-Path -LiteralPath $legacy).Path
+        }
+    }
+    throw "No repo-safe Python 3.11+ found. Set -Python or YUSU_MARGINALIA_PYTHON to a standalone interpreter."
 }
 
 function Set-EnvValue {

@@ -237,13 +237,15 @@ Verification on 2026-06-05:
 
 ## Deployment Rule Learned In V0.3
 
-Before installing a new runtime, search this knowledge vault for existing project toolchains. In this integration, PATH only exposed Python 3.7 and `uv` was absent, but `01_Projects/simple-oscilloscope/02_runbook.md` already recorded a Python 3.11 venv. The working interpreter was:
+Before installing a new runtime, search this knowledge vault for existing toolchains. Do not bind this management vault to another active project venv as a long-term dependency.
+
+The initial 2026-06-04 deployment temporarily used the Simple Oscilloscope Python 3.11 venv because PATH only exposed old Python builds and `uv` was absent. That workaround was retired on 2026-06-20. Current Windows setup should use a standalone interpreter, preferably the Codex runtime Python stored on F:
 
 ```text
-F:\Project\Simple Oscilloscope\.venv\python.exe
+F:\AcademicHub\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe
 ```
 
-Use known repo-local or project-local interpreters before downloading new ones.
+`C:\Users\yusu\.cache\codex-runtimes` is a junction to `F:\AcademicHub\.cache\codex-runtimes`, so seeing the C path in tool output does not mean the runtime cache is consuming C drive space.
 
 ## Windows Setup
 
@@ -256,11 +258,13 @@ From `F:\AcademicHub\0#YUSU`:
 The setup script:
 
 1. Initializes `vendor/marginalia` if the submodule is missing.
-2. Finds Python 3.11+ from `YUSU_MARGINALIA_PYTHON` or the known Simple Oscilloscope venv.
+2. Finds Python 3.11+ from `-Python`, `YUSU_MARGINALIA_PYTHON`, or the known F-drive Codex runtime Python.
 3. Creates `.tools/marginalia-venv/`.
 4. Installs `vendor/marginalia` editable into that venv.
 5. Initializes `.marginalia-yusu/`.
 6. Keeps `TEMP`, `TMP`, `PIP_CACHE_DIR`, `HOME`, and `USERPROFILE` inside this repo during setup/run.
+
+The legacy Simple Oscilloscope fallback is disabled by default and only allowed when `YUSU_ALLOW_PROJECT_PYTHON_FALLBACK=1` is deliberately set for emergency recovery.
 
 Run the CLI for isolated upstream debugging only:
 
@@ -478,7 +482,7 @@ An MCP wrapper is not required yet. The first stable integration point is the co
 Verified on 2026-06-04:
 
 - `vendor/marginalia` cloned as a submodule at `70f28bc381aafd86f047f9fe422c594c86d4330e`.
-- Repo-local venv created at `.tools/marginalia-venv/` using Python `3.11.15` from `F:\Project\Simple Oscilloscope\.venv\python.exe`.
+- Repo-local venv was initially created at `.tools/marginalia-venv/` using Python `3.11.15` from `F:\Project\Simple Oscilloscope\.venv\python.exe`; this was a bootstrap workaround and is now superseded.
 - `pip install -e .\vendor\marginalia` succeeded inside `.tools/marginalia-venv/`.
 - `marginalia --help` succeeded.
 - `.marginalia-yusu/.env` was initialized with `MARGINALIA_HOME=F:/AcademicHub/0#YUSU/.marginalia-yusu/data`.
@@ -487,6 +491,12 @@ Verified on 2026-06-04:
 - API server verified at `http://127.0.0.1:8000/health` with placeholder key and `WORKER_ENABLED=false`.
 - Browser UI verified at `http://127.0.0.1:5173/`; Playwright confirmed the Chinese navigation pages: `聊天`, `资料库`, `搜索`, `设置`.
 - Settings page verified server state: `MARGINALIA_HOME=F:\AcademicHub\0#YUSU\.marginalia-yusu\data`, SQLite, mirror storage, worker disabled.
+
+Runtime rebuild on 2026-06-20:
+
+- `C:\Users\yusu\.cache\codex-runtimes` was migrated to a junction targeting `F:\AcademicHub\.cache\codex-runtimes`.
+- `.tools\marginalia-venv/` was rebuilt with Python `3.12.13` from `F:\AcademicHub\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe`.
+- `tools\run-yusu-personal-site.ps1` now rejects a venv whose `pyvenv.cfg` still references `Simple Oscilloscope`.
 
 `/ingest --all` is intentionally not complete until the user configures a real LLM API key. A placeholder key is acceptable only for read-only `/check`; it must not be written to `.env`.
 

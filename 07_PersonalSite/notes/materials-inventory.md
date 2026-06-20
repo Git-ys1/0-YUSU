@@ -1,25 +1,28 @@
 # Personal Site Materials Inventory
 
-Raw folder: `记得整理/`
+Raw folder: `07_PersonalSite/media/raw/`
+
+The previous temporary inbox `记得整理/` was retired on 2026-06-20 after its contents were sorted into this formal media library.
 
 ## Video Reference
 
 | File | Role | Notes |
 |---|---|---|
-| `个人站.mp4` | Design reference only | 4:25, 1080p, dark portfolio/tutorial style. Do not treat its fictional profile content as YUSU facts. |
+| `raw/reference/个人站.mp4` | Design reference only | 4:25, 1080p, dark portfolio/tutorial style. Do not treat its fictional profile content as YUSU facts. |
+| `derived/reference/personal-site-reference-contact-sheet.jpg` | Full time-axis reference read | Generated from the full 4:25 video so future passes do not rely on a few isolated screenshots. |
 
 ## Certificates And Award Evidence
 
 | File | Structured Meaning | Source Type | Routing |
 |---|---|---|---|
-| `26北交电气杯校赛-二等奖.jpg` | `实验室清扫巡检车`, 2026 北京交通大学“电气杯”科技创新大赛二等奖 | Certificate image | Personal site proof wall; CleanScout-related evidence |
-| `26北交节能减排校赛-二等奖.jpg` | `实验室清扫巡检车`, 2026 北京交通大学大学生节能减排社会实践与科技竞赛二等奖 | Certificate image | Personal site proof wall; CleanScout-related evidence |
-| `26北交挑战杯校赛-铜奖.jpg` | `实验室清扫巡检车`, 2026 北京交通大学“挑战杯”大学生创业计划竞赛铜奖 | Certificate image | Personal site proof wall; CleanScout-related evidence |
-| `26北交挑战杯校赛-铜奖 .jpg` | Same certificate as above, lower-size alternate scan | Certificate image | Keep as raw alternate; default display should use the clearer file without the trailing-space name. |
-| `26北交数模校赛-二等奖.jpg` | 2026 北京交通大学大学生数学建模竞赛二等奖 | Certificate image | Personal site proof wall; independent modeling achievement |
-| `25北交数模校赛-二等奖.jpg` | 2025 北京交通大学大学生数学建模竞赛二等奖 | Certificate image | Personal site proof wall; independent modeling achievement |
-| `25国创赛北京赛区-三等奖.pdf` | 中国国际大学生创新大赛 2025 北京赛区三等奖, `融合素质教育课程体系建设` | PDF certificate | Personal site proof wall; text-extracted source available |
-| `P020260526399177509374.docx` | 第八届北京市大学生节能节水低碳减排社会实践与科技竞赛获奖名单公示 | Official/public award-list document | Structured rows include `C832` and `A450`; see below |
+| `raw/awards/26北交电气杯校赛-二等奖.jpg` | `实验室清扫巡检车`, 2026 北京交通大学“电气杯”科技创新大赛二等奖 | Certificate image | Personal site proof wall; CleanScout-related evidence |
+| `raw/awards/26北交节能减排校赛-二等奖.jpg` | `实验室清扫巡检车`, 2026 北京交通大学大学生节能减排社会实践与科技竞赛二等奖 | Certificate image | Personal site proof wall; CleanScout-related evidence |
+| `raw/awards/26北交挑战杯校赛-铜奖.jpg` | `实验室清扫巡检车`, 2026 北京交通大学“挑战杯”大学生创业计划竞赛铜奖 | Certificate image | Personal site proof wall; CleanScout-related evidence |
+| `raw/awards/26北交挑战杯校赛-铜奖-低尺寸备份.jpg` | Same certificate as above, lower-size alternate scan | Certificate image | Keep as raw alternate; default display should use the clearer main file. |
+| `raw/awards/26北交数模校赛-二等奖.jpg` | 2026 北京交通大学大学生数学建模竞赛二等奖 | Certificate image | Personal site proof wall; independent modeling achievement |
+| `raw/awards/25北交数模校赛-二等奖.jpg` | 2025 北京交通大学大学生数学建模竞赛二等奖 | Certificate image | Personal site proof wall; independent modeling achievement |
+| `raw/documents/25国创赛北京赛区-三等奖.pdf` | 中国国际大学生创新大赛 2025 北京赛区三等奖, `融合素质教育课程体系建设` | PDF certificate | Personal site proof wall; text-extracted source available |
+| `raw/documents/P020260526399177509374.docx` | 第八届北京市大学生节能节水低碳减排社会实践与科技竞赛获奖名单公示 | Official/public award-list document | Structured rows include `C832` and `A450`; see below |
 
 ## Extracted Public Award-List Rows
 
@@ -36,7 +39,8 @@ User routing note on 2026-06-18: `双碳智答` belongs to CarbonRAG. The curren
 
 | File | Source | Purpose |
 |---|---|---|
-| `07_PersonalSite/web/assets/achievements/25-bjtu-math-modeling-2025-landscape.jpg` | `记得整理/25北交数模校赛-二等奖.jpg` | Rotated landscape preview for the proof wall. The raw original remains linked by `打开原件`. |
+| `07_PersonalSite/web/assets/achievements/25-bjtu-math-modeling-2025-landscape.jpg` | `07_PersonalSite/media/raw/awards/25北交数模校赛-二等奖.jpg` | Rotated landscape preview for the proof wall. The raw original remains linked by `打开原件`. |
+| `07_PersonalSite/web/assets/reference/personal-site-reference-contact-sheet.jpg` | `07_PersonalSite/media/derived/reference/personal-site-reference-contact-sheet.jpg` | Browser-served copy of the video reference contact sheet. |
 
 ## Extracted PDF Text Note
 

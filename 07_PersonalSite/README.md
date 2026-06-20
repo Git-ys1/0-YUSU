@@ -4,7 +4,8 @@ YUSU 知识库的本地个人站与原生 Marginalia 工作台。运行时由一
 
 ## Architecture
 
-- Personal showcase UI: zero-build HTML/CSS/JavaScript under `web/`.
+- Personal showcase UI: zero-build HTML/CSS/JavaScript under `web/`, with MIT-licensed Lenis vendored under `web/vendor/lenis/`.
+- Personal site media: original material under `media/raw/`, derived browser material under `media/derived/` and `web/assets/`.
 - Integrated Marginalia UI source: React/Vite under `marginalia-ui/`.
 - Committed runtime UI: production build under `marginalia-dist/`.
 - Integrated Marginalia backend source: Python package under `marginalia-backend/marginalia/`.
@@ -16,6 +17,8 @@ YUSU 知识库的本地个人站与原生 Marginalia 工作台。运行时由一
 There is no iframe, frontend proxy, `5173` Vite server, or separate `8000` Marginalia API in normal use. `vendor/marginalia` remains the upstream reference copy; the integrated runtime uses `07_PersonalSite/marginalia-backend` and `07_PersonalSite/marginalia-ui`.
 
 The Kaoyan dashboard is different from Marginalia: it is a generated, self-contained HTML artifact whose source of truth remains the exam-prep workspace. The personal site mounts that artifact from its source path and does not copy its embedded score/verification data into this vault.
+
+The Kaoyan dashboard response includes a fixed `返回 YUSU` link injected by `server.py`; the source dashboard HTML in the exam-prep workspace is not modified for this portal control.
 
 ## First Setup
 
@@ -80,6 +83,15 @@ cd 'F:\AcademicHub\000资料相关\000考研'
 Then refresh `/kaoyan/`. No personal-site rebuild is required unless this repository's navigation or server routes changed.
 
 Privacy boundary: do not copy `00_打开-北交电气考研数据看板.html`, `output/`, `capture/`, or raw student roster exports into this vault. The local route reads the current artifact from the exam project only on `127.0.0.1`.
+
+## Media Library
+
+The old temporary `记得整理/` folder has been retired. Use:
+
+- `media/raw/awards/` for original certificate scans.
+- `media/raw/documents/` for public source documents.
+- `media/raw/reference/` for the original design-reference video.
+- `media/derived/` and `web/assets/` for browser-ready derivatives.
 
 ## Rebuild The Integrated UI
 

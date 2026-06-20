@@ -14,5 +14,5 @@ CleanScout Rover is yusu's laboratory cleaning and inspection robot project, spa
 ## Source Evidence
 
 - Project path: `F:\Project\CleanScout_rover`
-- Raw personal-site materials: `记得整理/`
+- Raw personal-site materials: `07_PersonalSite/media/raw/`
 - Personal site structured data: `07_PersonalSite/data/showcase.json`

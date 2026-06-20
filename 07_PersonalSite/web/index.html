@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>YUSU Local Archive</title>
     <link rel="icon" href="data:,">
-    <link rel="stylesheet" href="/styles.css?v=20260620-5">
+    <link rel="stylesheet" href="/vendor/lenis/lenis-1.3.23.css">
+    <link rel="stylesheet" href="/styles.css?v=20260620-8">
   </head>
   <body>
     <header class="topbar" aria-label="Site navigation">
@@ -14,44 +15,84 @@
         <span>YUSU</span>
       </a>
       <nav aria-label="Workspace views">
-        <a href="#home">主页</a>
-        <a href="#search">知识库</a>
+        <a href="#top">首页</a>
+        <a href="#proof">证据</a>
+        <a href="#projects">项目</a>
+        <a href="#search">搜索</a>
         <a href="/kaoyan/">考研看板</a>
         <a href="/marginalia/chat">Agent</a>
-        <a href="/marginalia/library">资料库</a>
       </nav>
-      <a class="top-action" href="/marginalia/chat">打开工作台</a>
+      <a class="top-action" href="/marginalia/chat">打开 Agent</a>
     </header>
 
     <main>
       <div id="home" class="home-view">
       <section id="top" class="hero" aria-labelledby="hero-title">
         <div class="hero-bg" aria-hidden="true"></div>
+        <div class="hero-scan" aria-hidden="true"></div>
         <div class="hero-copy reveal">
-          <p class="eyebrow">LOCAL KNOWLEDGE VAULT / V0.3</p>
+          <p class="eyebrow">LOCAL EVIDENCE SYSTEM / V0.4</p>
           <h1 id="hero-title">YUSU</h1>
-          <p class="hero-line">项目、竞赛证据和 Codex 知识库收束到一个本地入口。</p>
+          <p class="hero-line">把项目事实、竞赛证据、考研数据和 Codex 知识库收束到一个本地工作台。</p>
           <div class="hero-actions">
             <a class="primary-button" href="#proof">查看证据墙</a>
             <a class="ghost-button" href="#search">搜索知识库</a>
             <a class="ghost-button" href="/kaoyan/">考研看板</a>
           </div>
+          <div class="hero-status-grid" aria-label="Local workspace status">
+            <span><strong id="status-md">--</strong> Markdown</span>
+            <span><strong id="status-projects">--</strong> Projects</span>
+            <span><strong id="status-media">--</strong> Media</span>
+          </div>
         </div>
-        <aside class="hero-panel reveal" aria-label="Local status">
-          <p>LIVE VAULT</p>
-          <strong id="status-md">--</strong>
-          <span>Markdown files scanned locally</span>
+        <aside class="hero-panel reveal" aria-label="Workspace dock">
+          <p>WORKSPACE DOCK</p>
+          <a href="/marginalia/chat">Marginalia Agent</a>
+          <a href="/kaoyan/">北交电气考研看板</a>
+          <a href="/marginalia/library">资料库</a>
         </aside>
       </section>
 
       <section class="band intro-band" aria-labelledby="intro-title">
         <div>
-          <p class="section-kicker">WHY THIS EXISTS</p>
-          <h2 id="intro-title">不是作品集壳子，是本地事实入口。</h2>
+          <p class="section-kicker">USE / STYLE / MODULES</p>
+          <h2 id="intro-title">不是普通作品集，是本地事实入口。</h2>
         </div>
         <p class="intro-copy">
-          这里展示的是已经进入 YUSU 知识库或待整理素材的项目、证书、公开名单和运行经验。Codex 可以从同一个仓库读取，用户也可以直接浏览。
+          参考视频的核心不是照搬某个模板，而是先定义用途、风格和模块。本页现在围绕本地证据、长期项目、知识库检索和两个工作台入口组织。
         </p>
+      </section>
+
+      <section class="workspace-band" aria-labelledby="workspace-title">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">LOCAL WORKSPACES</p>
+            <h2 id="workspace-title">直接进入正在使用的工作面</h2>
+          </div>
+          <p>这些入口都由同一个 `8787` 本地服务承载，不再跳进孤立页面。</p>
+        </div>
+        <div class="workspace-grid">
+          <a class="workspace-link accent-green reveal" href="/marginalia/chat">
+            <span>01</span>
+            <strong>知识库 Agent</strong>
+            <em>跨项目问答、引用调查、长期记忆检索</em>
+          </a>
+          <a class="workspace-link accent-gold reveal" href="/kaoyan/">
+            <span>02</span>
+            <strong>考研数据看板</strong>
+            <em>080800 学硕、复试录取、源文件与目标线</em>
+          </a>
+          <a class="workspace-link accent-blue reveal" href="/marginalia/library">
+            <span>03</span>
+            <strong>资料库</strong>
+            <em>Markdown 镜像、文件状态、资料阅读</em>
+          </a>
+          <a class="workspace-link accent-red reveal" href="#search">
+            <span>04</span>
+            <strong>实时搜索</strong>
+            <em>直接扫本仓库 Markdown，不等语义索引</em>
+          </a>
+        </div>
       </section>
 
       <section id="proof" class="section" aria-labelledby="proof-title">
@@ -60,7 +101,7 @@
             <p class="section-kicker">PROOF WALL</p>
             <h2 id="proof-title">竞赛与项目证据</h2>
           </div>
-          <p>素材来自仓库内 `记得整理/`，原件通过本地服务读取。</p>
+          <p>素材已从临时收件夹迁入 `07_PersonalSite/media/`，原件通过本地服务读取。</p>
         </div>
         <div id="achievement-strip" class="achievement-strip" aria-live="polite"></div>
       </section>
@@ -74,6 +115,18 @@
           <p>每一项都指向共享知识库中的项目记忆。</p>
         </div>
         <div id="project-list" class="project-list"></div>
+      </section>
+
+      <section class="reference-section" aria-labelledby="reference-title">
+        <div class="reference-copy">
+          <p class="section-kicker">REFERENCE READ</p>
+          <h2 id="reference-title">完整视频被拆成时间轴参考，而不是几张截图。</h2>
+          <p>原视频是 4 分 25 秒的个人站方法论教程：先定义用途、风格、模块，再做深色首屏、精选项目、能力区、参考库和上线流程。YUSU 版本保留这个方法，不照搬其中虚构人设。</p>
+        </div>
+        <a class="reference-frame reveal" href="/media/raw/reference/个人站.mp4" target="_blank" rel="noreferrer">
+          <img src="/assets/reference/personal-site-reference-contact-sheet.jpg" alt="个人站参考视频时间轴抽帧">
+          <span>打开原始参考视频</span>
+        </a>
       </section>
 
       <section id="search" class="search-section" aria-labelledby="search-title">
@@ -111,6 +164,7 @@
       <span>Powered by live Markdown scan</span>
     </footer>
 
-    <script src="/app.js?v=20260620-5" type="module"></script>
+    <script src="/vendor/lenis/lenis-1.3.23.min.js"></script>
+    <script src="/app.js?v=20260620-8" type="module"></script>
   </body>
 </html>

@@ -18,7 +18,8 @@ The YUSU repository started as a shared Codex knowledge vault. V0.3 needs a huma
 
 ## Source Evidence
 
-- Raw materials: `记得整理/`
-- Reference video: `记得整理/个人站.mp4`
+- Raw materials: `07_PersonalSite/media/raw/`
+- Reference video: `07_PersonalSite/media/raw/reference/个人站.mp4`
+- Reference contact sheet: `07_PersonalSite/media/derived/reference/personal-site-reference-contact-sheet.jpg`
 - App path: `07_PersonalSite/`
 - Design note: `07_PersonalSite/notes/design-brief.md`

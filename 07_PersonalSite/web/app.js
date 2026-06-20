@@ -9,6 +9,8 @@ const docPathEl = document.querySelector("#doc-path");
 const docContentEl = document.querySelector("#doc-content");
 const docCloseEl = document.querySelector("#doc-close");
 const statusMd = document.querySelector("#status-md");
+const statusProjects = document.querySelector("#status-projects");
+const statusMedia = document.querySelector("#status-media");
 const siteVersion = document.querySelector("#site-version");
 
 const escapeHtml = (value) => String(value ?? "")
@@ -19,6 +21,23 @@ const escapeHtml = (value) => String(value ?? "")
   .replaceAll("'", "&#039;");
 
 const isImage = (source) => /\.(jpg|jpeg|png|webp)$/i.test(source || "");
+
+function initSmoothScroll() {
+  if (!window.Lenis || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return null;
+  }
+  const lenis = new window.Lenis({
+    anchors: true,
+    lerp: 0.08,
+    wheelMultiplier: 0.82,
+  });
+  function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+  return lenis;
+}
 
 function renderAchievements(items) {
   achievementsEl.innerHTML = items.map((item) => {
@@ -85,6 +104,25 @@ function wireReveal() {
   document.querySelectorAll(".reveal").forEach((node) => observer.observe(node));
 }
 
+function wireActiveNavigation() {
+  const navLinks = [...document.querySelectorAll(".topbar nav a[href^='#']")];
+  const sections = navLinks
+    .map((link) => document.querySelector(link.getAttribute("href")))
+    .filter(Boolean);
+  const observer = new IntersectionObserver((entries) => {
+    const visible = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if (!visible) {
+      return;
+    }
+    navLinks.forEach((link) => {
+      link.classList.toggle("active", link.getAttribute("href") === `#${visible.target.id}`);
+    });
+  }, { rootMargin: "-24% 0px -58% 0px", threshold: [0.08, 0.2, 0.5] });
+  sections.forEach((section) => observer.observe(section));
+}
+
 function renderSearchResults(results, query) {
   if (!query.trim()) {
     searchResultsEl.innerHTML = `<p class="empty">输入项目名、工具名、错误原文或经验关键词。</p>`;
@@ -141,11 +179,15 @@ async function boot() {
 
   document.title = `${showcase.site.name} Local Archive`;
   statusMd.textContent = status.markdownFiles;
+  statusProjects.textContent = status.projectDirectories;
+  statusMedia.textContent = status.rawMediaFiles;
   siteVersion.textContent = `${showcase.site.name} ${showcase.site.version}`;
 
   renderAchievements(showcase.achievements || []);
   renderProjects(showcase.projects || []);
+  initSmoothScroll();
   wireReveal();
+  wireActiveNavigation();
 
   renderSearchResults([], "");
 }

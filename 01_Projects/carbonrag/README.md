@@ -17,5 +17,5 @@ Full architecture, development history, known issues, and Memory Routing Audit s
 ## Known Evidence
 
 - User-provided classification on 2026-06-18: `双碳智答` belongs to CarbonRAG.
-- Public award-list source in this vault: `记得整理/P020260526399177509374.docx`.
+- Public award-list source in this vault: `07_PersonalSite/media/raw/documents/P020260526399177509374.docx`.
 - Extracted row: `A450 | 双碳智答-基于开源大模型的企业政策与碳管理智能服务系统 | 企（事）业单位 / 乡村振兴赛道 | 北京交通大学 | 二等奖 | 田斌贤、李浩天、钟立文、魏浩文、胡振恒`.

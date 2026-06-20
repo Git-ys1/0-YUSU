@@ -9,6 +9,7 @@
 | Codex AGENTS.md | instruction loading | global and project guidance |
 | Codex Skills | workflow playbooks | `yusu-kb` source lives in vault and is linked into both `.agents/skills` and `.codex/skills` |
 | Codex Memories | generated recall | not canonical memory storage |
+| Codex runtime cache | Windows disk hygiene | `C:\Users\yusu\.cache\codex-runtimes` should be a junction to `F:\AcademicHub\.cache\codex-runtimes`; `CODEX_HOME` alone does not move this cache |
 | Tailscale Serve | private remote access | HTTP Serve can be fallback when HTTPS cert domain is unavailable |
 | Playwright upload | browser automation | uploaded file must be under allowed roots |
 | SQLite CLI | local database repair | prefer stdin SQL over `.read C:\...` paths on Windows |
@@ -20,7 +21,7 @@
 | SuperYUSU session inventory | vault administrator audit | `tools/build-superyusu-session-inventory.ps1` scans local Codex session metadata/topic counts for this management vault without copying raw conversation text |
 | Find own Codex session | mature project ingestion | use `tools/find-own-codex-session.*` to resolve `CODEX_THREAD_ID` to the current engineer JSONL |
 | Mature project retro audit | mature project ingestion | use `tools/mature-project-retro-audit.*` with one explicit engineer JSONL as a read-only quality gate before completion |
-| Marginalia | deep KB research | source-integrated into the YUSU personal site: local backend source under `07_PersonalSite/marginalia-backend` and React source under `07_PersonalSite/marginalia-ui`; one `8787` FastAPI process serves `/v1` and `/marginalia/*`; optional BGE compute remains on `8011`; Markdown merges still require ingest/reindex |
+| Marginalia | deep KB research | source-integrated into the YUSU personal site: local backend source under `07_PersonalSite/marginalia-backend` and React source under `07_PersonalSite/marginalia-ui`; one `8787` FastAPI process serves `/v1` and `/marginalia/*`; Windows venv uses F-drive Codex runtime Python, not another project venv; Markdown merges still require ingest/reindex |
 | DeepSeek API | Marginalia LLM route | configure ignored `.marginalia-yusu/.env` with `tools/configure-marginalia-deepseek.*`; default model is `deepseek-v4-flash` |
 | Codex proxy LLM shim | historical local LLM API adapter | `tools/run-codex-proxy-llm-shim.*` converts streaming CLI proxy output into non-streaming chat-completions for Marginalia, but it is backup/historical after the DeepSeek route was verified |
 | CarbonRAG BGE-M3 embedding shim | local semantic recall | `tools/run-carbonrag-bge-embedding-server.*` exposes CarbonRAG local BGE-M3 as OpenAI-compatible `/v1/embeddings` for Marginalia |
@@ -32,8 +33,9 @@
 | PyInstaller | Windows desktop packaging | stop running packaged exe before rebuilding onedir dist |
 | Windows desktop launchers | Windows GUI tools | provide .bat launcher, project-local venv, startup logs, readiness checks, and old-process cleanup; Auto Play and invoice-archive-manager evidence |
 | FastAPI static React/Vite dist | local web-desktop apps | rebuild or freshness-check `frontend/dist` before serving; stale bundles can survive fixed source |
-| YUSU Personal Site | local vault UI | `tools/run-yusu-personal-site.*` starts one FastAPI process serving the showcase, live Markdown search, native Marginalia API, source-integrated React UI, and the external Kaoyan dashboard at `http://127.0.0.1:8787/` |
+| YUSU Personal Site | local vault UI | `tools/run-yusu-personal-site.*` starts one FastAPI process serving the showcase, live Markdown search, native Marginalia API, source-integrated React UI, and the external Kaoyan dashboard at `http://127.0.0.1:8787/`; formal media lives under `07_PersonalSite/media/` |
 | Sensitive generated dashboard mount | local portal integration | serve generated HTML from its source workspace through the portal process; do not copy raw score/roster dashboards into the shared vault |
+| Lenis | frontend scroll polish | MIT-licensed `lenis@1.3.23` is vendored under `07_PersonalSite/web/vendor/lenis/` for the local personal site; keep license with runtime files |
 | Windows GUI automation input stack | game automation | use RegisterHotKey, optional PyDirectInput, admin launcher, and window-mode fallback guidance |
 | CleanScout backend deploy scripts | cloud backend operations | load env before Prisma; record `.deploy-revision`; use bootstrap/check/update split |
 | Raw MJPEG relay | camera stream display | preserve ESP32-CAM native stream through worker/backend; avoid parse/repack if native page is smooth |
