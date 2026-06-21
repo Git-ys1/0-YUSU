@@ -61,7 +61,7 @@ export function StatusBar() {
   const totalBusy = busy.running + busy.pending;
 
   return (
-    <footer className="relative flex h-7 items-center justify-between border-t border-border bg-bg-subtle px-3 text-[11px] text-fg-muted">
+    <footer className="relative hidden h-7 items-center justify-between border-t border-border bg-bg-subtle px-3 text-[11px] text-fg-muted md:flex">
       <div className="flex items-center gap-3">
         <span
           className={cn(

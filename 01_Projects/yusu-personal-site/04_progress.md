@@ -55,8 +55,19 @@ Local V0.5 source-integrated personal site and Marginalia runtime are in place.
   - added a local run/sync/verify ending section
   - tightened mobile navigation into a single horizontal top bar with anchor offset
   - verified the result with system Chrome screenshots under `.tools/playwright-artifacts/`, including `yusu-v05d-desktop-method.png`, `yusu-v05c-mobile-home.png`, and `yusu-v05c-mobile-method.png`
+- Aligned the mounted Kaoyan dashboard route with the personal-site V0.5 visual system:
+  - The source dashboard remains in `F:\AcademicHub\000资料相关\000考研`, but its generated template now uses the same dark evidence-console palette, lime action color, glass top navigation, progress line, and hover glow treatment.
+  - `/kaoyan/` was verified through the running `8787` server on desktop and mobile; the injected `返回 YUSU` control is restyled by the dashboard route so it no longer clashes with the dark surface.
+  - No generated dashboard data or raw student-list exports were copied into the YUSU vault.
+- Reworked the native Marginalia UI surface after the user rejected the small embedded-frame appearance:
+  - Updated `07_PersonalSite/marginalia-ui/` source, not an iframe wrapper.
+  - Defaulted the integrated app to the YUSU dark workbench palette, with a lime action accent and dark panel hierarchy.
+  - Replaced the mobile left rail with a bottom navigation bar so chat/library/search/settings keep the full viewport width.
+  - Added real workspace spacing and bordered work panels for chat, library, search, and settings.
+  - Rebuilt `07_PersonalSite/marginalia-dist/` with `tools/build-yusu-integrated-marginalia-ui.ps1`.
+  - Verified `/marginalia/chat`, `/marginalia/library`, `/marginalia/search`, and `/marginalia/settings` on desktop/mobile with Playwright screenshots; no console errors or horizontal overflow.
 
 ## Last Meaningful Update
 
 - Date: 2026-06-21
-- Source: administrator V0.5 visual pass in the YUSU vault; reference-video frames and browser screenshots used as evidence
+- Source: Native Marginalia UI source/distro visual pass; `8787` desktop/mobile Playwright checks show dark workbench layout with no iframe/small-frame route

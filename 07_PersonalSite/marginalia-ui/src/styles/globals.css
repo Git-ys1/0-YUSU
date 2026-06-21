@@ -31,23 +31,23 @@
 }
 
 .dark {
-  --bg-base: 9 9 11;          /* zinc-950 */
-  --bg-subtle: 17 17 19;
-  --bg-muted: 24 24 27;
-  --bg-elevated: 28 28 31;
+  --bg-base: 5 7 6;
+  --bg-subtle: 10 14 12;
+  --bg-muted: 17 23 20;
+  --bg-elevated: 13 18 15;
 
-  --fg-base: 244 244 245;
-  --fg-muted: 161 161 170;
-  --fg-subtle: 113 113 122;
+  --fg-base: 245 244 233;
+  --fg-muted: 174 183 172;
+  --fg-subtle: 121 132 119;
 
-  --border-default: 39 39 42;
-  --border-strong: 63 63 70;
+  --border-default: 44 53 47;
+  --border-strong: 74 86 77;
 
-  --accent: 129 140 248;
-  --accent-fg: 17 24 39;
-  --accent-subtle: 30 27 75;
+  --accent: 185 255 62;
+  --accent-fg: 8 15 6;
+  --accent-subtle: 26 38 22;
 
-  --danger: 248 113 113;
+  --danger: 255 111 95;
   --danger-fg: 17 24 39;
 }
 
@@ -59,6 +59,12 @@ body {
   font-family: theme("fontFamily.sans");
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html.dark body {
+  background:
+    radial-gradient(circle at 18% 0%, rgb(var(--accent) / 0.08), transparent 30rem),
+    linear-gradient(180deg, rgb(8 11 9), rgb(var(--bg-base)));
 }
 
 /* Custom scrollbars to match the surface palette. WebKit only —

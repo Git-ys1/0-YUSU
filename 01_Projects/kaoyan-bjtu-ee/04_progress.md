@@ -97,6 +97,15 @@ Project initialized as a long-term exam-prep workspace. 2026 BJTU official admis
   - `http://127.0.0.1:8787/kaoyan/` serves the current root dashboard from the exam-prep workspace.
   - The integration is same-process/static-file mounting, not an iframe and not a second frontend service.
   - The generated dashboard and raw roster export files remain outside the shared YUSU vault to preserve the project privacy boundary.
+- Enhanced the dashboard score roster on 2026-06-21:
+  - The `成绩名册` table exposes `复试排名` beside `复试成绩`.
+  - The sort dropdown now labels the mode as `年份分段 · 复试排名`, and the table keeps year-break rows when sorting by retest rank.
+  - The roster summary shows current-filter initial-score average plus retest-score average for rows with published retest scores.
+- Aligned the dashboard visual system with the YUSU personal site on 2026-06-21:
+  - Updated `scripts/build_admission_dashboard.py` so the generated dashboard uses the personal-site dark evidence-console palette, fixed glass top navigation, lime action color, gold metric emphasis, dark tables, scroll progress, and pointer-follow glow surfaces.
+  - Kept the operational dashboard structure intact: KPIs, charts, filters, named roster, home-student verification, documents, and source links still render from the same embedded data.
+  - Added a route-only style override for the personal-site injected `返回 YUSU` control so `/kaoyan/` matches the dark dashboard without requiring a server restart.
+  - Verified local file and `http://127.0.0.1:8787/kaoyan/` route with Playwright desktop/mobile checks: no console errors, no horizontal overflow, top nav clears the title, metrics render, roster retest-rank sorting still returns 182 rows with 3 year breaks.
 
 ## Milestones
 
@@ -113,6 +122,8 @@ Project initialized as a long-term exam-prep workspace. 2026 BJTU official admis
 | 2026-06-17 | Student-list resume recovery hardened | `export_all.py`; `README.md`; one-page resume test | Recovered stale state from partial CSV row count; continued from page 319; raw rows reached 31,900; full export should resume with `--confirm-full-export` and no `--overwrite` |
 | 2026-06-17 | 2026 home-student status marked | `scripts/mark_home_students_2026.py`; updated CSV/XLSX/dashboard; static HTML checks | 201 retest rows and 157 proposed-admission rows marked from local roster same-name + `22` student-ID prefix rule |
 | 2026-06-20 | Dashboard mounted in YUSU personal site | `07_PersonalSite/server.py`; `/api/kaoyan/status`; `/kaoyan/` browser smoke | Same `8787` process serves the dashboard from the source workspace; generated data is not copied into the vault |
+| 2026-06-21 | Score roster retest-rank controls | `scripts/build_admission_dashboard.py`; regenerated dashboard; static HTML checks | Roster shows retest rank, year-segmented retest-rank sorting, and retest average for rows with published retest scores |
+| 2026-06-21 | Dashboard visual aligned to YUSU personal site | `scripts/build_admission_dashboard.py`; regenerated dashboard; Playwright desktop/mobile route checks | Dark evidence-console theme, glass top navigation, scroll progress, hover glow, route return-control override; `/kaoyan/` verified without console errors |
 
 ## In Progress
 
@@ -128,5 +139,5 @@ Project initialized as a long-term exam-prep workspace. 2026 BJTU official admis
 
 ## Last Meaningful Update
 
-- Date: 2026-06-17
-- Source: YUSU personal-site mount added after home-student marking pass; 2026 candidates now have home/non-home status in CSV, workbook, and dashboard using same-name + `22` student-ID prefix
+- Date: 2026-06-21
+- Source: Dashboard visual system aligned to the YUSU personal-site V0.5 style; regenerated local HTML and verified `/kaoyan/` desktop/mobile route with Playwright

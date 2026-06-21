@@ -163,10 +163,10 @@ export function LibraryPage() {
   const headerTargetName = selectedFolder?.name ?? t.library.root;
 
   return (
-    <div className="flex h-full min-w-0">
+    <div className="flex h-full min-w-0 gap-3 p-2 pb-20 md:p-4 md:pb-4">
       <div className={selectedEntry
-        ? "hidden w-full shrink-0 border-r border-border bg-bg-base sm:block sm:w-72"
-        : "block w-full shrink-0 border-r border-border bg-bg-base sm:w-72"}
+        ? "hidden h-full w-full shrink-0 overflow-hidden rounded-lg border border-border bg-bg-subtle/80 sm:block sm:w-80"
+        : "block h-full w-full shrink-0 overflow-hidden rounded-lg border border-border bg-bg-subtle/80 sm:w-80"}
       >
         <FolderTree
           selectedEntryId={selectedEntry?.id || null}
@@ -204,8 +204,8 @@ export function LibraryPage() {
       </div>
 
       <main className={selectedEntry
-        ? "relative flex min-w-0 flex-1 overflow-hidden bg-bg-base"
-        : "hidden min-w-0 flex-1 overflow-hidden bg-bg-base sm:flex"}
+        ? "relative flex min-w-0 flex-1 overflow-hidden rounded-lg border border-border bg-bg-elevated/70 shadow-[0_18px_60px_rgb(0_0_0_/_0.20)]"
+        : "hidden min-w-0 flex-1 overflow-hidden rounded-lg border border-border bg-bg-elevated/70 shadow-[0_18px_60px_rgb(0_0_0_/_0.20)] sm:flex"}
       >
         {selectedEntry && (
           <button
@@ -273,7 +273,7 @@ function EmptyViewer({
   return (
     <div
       onClick={onClick}
-      className="flex flex-1 cursor-default flex-col items-center justify-center text-center"
+      className="flex flex-1 cursor-default flex-col items-center justify-center p-6 text-center"
     >
       <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-bg-subtle text-fg-muted">
         <Inbox size={20} />

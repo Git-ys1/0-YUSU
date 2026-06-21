@@ -1,6 +1,6 @@
 /** Theme store (light/dark/system) persisted to localStorage.
- *  Mirrors the user's OS preference by default; a manual toggle
- *  overrides until the user clicks "system" again. */
+ *  Marginalia opens in the YUSU dark workbench by default; a manual
+ *  toggle still overrides it. */
 import { create } from "zustand";
 
 type ThemeMode = "light" | "dark" | "system";
@@ -29,12 +29,15 @@ function applyTheme(mode: ThemeMode): "light" | "dark" {
   return effective;
 }
 
+function initialMode(): ThemeMode {
+  if (typeof localStorage === "undefined") return "dark";
+  const stored = localStorage.getItem(STORAGE_KEY) as ThemeMode | null;
+  return stored && stored !== "system" ? stored : "dark";
+}
+
 export const useTheme = create<ThemeState>((set, get) => ({
-  mode:
-    (typeof localStorage !== "undefined"
-      && (localStorage.getItem(STORAGE_KEY) as ThemeMode | null))
-    || "system",
-  effective: "light",
+  mode: initialMode(),
+  effective: "dark",
   setMode: (m) => {
     if (typeof localStorage !== "undefined") localStorage.setItem(STORAGE_KEY, m);
     set({ mode: m, effective: applyTheme(m) });

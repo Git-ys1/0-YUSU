@@ -66,8 +66,8 @@ export function SettingsPage() {
   const ctx = useServerCtx();
   const { t } = useI18n();
   return (
-    <div className="h-full overflow-y-auto px-8 py-8">
-      <div className="mx-auto max-w-2xl space-y-6">
+    <div className="h-full overflow-y-auto px-4 py-5 pb-20 md:px-8 md:py-8 md:pb-8">
+      <div className="mx-auto max-w-3xl space-y-5">
         <h1 className="text-xl font-semibold">{t.settings.title}</h1>
 
         <PreferencesSection ctx={ctx} />
@@ -667,7 +667,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-md border border-border bg-bg-subtle p-4">
+    <section className="rounded-lg border border-border bg-bg-elevated/70 p-4">
       <h2 className="text-sm font-semibold">{title}</h2>
       {subtitle && <p className="mt-0.5 text-xs text-fg-subtle">{subtitle}</p>}
       <div className="mt-4">{children}</div>
@@ -685,12 +685,12 @@ function Row({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex flex-col items-stretch justify-between gap-2 sm:flex-row sm:items-center sm:gap-4">
       <div className="min-w-0 flex-1">
         <div className="text-sm font-medium">{label}</div>
         {hint && <div className="mt-0.5 text-xs text-fg-subtle">{hint}</div>}
       </div>
-      <div className="shrink-0">{children}</div>
+      <div className="sm:shrink-0">{children}</div>
     </div>
   );
 }
@@ -804,7 +804,7 @@ function TextInput({
         if (e.key === "Enter") (e.target as HTMLInputElement).blur();
       }}
       className={cn(
-        "rounded border border-border bg-bg-base px-2 py-1 font-mono text-xs disabled:opacity-50",
+        "max-w-full rounded border border-border bg-bg-base px-2 py-1 font-mono text-xs disabled:opacity-50",
         className,
       )}
     />

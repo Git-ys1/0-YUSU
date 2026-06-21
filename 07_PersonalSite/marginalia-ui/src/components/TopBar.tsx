@@ -9,12 +9,13 @@ export function TopBar() {
   const { t } = useI18n();
 
   return (
-    <header className="flex h-12 items-center justify-between border-b border-border bg-bg-base/80 px-4 backdrop-blur">
-      <div className="flex items-center gap-2 text-sm text-fg-muted">
-        <span className="font-medium text-fg-base">Marginalia</span>
+    <header className="flex h-14 items-center justify-between border-b border-border bg-bg-base/80 px-4 backdrop-blur md:px-5">
+      <div className="flex min-w-0 items-center gap-2 text-sm text-fg-muted">
+        <span className="truncate font-semibold text-fg-base">Marginalia Agent</span>
+        <span className="hidden text-xs text-fg-subtle sm:inline">YUSU 知识库</span>
       </div>
 
-      <div className="flex items-center gap-1 rounded-md border border-border bg-bg-subtle p-0.5">
+      <div className="flex shrink-0 items-center gap-1 rounded-md border border-border bg-bg-subtle p-0.5">
         <ThemeBtn current={mode} mode="light" title={t.theme.light} onClick={() => setMode("light")}>
           <Sun size={14} />
         </ThemeBtn>

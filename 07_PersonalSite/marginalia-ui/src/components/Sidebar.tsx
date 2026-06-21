@@ -25,12 +25,13 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "flex shrink-0 flex-col border-r border-border bg-bg-subtle",
-        compact ? "w-14" : "w-14 md:w-56",
+        "fixed inset-x-3 bottom-3 z-50 flex h-14 shrink-0 items-center rounded-lg border border-border bg-bg-subtle/95 px-2 shadow-[0_18px_45px_rgb(0_0_0_/_0.35)] backdrop-blur",
+        "md:static md:inset-auto md:z-auto md:h-auto md:flex-col md:items-stretch md:rounded-none md:border-y-0 md:border-l-0 md:border-r md:bg-bg-subtle/90 md:px-0 md:shadow-none",
+        compact ? "md:w-14" : "md:w-52",
       )}
     >
       <div className={cn(
-        "flex items-center gap-2 py-4",
+        "hidden items-center gap-2 py-4 md:flex",
         compact ? "justify-center px-2" : "justify-center px-2 md:justify-start md:px-4",
       )}>
         <div className="flex h-8 w-8 items-center justify-center rounded-md bg-accent text-accent-fg">
@@ -44,15 +45,15 @@ export function Sidebar() {
         )}
       </div>
 
-      <nav className="flex flex-col gap-0.5 px-2">
+      <nav className="flex flex-1 items-center justify-around gap-1 px-1 md:flex-none md:flex-col md:items-stretch md:justify-start md:px-2">
         <a
           href="/"
           title="YUSU 主页"
           className={cn(
-            "mb-2 flex items-center rounded-md border-b border-border text-sm text-fg-muted transition-colors hover:bg-bg-muted hover:text-fg-base",
+            "flex h-10 w-10 items-center justify-center rounded-md text-sm text-fg-muted transition-colors hover:bg-bg-muted hover:text-fg-base md:mb-2 md:h-auto md:w-full md:border-b md:border-border",
             compact
-              ? "justify-center px-2 py-2"
-              : "justify-center px-2 py-2 md:justify-start md:gap-2.5 md:px-2.5 md:py-1.5",
+              ? "md:px-2 md:py-2"
+              : "md:justify-start md:gap-2.5 md:px-2.5 md:py-1.5",
           )}
         >
           <House size={16} strokeWidth={2} />
@@ -68,11 +69,11 @@ export function Sidebar() {
               title={label}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center rounded-md text-sm transition-colors",
+                  "flex h-10 w-10 items-center justify-center rounded-md text-sm transition-colors md:h-auto md:w-full",
                   "hover:bg-bg-muted",
                   compact
-                    ? "justify-center px-2 py-2"
-                    : "justify-center px-2 py-2 md:justify-start md:gap-2.5 md:px-2.5 md:py-1.5",
+                    ? "md:px-2 md:py-2"
+                    : "md:justify-start md:gap-2.5 md:px-2.5 md:py-1.5",
                   isActive
                     ? "bg-bg-muted text-fg-base font-medium"
                     : "text-fg-muted",

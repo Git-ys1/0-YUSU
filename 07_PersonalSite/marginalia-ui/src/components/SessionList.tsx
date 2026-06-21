@@ -62,11 +62,11 @@ export function SessionList({
   }, [activeSessionId, onNewChat, t]);
 
   return (
-    <aside className="hidden h-full w-60 shrink-0 flex-col border-r border-border bg-bg-subtle lg:flex">
+    <aside className="hidden h-full w-64 shrink-0 flex-col overflow-hidden rounded-lg border border-border bg-bg-subtle/80 lg:flex">
       <div className="border-b border-border p-3">
         <button
           onClick={onNewChat}
-          className="flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-bg-base px-3 py-2 text-sm hover:bg-bg-muted"
+          className="flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-bg-elevated px-3 py-2 text-sm hover:bg-bg-muted"
         >
           <Plus size={13} /> {t.chat.newChat}
         </button>

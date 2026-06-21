@@ -233,16 +233,16 @@ export function ChatPage() {
   }, [reset]);
 
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className="flex h-full gap-3 overflow-hidden p-2 pb-20 md:p-4 md:pb-4">
       <SessionList
         activeSessionId={sessionId}
         onSelect={loadSession}
         onNewChat={newChat}
         refreshSignal={refreshSignal}
       />
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6 sm:py-6">
-          <div className="mx-auto max-w-5xl">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-lg border border-border bg-bg-elevated/70 shadow-[0_18px_60px_rgb(0_0_0_/_0.22)]">
+        <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6">
+          <div className="mx-auto max-w-4xl">
             {openErr && (
               <div className="mb-4 rounded-md border border-danger/30 bg-danger/10 p-3 text-sm text-danger">
                 {openErr}
@@ -258,8 +258,8 @@ export function ChatPage() {
           </div>
         </div>
 
-        <div className="border-t border-border bg-bg-subtle px-3 py-3 sm:px-6">
-          <div className="mx-auto flex max-w-5xl flex-wrap items-end gap-2 sm:flex-nowrap">
+        <div className="border-t border-border bg-bg-subtle/95 px-4 py-3 sm:px-6">
+          <div className="mx-auto flex max-w-4xl flex-wrap items-end gap-2 sm:flex-nowrap">
             <div
               className="order-2 flex h-9 shrink-0 overflow-hidden rounded-md border border-border bg-bg-base p-0.5 sm:order-1"
               aria-label={i18n.chat.mode}
@@ -336,7 +336,7 @@ export function ChatPage() {
               </button>
             )}
           </div>
-          <div className="mx-auto mt-1 max-w-3xl text-[11px] text-fg-subtle">
+          <div className="mx-auto mt-1 max-w-4xl text-[11px] text-fg-subtle">
             {sessionId
               ? <>{i18n.chat.session} <span className="font-mono">{sessionId.slice(0, 8)}...</span></>
               : i18n.chat.sessionOpens}
@@ -349,7 +349,7 @@ export function ChatPage() {
 
 function ChatEmpty({ t }: { t: I18nStrings }) {
   return (
-    <div className="flex h-full min-h-[40vh] flex-col items-center justify-center text-center">
+    <div className="flex h-full min-h-[52vh] flex-col items-center justify-center px-4 text-center">
       <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-accent-subtle text-accent">
         <Sparkles size={22} />
       </div>
