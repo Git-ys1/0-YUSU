@@ -71,7 +71,7 @@ function renderAchievementCard(item, index) {
   const imageFit = item.imageFit === "cover" ? "cover" : "contain";
   const media = isImage(item.source)
     ? `<img class="achievement-image ${imageFit}" src="${preview}" alt="${escapeHtml(item.award)}">`
-    : `<div class="doc-source">${escapeHtml(item.source)}</div>`;
+    : `<div class="doc-source">${escapeHtml(item.previewLabel || item.award || item.source)}</div>`;
 
   const people = (item.people || []).slice(0, 5).join(" / ");
   const tags = (item.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");

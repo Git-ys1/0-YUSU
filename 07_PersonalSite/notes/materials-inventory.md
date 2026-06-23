@@ -18,12 +18,13 @@ The previous temporary inbox `记得整理/` was retired on 2026-06-20 after its
 | `raw/awards/26北交电气杯校赛-二等奖.jpg` | `实验室清扫巡检车`, 2026 北京交通大学“电气杯”科技创新大赛二等奖 | Certificate image | Personal site proof wall; CleanScout-related evidence |
 | `raw/awards/26北交节能减排校赛-二等奖.jpg` | `实验室清扫巡检车`, 2026 北京交通大学大学生节能减排社会实践与科技竞赛二等奖 | Certificate image | Personal site proof wall; CleanScout-related evidence |
 | `raw/awards/26北交挑战杯校赛-铜奖.jpg` | `实验室清扫巡检车`, 2026 北京交通大学“挑战杯”大学生创业计划竞赛铜奖 | Certificate image | Personal site proof wall; CleanScout-related evidence |
-| `raw/awards/26北交挑战杯校赛-铜奖-低尺寸备份.jpg` | Same certificate as above, lower-size alternate scan | Certificate image | Keep as raw alternate; default display should use the clearer main file. |
+| `raw/awards/26北交挑战杯校赛-铜奖-低尺寸备份.jpg` | `凌果智行`, 2026 北京交通大学“挑战杯”大学生创业计划竞赛铜奖；李浩天为技术顾问 | Certificate image | Personal site proof wall; separate campus award, not a CleanScout backup |
 | `raw/awards/26北交数模校赛-二等奖.jpg` | 2026 北京交通大学大学生数学建模竞赛二等奖 | Certificate image | Personal site proof wall; independent modeling achievement |
 | `raw/awards/25北交数模校赛-二等奖.jpg` | 2025 北京交通大学大学生数学建模竞赛二等奖 | Certificate image | Personal site proof wall; independent modeling achievement |
 | `raw/documents/25国创赛北京赛区-三等奖.pdf` | 中国国际大学生创新大赛 2025 北京赛区三等奖, `融合素质教育课程体系建设` | PDF certificate | Personal site proof wall; text-extracted source available |
 | `raw/documents/P020260526399177509374.docx` | 第八届北京市大学生节能节水低碳减排社会实践与科技竞赛获奖名单公示 | Official/public award-list document | Structured rows include `C832` and `A450`; see below |
 | `raw/documents/eeeic-2026-provincial-awards.pdf` | 第五届高校电气电子工程创新大赛省（区域）赛获奖名单，`010100042D27` | Official/public award-list PDF | CleanScout-related placeholder evidence; certificate and full team details pending |
+| `raw/documents/关于公示2026年北京交通大学大学生电子设计竞赛评审结果的通知 (1).doc` | 2026 北京交通大学大学生电子设计竞赛获奖名单公示；组号 `28` 三等奖 | Official/public award-list document | Personal site proof wall; certificate pending |
 
 ## Extracted Public Award-List Rows
 
@@ -42,6 +43,12 @@ From `eeeic-2026-provincial-awards.pdf` and the user-provided platform screensho
 
 Official notice page: `https://eeeic.ces.org.cn/CompetitionInfo/A3-3/730d482f-870a-4347-be78-9f9efc6fdf7b`.
 
+From `关于公示2026年北京交通大学大学生电子设计竞赛评审结果的通知 (1).doc`:
+
+| 组号 | 竞赛 | 学校 | 奖项 | 团队成员 |
+|---|---|---|---|---|
+| 28 | 2026 北京交通大学大学生电子设计竞赛 | 北京交通大学 | 三等奖 | 魏浩文、蓝俊豪、李浩天 |
+
 User routing note on 2026-06-18: `双碳智答` belongs to CarbonRAG. The current vault only records a lightweight CarbonRAG placeholder; the full CarbonRAG project history still needs a project-owner ingestion.
 
 ## Display Level Routing
@@ -51,7 +58,7 @@ User routing note on 2026-06-18: `双碳智答` belongs to CarbonRAG. The curren
 | Level | Meaning | Current Count |
 |---|---|---|
 | `provincial` | 省级、北京市级或官方省（区域）赛证据 | 4 |
-| `campus` | 校级竞赛证据 | 5 |
+| `campus` | 校级竞赛证据 | 7 |
 | `national` | 国赛证据，当前没有条目时不显示 | 0 |
 
 ## Generated Display Derivatives
