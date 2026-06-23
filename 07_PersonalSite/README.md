@@ -14,7 +14,7 @@ YUSU 知识库的本地个人站与原生 Marginalia 工作台。运行时由一
 - Data/runtime: ignored `.marginalia-yusu/` SQLite, mirror library, journal and semantic index.
 - Optional semantic compute: CarbonRAG BGE-M3 shim on `127.0.0.1:8011`.
 
-Current showcase visual version: `0.5-video-method-showcase`. It is based on direct review of the extracted reference-video contact sheet and keeps the video method as visible navigation and section structure rather than a small embedded preview.
+Current showcase visual version: `0.6-award-level-showcase`. It is based on direct review of the extracted reference-video contact sheet, keeps the video method as visible navigation and section structure, and now groups competition evidence by achievement level.
 
 There is no iframe, frontend proxy, `5173` Vite server, or separate `8000` Marginalia API in normal use. `vendor/marginalia` remains the upstream reference copy; the integrated runtime uses `07_PersonalSite/marginalia-backend` and `07_PersonalSite/marginalia-ui`.
 
@@ -94,6 +94,12 @@ The old temporary `记得整理/` folder has been retired. Use:
 - `media/raw/documents/` for public source documents.
 - `media/raw/reference/` for the original design-reference video.
 - `media/derived/` and `web/assets/` for browser-ready derivatives.
+
+Achievement entries in `data/showcase.json` use `level` for display grouping:
+
+- `provincial`: provincial, Beijing municipal, or official regional/provincial competition evidence.
+- `campus`: school-level evidence.
+- `national`: reserved for future national-level evidence; it is hidden when empty.
 
 ## Rebuild The Integrated UI
 

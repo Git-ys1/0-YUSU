@@ -44,6 +44,16 @@ Official notice page: `https://eeeic.ces.org.cn/CompetitionInfo/A3-3/730d482f-87
 
 User routing note on 2026-06-18: `双碳智答` belongs to CarbonRAG. The current vault only records a lightweight CarbonRAG placeholder; the full CarbonRAG project history still needs a project-owner ingestion.
 
+## Display Level Routing
+
+`07_PersonalSite/data/showcase.json` groups achievements into visible evidence lanes:
+
+| Level | Meaning | Current Count |
+|---|---|---|
+| `provincial` | 省级、北京市级或官方省（区域）赛证据 | 4 |
+| `campus` | 校级竞赛证据 | 5 |
+| `national` | 国赛证据，当前没有条目时不显示 | 0 |
+
 ## Generated Display Derivatives
 
 | File | Source | Purpose |

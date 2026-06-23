@@ -22,6 +22,11 @@ const escapeHtml = (value) => String(value ?? "")
   .replaceAll("'", "&#039;");
 
 const isImage = (source) => /\.(jpg|jpeg|png|webp)$/i.test(source || "");
+const achievementLevels = [
+  { key: "national", label: "国赛", tone: "gold" },
+  { key: "provincial", label: "省级 / 区域赛", tone: "green" },
+  { key: "campus", label: "校级", tone: "blue" },
+];
 
 function initSmoothScroll() {
   if (!window.Lenis || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -41,34 +46,53 @@ function initSmoothScroll() {
 }
 
 function renderAchievements(items) {
-  achievementsEl.innerHTML = items.map((item, index) => {
-    const preview = item.previewMedia || item.media;
-    const imageFit = item.imageFit === "cover" ? "cover" : "contain";
-    const media = isImage(item.source)
-      ? `<img class="achievement-image ${imageFit}" src="${preview}" alt="${escapeHtml(item.award)}">`
-      : `<div class="doc-source">${escapeHtml(item.source)}</div>`;
+  const groups = achievementLevels
+    .map((level) => ({
+      ...level,
+      items: items.filter((item) => item.level === level.key),
+    }))
+    .filter((group) => group.items.length > 0);
 
-    const people = (item.people || []).slice(0, 5).join(" / ");
-    const tags = (item.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
+  achievementsEl.innerHTML = groups.map((group) => `
+    <section class="achievement-group achievement-group-${group.tone}" aria-label="${escapeHtml(group.label)}">
+      <div class="achievement-group-head">
+        <h3>${escapeHtml(group.label)}</h3>
+        <span>${group.items.length}</span>
+      </div>
+      <div class="achievement-list">
+        ${group.items.map((item, index) => renderAchievementCard(item, index)).join("")}
+      </div>
+    </section>
+  `).join("");
+}
 
-    return `
-      <article class="achievement glow-surface reveal">
-        <div class="achievement-media">${media}</div>
-        <div class="achievement-body">
-          <span class="item-index">${String(index + 1).padStart(2, "0")}</span>
-          <h3>${escapeHtml(item.title)}</h3>
-          <p class="award">${escapeHtml(item.award)}</p>
-          <div class="meta">
-            <span>${escapeHtml(item.date)}</span>
-            <span>${escapeHtml(item.project)}</span>
-            <span>${escapeHtml(people)}</span>
-          </div>
-          <div class="tags">${tags}</div>
-          <a class="source-link" href="${item.media}" target="_blank" rel="noreferrer">打开原件</a>
+function renderAchievementCard(item, index) {
+  const preview = item.previewMedia || item.media;
+  const imageFit = item.imageFit === "cover" ? "cover" : "contain";
+  const media = isImage(item.source)
+    ? `<img class="achievement-image ${imageFit}" src="${preview}" alt="${escapeHtml(item.award)}">`
+    : `<div class="doc-source">${escapeHtml(item.source)}</div>`;
+
+  const people = (item.people || []).slice(0, 5).join(" / ");
+  const tags = (item.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
+
+  return `
+    <article class="achievement glow-surface reveal">
+      <div class="achievement-media">${media}</div>
+      <div class="achievement-body">
+        <span class="item-index">${String(index + 1).padStart(2, "0")}</span>
+        <h3>${escapeHtml(item.title)}</h3>
+        <p class="award">${escapeHtml(item.award)}</p>
+        <div class="meta">
+          <span>${escapeHtml(item.date)}</span>
+          <span>${escapeHtml(item.project)}</span>
+          <span>${escapeHtml(people)}</span>
         </div>
-      </article>
-    `;
-  }).join("");
+        <div class="tags">${tags}</div>
+        <a class="source-link" href="${item.media}" target="_blank" rel="noreferrer">打开原件</a>
+      </div>
+    </article>
+  `;
 }
 
 function renderProjects(items) {
