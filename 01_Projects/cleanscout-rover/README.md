@@ -6,7 +6,7 @@
 - Project Slug: `cleanscout-rover`
 - Primary Path: `F:\Project\CleanScout_rover`
 - Status: active
-- Last Updated: 2026-06-18
+- Last Updated: 2026-06-23
 - Maintainer/Source: yusu + project-specific Codex sessions
 
 ## Role Of This Entry

@@ -23,6 +23,7 @@ The previous temporary inbox `记得整理/` was retired on 2026-06-20 after its
 | `raw/awards/25北交数模校赛-二等奖.jpg` | 2025 北京交通大学大学生数学建模竞赛二等奖 | Certificate image | Personal site proof wall; independent modeling achievement |
 | `raw/documents/25国创赛北京赛区-三等奖.pdf` | 中国国际大学生创新大赛 2025 北京赛区三等奖, `融合素质教育课程体系建设` | PDF certificate | Personal site proof wall; text-extracted source available |
 | `raw/documents/P020260526399177509374.docx` | 第八届北京市大学生节能节水低碳减排社会实践与科技竞赛获奖名单公示 | Official/public award-list document | Structured rows include `C832` and `A450`; see below |
+| `raw/documents/eeeic-2026-provincial-awards.pdf` | 第五届高校电气电子工程创新大赛省（区域）赛获奖名单，`010100042D27` | Official/public award-list PDF | CleanScout-related placeholder evidence; certificate and full team details pending |
 
 ## Extracted Public Award-List Rows
 
@@ -32,6 +33,14 @@ From `P020260526399177509374.docx`:
 |---|---|---|---|---|---|
 | C832 | 面向实验室场景的低碳智能清扫巡检系统 | 主赛道 | 北京交通大学 | 三等奖 | 李浩天、胡振恒、钟立文、刘敬丹、魏浩文 |
 | A450 | 双碳智答-基于开源大模型的企业政策与碳管理智能服务系统 | 企（事）业单位 / 乡村振兴赛道 | 北京交通大学 | 二等奖 | 田斌贤、李浩天、钟立文、魏浩文、胡振恒 |
+
+From `eeeic-2026-provincial-awards.pdf` and the user-provided platform screenshot:
+
+| 编号 | 作品名称 | 赛道 | 高校 | 奖项 | 团队成员 |
+|---|---|---|---|---|---|
+| 010100042D27 | 实验室具身智能巡检与近场作业平台 | 赛道 D：其它电气电子工程相关技术 | 待证书/完整明细补齐 | 省（区域）赛三等奖 | 待证书/完整明细补齐 |
+
+Official notice page: `https://eeeic.ces.org.cn/CompetitionInfo/A3-3/730d482f-870a-4347-be78-9f9efc6fdf7b`.
 
 User routing note on 2026-06-18: `双碳智答` belongs to CarbonRAG. The current vault only records a lightweight CarbonRAG placeholder; the full CarbonRAG project history still needs a project-owner ingestion.
 

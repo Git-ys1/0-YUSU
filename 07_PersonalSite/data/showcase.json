@@ -3,7 +3,7 @@
     "name": "YUSU",
     "version": "0.5-video-method-showcase",
     "tagline": "项目、证据、知识库的本地入口",
-    "updated": "2026-06-21"
+    "updated": "2026-06-23"
   },
   "materials": {
     "rawRoot": "07_PersonalSite/media/raw",
@@ -96,6 +96,18 @@
       "source": "P020260526399177509374.docx",
       "media": "/media/raw/documents/P020260526399177509374.docx",
       "tags": ["低碳", "市赛名单", "机器人"]
+    },
+    {
+      "id": "cleanscout-eeeic-provincial-2026",
+      "title": "实验室具身智能巡检与近场作业平台",
+      "award": "第五届高校电气电子工程创新大赛省（区域）赛三等奖",
+      "date": "2026-06-23",
+      "project": "CleanScout Rover",
+      "people": ["李浩天"],
+      "source": "eeeic-2026-provincial-awards.pdf；编号 010100042D27",
+      "media": "/media/raw/documents/eeeic-2026-provincial-awards.pdf",
+      "tags": ["高校电气电子工程创新大赛", "省赛名单", "机器人"],
+      "note": "Certificate and full team details pending. Official PDF page 11 verifies work number 010100042D27 in the provincial third-prize D-track list; project title is from the user-provided platform screenshot."
     },
     {
       "id": "beijing-energy-saving-a450-2026",
