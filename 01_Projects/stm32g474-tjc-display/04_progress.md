@@ -69,6 +69,11 @@
 - HMI模拟器已稳定验证1T、3T、刷新、测试按钮、复合时域波形、最多3根频谱线和六项文本。
 - 已验证10.5/31.5/42 kHz场景（Upp 126.0 mV、Urms 40.93 mV）和120/240/480 kHz场景（Upp 136.1 mV、Urms 45.28 mV）。
 - 当前阶段冻结为V1.4全量融合稳定基线，后续只做真实输入标定、算法边界和实体屏回归微调。
+- 商家误发不可触摸屏后，已在V1.4稳定基线上加入KEY1（PB8/BOOT0）实体控制：短按切换1T/3T，长按执行原测试命令。
+- KEY1与HMI按钮统一进入`Display_ProcessButtonCommand()`，没有建立第二套显示状态机；EXTI只记录按下时刻，主循环处理松开与按压时长。
+- Keil ArmClang 6.7最终Clean Rebuild通过：0 errors、0 warnings；Code 56880 B、RO-data 25700 B、RW-data 52 B、ZI-data 48284 B。
+- 最终`ADC.hex`为232493字节，SHA-256为`36BC21B04451250138FFFA0F95174AC218E66342375379CFE893A96FAFB268D0`。
+- STM32CubeProgrammer 2.22.0已完成下载、校验和复位；实物确认KEY1短按、长按和原HMI按钮共存正常，冻结为V1.4.1实体按键兼容版。
 
 ## Evidence
 
@@ -111,3 +116,5 @@
 | 大于主栈的结果快照不得作为嵌套局部变量 | cross-project pitfall | `03_CrossProject/stm32-stlink-runtime-debugging.md` | written | 1084字节AnalyzerResult与1024字节Stack_Mem |
 | ArmClang升级后应复核半主机和argv选择符 | cross-project pitfall | `03_CrossProject/stm32-stlink-runtime-debugging.md` | written | `_sys_command_string`触发BKPT 0xAB |
 | 高计算负载下HMI接收不能只依赖主循环轮询 | project architecture | `03_decisions.md` | written | FFT期间USART3 ORE与中断接收修复 |
+| 本机STM32CubeProgrammer CLI应使用已知固定路径，禁止全盘递归搜索 | cross-project tooling | `03_CrossProject/tooling.md`与`06_Maps/tool-map.md` | written | 2026-07-30 KEY1固件烧录前已确认独立CLI路径 |
+| 同一业务动作的触摸按钮和实体按键必须汇入同一命令处理入口 | cross-project pitfall | `03_CrossProject/pitfalls.md`与`06_Maps/pitfall-map.md` | written | KEY1独立显示逻辑曾导致错误曲线，统一复用原按钮命令后实物验收通过 |
