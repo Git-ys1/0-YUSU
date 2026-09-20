@@ -20,11 +20,12 @@ Windows host deployment and GitHub private remote are operational. The vault is 
 - Added Marginalia V0.3 research layer and local LLM/embedding adapter notes.
 - Added a privacy-preserving SuperYUSU session inventory over 38 local rollout JSONL files.
 - Added mature project files `07_development_history.md`, `08_onboarding_from_zero.md`, `09_session_evidence.md`, and `10_project_summary.md` for this vault itself.
+- Accepted the 2026-09-20 multi-project ingestion round: CleanScout lower firmware, OrangePi AI and Vue3 updates; STM32G474 contest closure; WeCom DeepSeek Bot; Video to Codex Spec; mechanical-design and cross-project lessons.
+- Reconciled the project registry, project map, root index, and personal-site showcase with the accepted entries.
 
 ## In Progress
 
-- Running mature-project retrospective audit against the primary 0#YUSU session.
-- Keeping maps and cross-project routing aligned with the new mature entry.
+- Keeping Marginalia's derived projection and semantic index aligned after Markdown commits.
 
 ## Blocked
 
@@ -33,5 +34,5 @@ Windows host deployment and GitHub private remote are operational. The vault is 
 
 ## Last Meaningful Update
 
-- Date: 2026-06-09
-- Source: Codex session evidence inventory plus Git history in `F:\AcademicHub\0#YUSU`
+- Date: 2026-09-20
+- Source: administrator review of project entries, official award workbook, repository state, and local-site verification

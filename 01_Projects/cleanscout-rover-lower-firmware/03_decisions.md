@@ -326,6 +326,40 @@ Do not describe the first stage as "every frame full IK tracking". That wording 
 - `OrangePi/rk3588_ai/arm_tracking_demo/ARM_VISUAL_TRACKING_REPORT.md`
 - `docs/PLAN/C-5.0.3.md`
 
+## Decision: one MCU uses isolated USART2 motion and USART3 arm host protocols
+
+**Status**: accepted for combined-firmware candidate
+**Date**: 2026-07-19
+
+### Context
+
+底盘与机械臂原本各自拥有一份完整 STM32 工程。直接拼接会带来两个 `main`、两个时基、
+共享串口缓冲和 TIM7/USART3/GPIO 冲突，也无法保证任一上位机的坏帧不会污染另一控制域。
+
+### Decision
+
+新增 `firmware/cleanscout_combined_controller/`，以正式 RF1 工程为母体：
+
+- USART2 PA2/PA3 只解析底盘行协议
+- USART3 PB10/PB11 只解析机械臂文本协议
+- UART5 PC12 只做 MCU 到总线舵机的半双工执行链
+- 每个端口独立 RX/TX ring、解析状态和 overflow 计数
+- IRQ 只搬运字节，解析和动作在主循环执行
+- 正式后端只启用 `servo_bus`，不带入冲突的 TIM7 本地 PWM
+
+### Consequences
+
+- Positive: 旧 Raspberry Pi 与 Orange Pi 协议可同时在线，跨协议输入会被各自拒绝。
+- Positive: 全局 ESTOP 可以从任一主机入口锁存并覆盖两个执行域。
+- Negative: 在 30 分钟双域长稳、完整方向和负载运动完成前只能标记 `ROS_READY=NO`。
+
+### Evidence
+
+- commit `5f70f732`
+- `docs/下位机双串口双协议合并任务书.md`
+- `docs/DUAL_UART_PROTOCOL.md`
+- `docs/VERIFY/combined_dual_uart_controller_verification.md`
+
 ## ADR Index
 
 - [[adr/2026-04-19-rf1-native-timer-encoder-path]]

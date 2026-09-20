@@ -241,3 +241,38 @@ Have the device/PC side actively connect to cloud over WebSocket, then multiplex
 - Project: `cleanscout-rover-vue3`
 - Source: `Git-ys1/CleanScout_rover/vue3`
 - Files: `docs/releases/V-1.7.0/README.md`, `docs/releases/V-2.1.0/README.md`, `docs/camera-mjpeg-stream.md`
+
+## Pattern: Combine uniform sweeps with exact rational-resonance enumeration
+**Status**: active
+**Seen In**: stm32g474-tjc-display
+
+### Use When
+
+A sampled periodic system is validated over frequency and failures can occur when
+`f/Fs` reduces to a small denominator, such as phase folding, coherent sampling,
+FFT leakage tests, or equivalent-time reconstruction.
+
+### Avoid When
+
+The parameter under test has no rational relation to a fixed clock, or a closed-form
+proof already covers the entire admissible range.
+
+### Notes
+
+A decimal grid `f=kΔf` only hits rational ratios whose reduced denominators divide
+`Fs/Δf`. Making `Δf` smaller improves trend resolution but can still miss exact
+denominators containing other prime factors. Use two complementary sets:
+
+1. a uniform sweep for continuous behavior;
+2. exact coprime points `f=Fs*p/q`, plus a small detuning neighborhood, for resonances.
+
+For finite records, report occupied hard phase bins and maximum circular phase gap.
+Do not infer information coverage from an interpolation or weighted-write mask that
+can let one physical sample contribute to multiple bins.
+
+### Evidence
+
+- Project: `stm32g474-tjc-display`
+- Source: `tools/analyze_phase_coverage.py`
+- Verified: 2026-07-31; a 10 Hz sweep plus exact `q<=256` resonances found `Fs/3`
+  with only 3 of 256 hard bins, a point no decimal frequency grid can hit exactly.

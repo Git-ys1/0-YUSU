@@ -9,11 +9,13 @@
 - Visibility: private
 - OS/Environment: Windows host, Ubuntu 20.04 secondary system planned
 - Main Languages/Frameworks: Markdown, Git, Codex AGENTS, Codex Skills, Obsidian vault
-- Last Updated: 2026-06-09
+- Last Updated: 2026-09-20
 - Maintainer/Source: yusu + Codex
 
 ## Quick Links
 
+- [[11_workspace_orientation_2026-09-05|2026-09-05 管理员接手与本机工作区快照]]
+- [[12_ingestion_acceptance_2026-09-20|2026-09-20 多项目入库验收]]
 - [[00_project_brief]]
 - [[01_architecture]]
 - [[02_runbook]]

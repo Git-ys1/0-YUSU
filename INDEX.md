@@ -2,6 +2,8 @@
 
 ## 必读入口
 
+- [[01_Projects/yusu-codex-knowledge-vault/11_workspace_orientation_2026-09-05|2026-09-05 本机工作区接手快照]]
+- [[01_Projects/yusu-codex-knowledge-vault/12_ingestion_acceptance_2026-09-20|2026-09-20 多项目入库验收]]
 - [[00_START_HERE_FOR_CODEX]]
 - [[04_Runbooks/system-decisions]]
 - [[04_Runbooks/codex-retrieval-workflow]]
@@ -21,7 +23,13 @@
 - [[01_Projects/auto-play/README]]
 - [[01_Projects/simple-oscilloscope/README]]
 - [[01_Projects/cleanscout-rover/README]]
+- [[01_Projects/cleanscout-rover-lower-firmware/README]]
+- [[01_Projects/cleanscout-rover-orangepi-ai/README]]
 - [[01_Projects/cleanscout-rover-vue3/README]]
+- [[01_Projects/hyperframes/README]]
+- [[01_Projects/stm32g474-tjc-display/README]]
+- [[01_Projects/video-to-codex-spec/README]]
+- [[01_Projects/wecom-deepseek-bot/README]]
 - [[01_Projects/carbonrag/README]]
 - [[01_Projects/invoice-archive-manager/README]]
 - [[01_Projects/kaoyan-bjtu-ee/README]]

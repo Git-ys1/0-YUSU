@@ -1,20 +1,21 @@
 # YUSU Personal Site
 
-YUSU 知识库的本地个人站与原生 Marginalia 工作台。运行时由一个 FastAPI 进程在 `127.0.0.1:8787` 同时提供个人主页、知识库 API、Marginalia `/v1` API、React UI 和本机考研数据看板入口。
+YUSU 知识库的本地个人站与原生 Marginalia 工作台。运行时由一个 FastAPI 进程在 `127.0.0.1:8787` 同时提供个人主页、知识库 API、Marginalia `/v1` API、React UI、本机考研数据看板和考研例程统计入口。
 
 ## Architecture
 
 - Personal showcase UI: zero-build HTML/CSS/JavaScript under `web/`, with MIT-licensed Lenis vendored under `web/vendor/lenis/`.
+- Routine tracker UI: zero-build `/routine/` page under `web/routine.*`, with Apache-2.0 SheetJS vendored under `web/vendor/sheetjs/` for browser-side `.xls/.xlsx` import and a note-derived AI milestone calendar.
 - Personal site media: original material under `media/raw/`, derived browser material under `media/derived/` and `web/assets/`.
 - Integrated Marginalia UI source: React/Vite under `marginalia-ui/`.
 - Committed runtime UI: production build under `marginalia-dist/`.
 - Integrated Marginalia backend source: Python package under `marginalia-backend/marginalia/`.
 - Backend host: `server.py` loads the local backend source first, then registers YUSU routes directly on Marginalia's FastAPI app.
 - Kaoyan dashboard: served directly from `F:\AcademicHub\000资料相关\000考研\00_打开-北交电气考研数据看板.html` under `/kaoyan/`.
-- Data/runtime: ignored `.marginalia-yusu/` SQLite, mirror library, journal and semantic index.
+- Data/runtime: ignored `.marginalia-yusu/` SQLite, mirror library, journal and semantic index; ignored `07_PersonalSite/local/routine/` stores private uploaded Tomato ToDo exports and merged routine records.
 - Optional semantic compute: CarbonRAG BGE-M3 shim on `127.0.0.1:8011`.
 
-Current showcase visual version: `0.6-award-level-showcase`. It is based on direct review of the extracted reference-video contact sheet, keeps the video method as visible navigation and section structure, and now groups competition evidence by achievement level.
+Current showcase visual version: `0.8-knowledge-refresh`. It is based on direct review of the extracted reference-video contact sheet, keeps the video method as visible navigation and section structure, groups competition evidence by achievement level, adds a local Tomato ToDo routine tracker for exam-prep logs, and reflects the 2026-09-20 knowledge-vault ingestion round.
 
 There is no iframe, frontend proxy, `5173` Vite server, or separate `8000` Marginalia API in normal use. `vendor/marginalia` remains the upstream reference copy; the integrated runtime uses `07_PersonalSite/marginalia-backend` and `07_PersonalSite/marginalia-ui`.
 
@@ -52,6 +53,7 @@ bash tools/run-yusu-personal-site.sh
 Open:
 
 - Personal site: `http://127.0.0.1:8787/`
+- Routine tracker: `http://127.0.0.1:8787/routine/`
 - Kaoyan dashboard: `http://127.0.0.1:8787/kaoyan/`
 - Native Agent: `http://127.0.0.1:8787/marginalia/chat`
 - Library: `http://127.0.0.1:8787/marginalia/library`
@@ -59,6 +61,37 @@ Open:
 - Settings: `http://127.0.0.1:8787/marginalia/settings`
 - API/health: `http://127.0.0.1:8787/v1/*`, `http://127.0.0.1:8787/health`
 - Kaoyan status: `http://127.0.0.1:8787/api/kaoyan/status`
+
+## Routine Tracker Maintenance
+
+The routine tracker is for private Tomato ToDo / 番茄 ToDo exports used in exam-prep review.
+
+Local runtime storage:
+
+```text
+07_PersonalSite/local/routine/
+```
+
+This directory is ignored by Git. It contains:
+
+- `imports/`: original uploaded `.xls`, `.xlsx`, `.csv`, or `.tsv` files.
+- `routine-records.json`: merged normalized records and import history.
+
+Use the web page:
+
+```text
+http://127.0.0.1:8787/routine/
+```
+
+Supported import path:
+
+- Browser-side SheetJS parses `.xls/.xlsx/.csv/.tsv` and posts normalized records plus the original file to `/api/routine/import-json`.
+- The server stores the original file locally, deduplicates records by time/task/duration/note, and serves `/api/routine/stats`.
+- DeepSeek/OpenAI-compatible review is optional at `/api/routine/summary`; it reads keys only from ignored runtime environment such as `.marginalia-yusu/.env`.
+- DeepSeek/OpenAI-compatible milestone extraction is available at `/api/routine/milestones`. It must use imported Tomato ToDo remarks as the evidence source, then stores derived labels such as start/finish/chapter/exercise/accuracy markers in ignored `routine-records.json`.
+- The calendar UI supports year, month, and day modes. Month cells use task-colored focus rings, pinned milestone chips, and a day-detail inspector for the original records behind each label.
+
+Do not commit routine exports or `routine-records.json`. The committed part is only the tool and documentation.
 
 ## Kaoyan Dashboard Maintenance
 

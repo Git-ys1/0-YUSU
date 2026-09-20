@@ -362,3 +362,28 @@ vendor baseline 常常带着旧机器生成的日志、HEX 和工程文件一起
 
 - `docs/VERIFY/C-5.0.3_arm_tracking_strategy.md`
 - `OrangePi/rk3588_ai/arm_tracking_demo/config/arm_track_config.yaml`
+
+## Issue: 多串口合并不能复用旧机械臂共享缓冲，UART5 半双工还必须处理回显帧头
+
+### Symptom
+
+- 旧机械臂代码让 USART1/2/3/5 共用 `uart_receive_buf`、`buf_index`、`uart_mode`
+- 实机查询时 UART5 曾收到 `##000P1500!`，严格按单个 `#` 起始会导致合法位置回包丢失
+- STM32CubeProgrammer `-rst` 后个别组合仍会让内核停在暂停态
+
+### What Fixed It
+
+- 三条链路使用独立 ring、状态机和错误计数，IRQ 只做字节收发
+- UART5 遇到新的 `#` 时从最新帧头重同步，但仍严格校验 payload 和期望舵机 ID
+- 烧录脚本在 write/verify/reset 后显式执行 `-g 0x08000000`
+
+### Rule
+
+多 UART 固件不能只靠“不同前缀”隔离协议，必须从缓冲、状态、TX 队列和执行域四层隔离。
+半双工总线的回显/重复帧头应在链路层重同步，不能放宽业务帧校验。
+
+### Evidence
+
+- `firmware/cleanscout_combined_controller/User/arm_servo_bus.c`
+- `firmware/cleanscout_combined_controller/scripts/flash.ps1`
+- `docs/VERIFY/combined_dual_uart_controller_verification.md`

@@ -36,6 +36,7 @@ Open:
 
 ```text
 http://127.0.0.1:8787/
+http://127.0.0.1:8787/routine/
 http://127.0.0.1:8787/kaoyan/
 http://127.0.0.1:8787/marginalia/chat
 http://127.0.0.1:8787/marginalia/library
@@ -51,8 +52,11 @@ Invoke-RestMethod http://127.0.0.1:8787/health
 Invoke-RestMethod http://127.0.0.1:8787/api/status
 Invoke-RestMethod http://127.0.0.1:8787/api/marginalia/status
 Invoke-RestMethod http://127.0.0.1:8787/api/kaoyan/status
+Invoke-RestMethod http://127.0.0.1:8787/api/routine/stats
+Invoke-RestMethod http://127.0.0.1:8787/api/routine/milestones -Method Post
 Invoke-RestMethod "http://127.0.0.1:8787/api/search?q=CleanScout"
 Invoke-WebRequest http://127.0.0.1:8787/marginalia/chat
+Invoke-WebRequest http://127.0.0.1:8787/routine/
 Invoke-WebRequest http://127.0.0.1:8787/kaoyan/
 ```
 
@@ -70,6 +74,16 @@ For the Kaoyan dashboard, expected status fields:
 - `uiBase=/kaoyan/`
 - `online=true`
 - `workspace=F:\AcademicHub\000资料相关\000考研` unless `YUSU_KAOYAN_WORKSPACE` was overridden.
+
+For the routine tracker, expected status fields after the first Tomato ToDo import:
+
+- `store.path=F:\AcademicHub\0#YUSU\07_PersonalSite\local\routine\routine-records.json`
+- `stats.records.total` equals the imported row count
+- `stats.records.included` excludes zero-minute records and `中途放弃`
+- `stats.kpis.totalHours` is the effective focus-hour total shown in the UI.
+- `stats.tasks` preserves Chinese task names such as `高等数学`
+- `stats.calendar` contains year/month/day-ready day objects with task-colored focus rings.
+- `stats.milestones` contains AI/fallback labels derived from Tomato ToDo notes, not from free-form invention.
 
 Agent SSE smoke uses native routes:
 
@@ -89,6 +103,37 @@ Showcase layer:
 2. Keep vendored browser libraries under `07_PersonalSite/web/vendor/` with their license files.
 3. Run `node --check .\07_PersonalSite\web\app.js`.
 4. Verify desktop and mobile with Playwright.
+
+Routine tracker layer:
+
+1. Edit `07_PersonalSite/web/routine.html`, `routine.css`, or `routine.js`.
+2. Keep SheetJS under `07_PersonalSite/web/vendor/sheetjs/` with its Apache-2.0 license.
+3. Run `node --check .\07_PersonalSite\web\routine.js`.
+4. Verify real import through `/routine/` with Playwright `setInputFiles`; do not rely only on API smoke tests because `.xls` is parsed browser-side to avoid Windows backend encoding issues.
+
+## Update Routine Imports
+
+Use the web page:
+
+```text
+http://127.0.0.1:8787/routine/
+```
+
+Private runtime data lives here and is intentionally ignored by Git:
+
+```text
+07_PersonalSite/local/routine/
+```
+
+The current import path:
+
+- Browser SheetJS reads `.xls/.xlsx/.csv/.tsv`.
+- Browser posts normalized records and the original file to `/api/routine/import-json`.
+- Server saves the original file under `local/routine/imports/`, merges records into `routine-records.json`, and exposes `/api/routine/stats`.
+- `/api/routine/summary` uses the ignored DeepSeek/OpenAI-compatible LLM config when available.
+- `/api/routine/milestones` uses the same ignored LLM config to extract calendar labels from record notes. The source of truth is the imported table remarks; labels such as `开始复习`, `第一章完成`, `开始做题`, or `正确率56.25%` must be traceable to an individual record note.
+
+Do not commit exported Tomato ToDo files or `routine-records.json`.
 
 Marginalia layer:
 

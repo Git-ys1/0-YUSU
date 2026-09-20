@@ -19,3 +19,12 @@
 | 覆盖用户设置和用户宏文件 | auto-play | [[03_CrossProject/pitfalls]] | active |
 | UI click duplicated as device toggle | cleanscout-rover-vue3 | [[03_CrossProject/pitfalls]] | active |
 | Long-lived MJPEG stream killed by normal request timeout | cleanscout-rover-vue3 | [[03_CrossProject/pitfalls]] | active |
+| Embedded newlib-nano silently drops float printf fields | stm32g474-tjc-display | [[03_CrossProject/pitfalls]] | active |
+| A local rendering failure suppresses independent telemetry | stm32g474-tjc-display | [[03_CrossProject/pitfalls]] | active |
+| Multiple input devices implement the same UI action twice | stm32g474-tjc-display | [[03_CrossProject/pitfalls]] | active |
+| Coverage computed from an estimated coordinate model can be false confidence | stm32g474-tjc-display | [[03_CrossProject/pitfalls]] | active |
+| Digital filtering is treated as a replacement for the ADC analog boundary | stm32g474-tjc-display | [[03_CrossProject/pitfalls]] | active |
+| Buffer length and engineering unit drift across module boundaries | stm32g474-tjc-display | [[03_CrossProject/pitfalls]] | active |
+| Smooth analytical reconstruction is treated as proof that the measurements are correct | stm32g474-tjc-display | [[03_CrossProject/pitfalls]] | active |
+| Direct raw-sample plotting is mistaken for calibrated waveform reconstruction | stm32g474-tjc-display | [[03_CrossProject/pitfalls]] | active |
+| An invalid or absent measurement is handled by dropping the frame | stm32g474-tjc-display | [[03_CrossProject/pitfalls]] | active |

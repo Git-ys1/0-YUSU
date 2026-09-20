@@ -6,8 +6,8 @@
 - [ ] Run `bash tools/setup-codex-endpoint.sh`.
 - [ ] Verify Ubuntu Codex can read `YUSU_KB_ROOT` and discover `yusu-kb`.
 - [ ] Make a tiny Ubuntu-side test commit, push it, then pull it on Windows.
-- [ ] Run mature-project retrospective audit for this vault after the 2026-06-09 mature files are written.
-- [ ] Review older project entries that predate super-yusuV0.2 and decide which need routing-audit upgrades.
+- [x] Run mature-project retrospective audit for this vault after the 2026-06-09 mature files are written.
+- [ ] Review remaining partial entries (`carbonrag`, `invoice-archive-manager`, `kaoyan-bjtu-ee`, `yusu-personal-site`) and decide which need full mature-ingestion upgrades.
 
 ## Needs User Decision
 

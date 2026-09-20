@@ -5,8 +5,8 @@
 - Project Name: YUSU Personal Site / Showcase Wall
 - Project Slug: `yusu-personal-site`
 - Primary Path: `F:\AcademicHub\0#YUSU\07_PersonalSite`
-- Status: local V0.3 integrated runtime
-- Last Updated: 2026-06-20
+- Status: local V0.8 integrated runtime
+- Last Updated: 2026-09-20
 - Maintainer/Source: YUSU KB administrator
 
 ## Quick Links
@@ -33,5 +33,7 @@ The current version is a local-only personal site that combines:
 - a same-process Kaoyan dashboard route at `/kaoyan/` with a visible return link
 - vendored Lenis smooth-scroll enhancement under `07_PersonalSite/web/vendor/lenis/`
 - one normal runtime port, `127.0.0.1:8787`, with no iframe or Vite dev server
+- a local `/routine/` Tomato ToDo importer and year/month/day milestone calendar
+- a refreshed proof wall with the 2026 Beijing electronic-design provincial second prize and newly ingested project entries
 
 It is intentionally not hosted in the cloud yet.

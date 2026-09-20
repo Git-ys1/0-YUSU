@@ -56,6 +56,7 @@ fi
 
 if [[ "$skip_install" -eq 0 ]]; then
   "$venv_dir/bin/python" -m pip install -e "$submodule_dir"
+  "$venv_dir/bin/python" -m pip install "xlrd==2.0.1"
 fi
 
 "$venv_dir/bin/marginalia" init "$runtime_dir"

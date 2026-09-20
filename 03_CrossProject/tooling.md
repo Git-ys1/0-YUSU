@@ -296,6 +296,22 @@ Use `deepseek-v4-flash` as the first-run model because it returned non-empty `me
 
 Evidence: On 2026-06-19, DeepSeek `/models` returned `deepseek-v4-flash` and `deepseek-v4-pro`; `deepseek-v4-flash` returned `OK`; `deepseek-v4-pro` returned empty content under a short `max_tokens` smoke. Marginalia ingest then applied 47 new and 18 modified files, and the final BGE rebuild contained 179 entries.
 
+### Enterprise WeChat intelligent bot long-connection facts
+
+When implementing 企业微信智能机器人长连接, use the official doc path `https://developer.work.weixin.qq.com/document/path/101463` as the protocol source. The page can return a very large HTML document, but targeted extraction around terms such as `aibot_subscribe`, `aibot_msg_callback`, `aibot_respond_msg`, and `ping` exposes the current examples and field tables.
+
+Verified on 2026-06-22:
+
+- WebSocket endpoint: `wss://openws.work.weixin.qq.com`.
+- Subscribe command: `aibot_subscribe`.
+- Subscribe body fields: `bot_id` and `secret`.
+- Message callback command: `aibot_msg_callback`; text sample has `body.msgid`, `body.aibotid`, optional group `body.chatid`, `body.chattype`, `body.from.userid`, `body.msgtype=text`, and `body.text.content`.
+- Heartbeat command: `ping`; official suggested interval is 30 seconds.
+- Reply command: `aibot_respond_msg`; reply should reuse the callback `headers.req_id`. Ordinary replies can use markdown/non-streaming payloads, while stream replies use `msgtype=stream`, stable `stream.id`, and `finish`.
+- One bot should have only one effective long connection at a time; a new successful subscription can kick the old connection.
+
+Evidence: `F:\Project\微信智能体\wecom-deepseek-bot` V0.1 connected to WeCom, subscribed with `errcode=0`, and received `heartbeat ok`; unit tests cover protocol builders without storing secrets.
+
 ### Marginalia scripted ingest must auto-confirm and wait
 
 Marginalia `/ingest --all` prompts for confirmation and then queues per-file background tasks. Automation should use:
@@ -348,6 +364,34 @@ tools\flash_stlink.bat
 Then verify the running firmware through its normal serial protocol. This avoids confusing "hex was built" with "board was flashed."
 
 Evidence: Simple Oscilloscope V0.9.3 generated `Objects\SimpleOscilloscope.hex`, flashed by ST-Link, and COM14 returned firmware `0.9.3`.
+
+### Canonical STM32CubeProgrammer CLI path on yusu Windows
+
+On yusu's current Windows machine, use this verified standalone STM32CubeProgrammer
+CLI path first:
+
+```text
+F:\AcademicHub\STMicroelectronics\stm32cubeprogrammer\bin\STM32_Programmer_CLI.exe
+```
+
+Before any search, check this exact path with `Test-Path`. Do **not** recursively
+scan entire `C:`, `D:` and `F:` drives for `STM32_Programmer_CLI.exe`; that is slow
+and unnecessary.
+
+A version-dependent fallback currently exists inside STM32CubeIDE 2.1.0:
+
+```text
+F:\CodeForge\STM32CubeIDE_2.1.0\STM32CubeIDE\plugins\
+com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.win32_2.2.400.202601091506\
+tools\bin\STM32_Programmer_CLI.exe
+```
+
+Prefer the standalone path because the CubeIDE plugin directory contains version
+numbers and may change after an IDE upgrade.
+
+Evidence: the standalone CLI reported STM32CubeProgrammer v2.22.0 on 2026-07-30.
+During the STM32G474 KEY1 firmware task, failing to use the known path first caused
+an avoidable full-drive recursive search and user-visible delay.
 
 ### HyperFrames TTS on Windows
 
@@ -429,6 +473,31 @@ Recommended discipline:
 
 Evidence: CleanScout Rover lower-firmware cleanup on 2026-06-07 had to restore Keil project files after GUI-side rewrites, even though the underlying runtime behavior was meant to stay unchanged.
 
+### Keil compiler pins and CMSIS-DSP include paths must be audited together
+
+Imported Keil projects may simultaneously pin an unavailable Arm Compiler version in
+`pArmCC`/`pCCUsed` and reference CMSIS-DSP headers through the previous developer's
+absolute drive path. A historical successful build or a bundled `.lib` does not prove
+the current machine can rebuild the project.
+
+Safe workflow:
+
+1. inspect the exact compiler pin before building;
+2. locate the current machine's installed Arm Compiler version;
+3. vendor the matching official CMSIS-DSP headers into the isolated integration
+   workspace when the repository lacks them;
+4. convert include and library references to repository-relative paths;
+5. verify the bundled DSP library against an official local copy by hash when possible;
+6. run a full clean link and report the actual toolchain version;
+7. never edit the original vendor/teammate snapshot merely to fit the local machine.
+
+Evidence: `stm32g474-tjc-display` V1.4 on 2026-07-30 inherited an Arm Compiler
+6.23 pin and an `E:`-drive CMSIS-DSP include path. The isolated integration copy was
+made portable with official STM32Cube G4 V1.6.3 headers, relative paths, and the
+locally installed Arm Compiler 6.7; Clean Rebuild completed with 0 errors and
+0 warnings.
+
+
 ### Backend deploy scripts must load runtime env before Prisma
 
 Prisma CLI validates `schema.prisma` before migrations run, so update/bootstrap scripts must load the production env file first. If `DATABASE_URL` is missing during `npx prisma migrate deploy`, the deployment script is wrong even if the systemd service would later have the env.
@@ -449,7 +518,7 @@ Evidence: CleanScout `cleanscout-rover-vue3` V-2.2.2.
 
 ### Orange Pi remote SSH development access
 
-For the local Windows Codex environment, the Orange Pi 5 Max at `10.53.110.224` is reachable as `orangepi@10.53.110.224`. On 2026-06-08, a dedicated local SSH key was created at `C:\Users\yusu\.ssh\orangepi_10_53_110_224_ed25519`, its public key was added to the remote `authorized_keys`, and `C:\Users\yusu\.ssh\config` gained aliases `opi5max`, `orangepi5max`, and `10.53.110.224`.
+For the local Windows Codex environment, the Orange Pi 5 Max now uses the portable-WiFi fixed IP `192.168.8.148` and is reachable through the SSH aliases `opi5max` / `orangepi5max`. On 2026-06-08, a dedicated local SSH key was created at `C:\Users\yusu\.ssh\orangepi_10_53_110_224_ed25519`, its public key was added to the remote `authorized_keys`, and `C:\Users\yusu\.ssh\config` gained the aliases. On 2026-07-03, those aliases were repointed from the old changing phone-hotspot IP to `192.168.8.148`.
 
 Use `ssh opi5max` for future development. Verified remote baseline: hostname `orangepi5max`, Ubuntu 20.04.6 / Orange Pi Focal, kernel `5.10.160-rockchip-rk3588`, user `orangepi`, Git 2.25.1, Python 3.8.10, Docker 28.1.1, and about 33G free on `/`.
 
@@ -495,3 +564,31 @@ Windows 上定点修改现有 PPTX 时，如果用户给的是已完成视觉稿
 3. 修改前先复制原 PPTX，修改后用 PowerPoint 导出目标页 PNG 做视觉校验，确认页数、尺寸、文件大小正常。
 
 Evidence: 2026-06-13 大创立项 PPT 第 8 页修改中，手工拼接参考页效果差；改为从原 PPT 复制后清空第 8 页并铺满用户给定 PNG，输出 `实验室具身智能与近场作业平台_第8页图片版.pptx`，11 页和 960x540 尺寸校验通过。
+
+### SOLIDWORKS 2024 COM parametric modeling on Windows
+
+在本机 SOLIDWORKS 2024 SP5（revision `32.5.0`）做无人值守建模时，优先使用安装目录的 `SolidWorks.Interop.sldworks.dll` 编译早绑定 C# 调用，不要依赖 PowerShell 动态 COM。动态调用可能在 `Visible`、`RevisionNumber` 等普通成员上直接报：
+
+```text
+TYPE_E_ELEMENTNOTFOUND (0x8002802B)
+```
+
+当前环境的 `IModeler.CreateBodyFromBox3(double[])` 还可能报：
+
+```text
+DISP_E_ARRAYISLOCKED (0x8002000D)
+```
+
+稳定替代方案是：
+
+1. 从 `gb_part.prtdot` 新建零件。
+2. 早绑定遍历 `RefPlane`，显式选择前视/上视基准面。
+3. 用 `SketchManager.CreateCornerRectangle` / `CreateCircleByRadius` 建草图。
+4. 用 `FeatureExtrusion3` 生成原生可编辑特征。
+5. 对通孔、环形凸台、方管和法兰开口，直接在同一草图中放外轮廓与内轮廓，一次拉伸；不要把不稳定的偏置 `FeatureCut3` 当唯一实现路径。
+
+坐标注意：GB 模板的前视面是 `XY`，上视面是 `XZ`，上视草图第二轴对应 `-Z`。具体项目还要先从既有模型确认哪个轴是物理高度；CleanScout 旧模型使用 `Y` 作为车高。
+
+装配注意：`IAssemblyDoc.AddComponent5(x,y,z)` 在本机实测把坐标当组件包络中心。建立装配时应准备显式组件中心表，保存后再用 `IAssemblyDoc.GetBox` 和 `IComponent2.GetBox` 校验总包络和每件位置。关闭装配后，先前的零件 COM 对象可能变成 `RPC_E_DISCONNECTED`；关闭前缓存标题，之后按标题清理，不要再解引用旧对象。
+
+Evidence: 2026-07-12 CleanScout Rover 机械重构，源模型 `260711_2`，输出 `260712_3_CleanScout_redesign`；最终 SLDASM 复开 errors `0` / warnings `0`，并成功导出 SLDPRT、SLDASM、STEP、STL 和 PNG。

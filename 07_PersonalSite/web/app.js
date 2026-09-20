@@ -22,9 +22,14 @@ const escapeHtml = (value) => String(value ?? "")
   .replaceAll("'", "&#039;");
 
 const isImage = (source) => /\.(jpg|jpeg|png|webp)$/i.test(source || "");
+const sourceType = (source) => {
+  const match = String(source || "").match(/\.([a-z0-9]+)(?:[?#].*)?$/i);
+  return match ? match[1].toUpperCase() : "DOC";
+};
+
 const achievementLevels = [
   { key: "national", label: "国赛", tone: "gold" },
-  { key: "provincial", label: "省级 / 区域赛", tone: "green" },
+  { key: "provincial", label: "省级", tone: "green" },
   { key: "campus", label: "校级", tone: "blue" },
 ];
 
@@ -56,8 +61,8 @@ function renderAchievements(items) {
   achievementsEl.innerHTML = groups.map((group) => `
     <section class="achievement-group achievement-group-${group.tone}" aria-label="${escapeHtml(group.label)}">
       <div class="achievement-group-head">
-        <h3>${escapeHtml(group.label)}</h3>
-        <span>${group.items.length}</span>
+        <span class="achievement-level-label">${escapeHtml(group.label)}</span>
+        <strong>${group.items.length}</strong>
       </div>
       <div class="achievement-list">
         ${group.items.map((item, index) => renderAchievementCard(item, index)).join("")}
@@ -71,17 +76,27 @@ function renderAchievementCard(item, index) {
   const imageFit = item.imageFit === "cover" ? "cover" : "contain";
   const media = isImage(item.source)
     ? `<img class="achievement-image ${imageFit}" src="${preview}" alt="${escapeHtml(item.award)}">`
-    : `<div class="doc-source">${escapeHtml(item.previewLabel || item.award || item.source)}</div>`;
+    : `<div class="doc-source">
+        <span>${escapeHtml(sourceType(item.source))}</span>
+        <strong>${escapeHtml(item.previewLabel || "名单 / 公示")}</strong>
+      </div>`;
 
   const people = (item.people || []).slice(0, 5).join(" / ");
   const tags = (item.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
+  const source = item.source ? `<span>${escapeHtml(item.source)}</span>` : "";
+  const sourceHref = item.memory ? `#${escapeHtml(item.memory)}` : escapeHtml(item.media || "#");
+  const sourceAction = item.memory
+    ? `<button class="source-link doc-button" type="button" data-path="${escapeHtml(item.memory)}">打开证据</button>`
+    : `<a class="source-link" href="${sourceHref}" target="_blank" rel="noreferrer">打开原件</a>`;
 
   return `
     <article class="achievement glow-surface reveal">
       <div class="achievement-media">${media}</div>
       <div class="achievement-body">
-        <span class="item-index">${String(index + 1).padStart(2, "0")}</span>
-        <h3>${escapeHtml(item.title)}</h3>
+        <div class="achievement-title-line">
+          <span class="item-index">${String(index + 1).padStart(2, "0")}</span>
+          <h3>${escapeHtml(item.title)}</h3>
+        </div>
         <p class="award">${escapeHtml(item.award)}</p>
         <div class="meta">
           <span>${escapeHtml(item.date)}</span>
@@ -89,7 +104,10 @@ function renderAchievementCard(item, index) {
           <span>${escapeHtml(people)}</span>
         </div>
         <div class="tags">${tags}</div>
-        <a class="source-link" href="${item.media}" target="_blank" rel="noreferrer">打开原件</a>
+        <div class="achievement-source-line">
+          ${source}
+          ${sourceAction}
+        </div>
       </div>
     </article>
   `;

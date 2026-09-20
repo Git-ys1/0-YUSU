@@ -6,6 +6,33 @@
 
 ## Immediate Next Steps
 
+### 0. 完成合并固件 ROS-ready 硬件门槛
+
+Status: in progress
+
+已完成：
+
+- USART2 短时 `0.03/0.05/0.10 m/s` 架空前进、ACK、四轮编码器反馈和 STOP 归零
+- USART3 六轴 `PRAD` 只读回包
+- 两端协议交叉拒绝
+- 3 秒双路并发零运动测试
+- USART2/USART3 两端全局 ESTOP 与清除
+- 底盘约 254 ms 失联停车、ARM_V2 约 409 ms 看门狗
+
+仍要做：
+
+1. 架空回归后退、左右转、左右移和 RAW 模式。
+2. 在安全负载下验证机械臂移动边界、逐轴 PDST 和查询期间动作隔离。
+3. 真实物理拔掉两条主机链路，确认另一控制域继续工作。
+4. 双路同时在线至少 30 分钟，记录 overflow、bad frame、watchdog 和控制 tick 抖动。
+5. 全部通过后才把 `ROS_READY=NO` 改为 `YES`，再交给 RaspberryPi 维护方启动 ROS 验收。
+
+Evidence to update:
+
+- `docs/VERIFY/combined_dual_uart_controller_verification.md`
+- `docs/DUAL_UART_PROTOCOL.md`
+- 本条目 `04_progress.md`
+
 ### 1. 机械臂官方基线再做一次只读到运行的证据闭环
 
 Status: pending

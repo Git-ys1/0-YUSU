@@ -1,9 +1,9 @@
 {
   "site": {
     "name": "YUSU",
-    "version": "0.6-award-level-showcase",
+    "version": "0.8-knowledge-refresh",
     "tagline": "项目、证据、知识库的本地入口",
-    "updated": "2026-06-23"
+    "updated": "2026-09-20"
   },
   "materials": {
     "rawRoot": "07_PersonalSite/media/raw",
@@ -121,6 +121,20 @@
       "tags": ["创新创业", "市赛", "证书PDF"]
     },
     {
+      "id": "beijing-electronic-design-g-2026",
+      "title": "周期信号测量与分析装置（G题）",
+      "award": "2026 年北京市大学生电子设计竞赛二等奖",
+      "date": "2026-09",
+      "level": "provincial",
+      "project": "STM32G474 周期信号分析装置",
+      "people": ["魏浩文", "蓝俊豪", "李浩天"],
+      "source": "官方获奖名单.xlsx；参赛编号 B26244",
+      "memory": "01_Projects/stm32g474-tjc-display/12_final_result_and_code_locations_2026-09-20.md",
+      "previewLabel": "官方名单 / 第 142 行",
+      "tags": ["电子设计", "北京市赛", "G题", "STM32G474"],
+      "note": "官方获奖名单 Sheet1 第 142 行确认 B26244、北京交通大学、G题、二等奖；证书待补。"
+    },
+    {
       "id": "beijing-energy-saving-c832-2026",
       "title": "面向实验室场景的低碳智能清扫巡检系统",
       "award": "第八届北京市大学生节能节水低碳减排社会实践与科技竞赛三等奖",
@@ -164,7 +178,7 @@
       "name": "CleanScout Rover",
       "type": "机器人系统",
       "status": "active",
-      "summary": "STM32 下位机、OrangePi AI、Vue3 前后端和机械臂视觉伺服共同组成的实验室清扫巡检项目。",
+      "summary": "STM32 下位机组合控制器、OrangePi AI、跨电脑 Vue3 全栈和机械臂视觉伺服共同组成的实验室清扫巡检项目。",
       "memory": "01_Projects/cleanscout-rover/README.md",
       "tags": ["STM32", "RK3588", "Vue3", "机器人"]
     },
@@ -218,6 +232,33 @@
       "summary": "与“双碳智答”相关的碳管理和政策智能服务系统；当前只建立轻量占位，完整项目史等待 CarbonRAG 项目工程师入库。",
       "memory": "01_Projects/carbonrag/README.md",
       "tags": ["RAG", "Carbon", "LLM"]
+    },
+    {
+      "id": "stm32g474-tjc-display",
+      "name": "STM32G474 周期信号分析装置",
+      "type": "嵌入式测量系统",
+      "status": "completed / 北京市二等奖",
+      "summary": "2026 北京市大学生电子设计竞赛 G 题作品；双 ADC、FFT/Goertzel 分析与淘晶驰显示链路已完成赛后归档。",
+      "memory": "01_Projects/stm32g474-tjc-display/README.md",
+      "tags": ["STM32G474", "双ADC", "FFT", "电赛"]
+    },
+    {
+      "id": "wecom-deepseek-bot",
+      "name": "企业微信 DeepSeek Bot",
+      "type": "企业微信智能体后端",
+      "status": "validated MVP",
+      "summary": "Node.js/TypeScript 长连接机器人，已验证企业微信订阅、心跳、真实消息回调、DeepSeek 回复和客户端可见回复。",
+      "memory": "01_Projects/wecom-deepseek-bot/README.md",
+      "tags": ["WeCom", "DeepSeek", "TypeScript", "WebSocket"]
+    },
+    {
+      "id": "video-to-codex-spec",
+      "name": "Video to Codex Spec",
+      "type": "视频理解与规格提取工具",
+      "status": "validated",
+      "summary": "把参考视频拆成场景、关键帧、OCR、ASR 与 agent_context；外部视觉受阻时支持 Codex 人工视觉复核回填。",
+      "memory": "01_Projects/video-to-codex-spec/README.md",
+      "tags": ["Computer Vision", "OCR", "ASR", "Codex"]
     },
     {
       "id": "yusu-kb",

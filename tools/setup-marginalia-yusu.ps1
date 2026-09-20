@@ -93,6 +93,7 @@ $venvPython = Join-Path $venvDir "Scripts\python.exe"
 
 if (-not $SkipInstall) {
     & $venvPython -m pip install -e (Join-Path $root "vendor\marginalia")
+    & $venvPython -m pip install "xlrd==2.0.1"
 }
 
 $marginaliaExe = Join-Path $venvDir "Scripts\marginalia.exe"

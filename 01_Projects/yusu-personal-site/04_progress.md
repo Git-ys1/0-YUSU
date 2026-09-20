@@ -66,8 +66,27 @@ Local V0.5 source-integrated personal site and Marginalia runtime are in place.
   - Added real workspace spacing and bordered work panels for chat, library, search, and settings.
   - Rebuilt `07_PersonalSite/marginalia-dist/` with `tools/build-yusu-integrated-marginalia-ui.ps1`.
   - Verified `/marginalia/chat`, `/marginalia/library`, `/marginalia/search`, and `/marginalia/settings` on desktop/mobile with Playwright screenshots; no console errors or horizontal overflow.
+- Added the考研例程 tracker on 2026-06-23:
+  - Added `/routine/` as a same-process personal-site page.
+  - Added browser-side SheetJS import for Tomato ToDo `.xls/.xlsx/.csv/.tsv` exports; the original upload is saved under ignored `07_PersonalSite/local/routine/imports/`.
+  - Added `/api/routine/import-json`, `/api/routine/stats`, and `/api/routine/summary`.
+  - Merged the initial `tomatodo_history_5225.xls` export through the real page upload path: 41 total records, 36 effective records, 55.93 effective hours, 9 active days, tasks `高等数学` / `电力系统` / `电路`.
+  - Verified DeepSeek/OpenAI-compatible summary through `/api/routine/summary`; no key is committed.
+  - Verified desktop and mobile routine pages with Playwright: no console errors and no horizontal overflow.
+- Upgraded the `/routine/` calendar on 2026-06-24 after user review:
+  - Added `/api/routine/milestones`, which asks the configured DeepSeek/OpenAI-compatible LLM to extract milestone labels only from Tomato ToDo record notes.
+  - Added fallback note parsing for start, finish, chapter, exercise, accuracy, review, and warning markers so the calendar remains useful if the LLM is unavailable.
+  - Reworked the routine UI into year/month/day calendar modes, task-colored date rings, pinned milestone chips, and a clickable day-detail inspector.
+  - Verified DeepSeek milestone generation on the imported records: 6 labels, including `开始零基础篇`, `完成零基础篇`, `看完第一讲`, and `正确率56.25%`.
+  - Expanded the calendar into the primary workbench row and moved the task pie into its own row; Playwright desktop/mobile checks reported no console errors and no horizontal overflow.
+- Corrected the proof-wall award layout after user visual review:
+  - Replaced the tall two-column-feeling certificate cards with horizontal evidence lanes.
+  - Visible award groups are now only `省级` and `校级`; the empty national group stays hidden until real national evidence exists.
+  - Each achievement is a compact horizontal strip on desktop: evidence thumbnail or document badge on the left, title/award/meta/source action on the right.
+  - Mobile keeps the same group order but switches each item to a compact vertical block for readability.
+  - Verified `/` proof section with Playwright screenshots: `.tmp/personal-site-proof-horizontal-v2-desktop.png` and `.tmp/personal-site-proof-horizontal-v2-mobile.png`; no console errors or page-level horizontal overflow.
 
 ## Last Meaningful Update
 
-- Date: 2026-06-21
-- Source: Native Marginalia UI source/distro visual pass; `8787` desktop/mobile Playwright checks show dark workbench layout with no iframe/small-frame route
+- Date: 2026-06-24
+- Source: Routine tracker calendar correction; `/api/routine/milestones` generated DeepSeek-backed note labels from Tomato ToDo remarks, and `/routine/` desktop/mobile Playwright checks show the full-width calendar workbench with no console errors or page-level horizontal overflow

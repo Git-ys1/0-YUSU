@@ -49,3 +49,12 @@ ADR: [[adr/2026-05-26-esp32cam-raw-mjpeg-relay]]
 **Date**: 2026-05-19
 
 Cloud backend sends control intent. Raspberry Pi / ROS side owns local 50Hz publishing, toggle/hold logic, and lower-controller protocol selection (`W` vs `M`).
+
+## Decision: xuan-xiao-han owns the continuing frontend/backend and multimodal Agent line
+
+**Status**: accepted
+**Date**: 2026-09-06
+
+The project owner assigned `xuan-xiao-han` as the long-term frontend/backend maintainer. PR #2 introduced the standalone `vue3/bs/` Agnes multimodal Agent and was approved and merged as `02a29e57` after its Python 3.13 tests and the H5 build passed.
+
+For future integration decisions, treat this maintainer's `vue3/bs/` Agent and image-message direction as authoritative. PR #1's existing Vue/Express local image-message path remains operational until that maintainer deliberately integrates or replaces it; the two implementations must not be silently treated as already unified.

@@ -231,3 +231,262 @@ Treat MJPEG as a stream: raw tunnel when possible, no short fetch timeout for so
 - Project/source: `Git-ys1/CleanScout_rover/vue3`
 - HDS evidence path: `F:\Project\CSc——uniapp\vue3`
 - Source: V-2.2.2 raw MJPEG tunnel, `docs/camera-mjpeg-stream.md`.
+
+### Pitfall: Embedded newlib-nano silently drops float printf fields
+**Status**: active
+**Seen In**: stm32g474-tjc-display
+
+### Symptom
+
+An embedded HMI receives text commands, but numeric fields produced by `%.1f` or `%.2f` are blank or unreliable while prefixes and units remain visible.
+
+### Root Cause
+
+The firmware links `--specs=nano.specs` without `_printf_float`. A successful compile does not prove float formatting support is present at runtime.
+
+### Better Approach
+
+For small measurement displays, convert values to scaled integers and format them with integer specifiers. Only enable `_printf_float` deliberately when the flash-size and runtime costs are acceptable, and verify the actual link command.
+
+### Evidence
+
+- Project/path: `F:\Project\stm32G474VETx\TI\G_Periodic_Signal_Analyzer`
+- Date: 2026-07-30
+- Source: dashboard V1.3.1 text fix, Clean Build link command, and USART HMI simulator validation.
+
+### Pitfall: A local rendering failure suppresses independent telemetry
+**Status**: active
+**Seen In**: stm32g474-tjc-display
+
+### Symptom
+
+One plot fails, while unrelated measurements and status text remain as placeholders, making the whole dashboard appear dead.
+
+### Root Cause
+
+A sequential dashboard function returns immediately after the failed plot and never executes later text updates.
+
+### Better Approach
+
+Track independent output statuses separately. Continue updating observability and independent telemetry, then expose the failed component's ID and status code in a reserved diagnostic field.
+
+### Evidence
+
+- Project/path: `F:\Project\stm32G474VETx\TI\G_Periodic_Signal_Analyzer`
+- Date: 2026-07-30
+- Source: `Display_DrawDashboard()` V1.3.1 repair and successful simulator regression.
+
+### Pitfall: Multiple input devices implement the same UI action twice
+**Status**: active
+**Seen In**: stm32g474-tjc-display
+
+### Symptom
+
+The original touch or simulator button works, but a newly added physical key briefly
+shows a different result, an incorrect curve, or a state that is immediately overwritten.
+
+### Root Cause
+
+The physical key calls a new drawing, refresh, or latching path instead of producing the
+same semantic command as the already verified HMI button. Two implementations then
+compete over display state and result lifetime.
+
+### Better Approach
+
+Separate input detection from business action. Let each device translate its event into
+the same command, then route HMI frames and physical keys through one command handler.
+Keep ISR work limited to recording the event; perform state changes and blocking I/O in
+the main task.
+
+### Evidence
+
+- Project/path: `F:\Project\stm32G474VETx\TI\G_Periodic_Signal_Analyzer`
+- Date: 2026-07-30
+- Source: V1.4.1 KEY1 integration; the accepted fix routes both KEY1 and HMI through
+  `Display_ProcessButtonCommand()`.
+
+### Pitfall: Coverage computed from an estimated coordinate model can be false confidence
+**Status**: active
+**Seen In**: stm32g474-tjc-display
+
+### Symptom
+
+A phase-bin coverage metric reports 80% to 100%, yet the reconstructed waveform is much
+worse than at a nominally low-coverage point.
+
+### Root Cause
+
+The same estimated frequency is used both to assign sample phases and to compute coverage.
+When the true signal is locked to a low-denominator ratio but the estimate is slightly
+wrong, the calculated phases spread across many bins although the ADC only observed a few
+true phases.
+
+### Better Approach
+
+Treat geometric coverage as one diagnostic, not proof of reconstruction quality. Gate
+adaptive reconstruction with independent checks: cross-frame frequency stability,
+residual against original samples, model rank, and condition number. Enumerate exact
+rational resonances during offline validation.
+
+### Evidence
+
+- Project/path: `F:\Project\stm32G474VETx\TI\G_Periodic_Signal_Analyzer`
+- Date: 2026-07-31
+- Source: exact 256 kHz sensitivity scan; a +100 Hz assumed-frequency error reports
+  82.03% coverage while phase-fold display RMSE rises to 27.33 mV.
+
+### Pitfall: Digital filtering is treated as a replacement for the ADC analog boundary
+**Status**: active
+**Seen In**: stm32g474-tjc-display
+
+### Symptom
+
+A simulated FIR demo looks clean, so a bipolar or wide-band signal is connected directly
+to an MCU ADC with the expectation that software will remove every unwanted component.
+
+### Root Cause
+
+Digital filtering runs after sampling. It cannot undo clipping, negative or excessive pin
+voltage, sample-and-hold settling error, or out-of-band energy that has already aliased into
+the passband. Filter coefficients also represent different physical frequencies when the
+actual sample rate changes.
+
+### Better Approach
+
+Prove the acquisition chain first: safe input range and bias, common ground, source drive,
+measured sample rate, DMA integrity, and analog anti-aliasing. Only then design the digital
+filter from the actual sample rate and required passband/stopband. Keep high-rate raw capture
+separate from low-bandwidth UART visualization.
+
+### Evidence
+
+- Project/path: `F:\Project\stm32G474VETx\TI\G_Periodic_Signal_Analyzer`
+- Date: 2026-08-01
+- Source: the open-source F103 project contains no ADC/DMA and only filters 64 generated
+  sine samples; its 31-tap coefficients reach about -3 dB at 691 kHz and suppress 1 MHz by
+  about 75.5 dB when interpreted at 4.096 MS/s.
+
+## Buffer length and engineering unit drift across module boundaries
+
+Status: active
+
+### Symptom
+
+A downstream module receives a pointer to 2048 elements but is told to process 4096, or it
+applies ADC-code scaling to samples that upstream has already converted to volts. The code
+can compile and appear partly functional while reading unrelated memory or corrupting values.
+
+### Root Cause
+
+The interface exposes only a raw pointer and count while the actual frame shape, element type,
+physical unit, mutation ownership, and lifetime remain implicit. When acquisition changes from
+one ADC buffer to an interleaved floating-point frame, old call sites remain syntactically valid.
+
+### Better Approach
+
+Make the unit and representation explicit in the API, validate the exact sample count at the
+boundary, and keep conversion in one owner only. If an upstream routine mutates the shared
+buffer, snapshot or prepare downstream state before that call and publish results afterwards.
+Review pointer length, element type, unit, mutability, and lifetime together whenever the frame
+shape changes.
+
+### Evidence
+
+- Project/path: `F:\Project\stm32G474VETx\TI\G_Periodic_Signal_Analyzer`
+- Date: 2026-08-01
+- Source: the old display bridge passed a 2048-element ADC buffer with a count of 4096 and
+  converted already-scaled voltage data again; V2.5 replaced it with an explicit
+  `const float VO[4096]` prepare/publish boundary.
+
+## Smooth analytical reconstruction is treated as proof that the measurements are correct
+
+Status: active
+
+### Symptom
+
+A sparse frequency/amplitude/phase model produces a visually clean waveform, so the raw-data
+reconstruction is deleted and model output is accepted without an independent check.
+
+### Root Cause
+
+Analytical synthesis can only reproduce the components and calibration represented in its
+model. Wrong frequency, missing peaks, nonlinear front-end phase, clipping, interleaved ADC
+mismatch, and transients may disappear from the displayed curve instead of being detected.
+
+### Better Approach
+
+Use the analytical model as the primary presentation path only behind quality gates: harmonic
+relation, component SNR, calibration validity, and residual against the original samples or an
+independent reconstruction. Retain a raw-evidence path and fall back when any gate fails.
+
+### Evidence
+
+- Project/path: `F:\Project\stm32G474VETx\TI\G_Periodic_Signal_Analyzer`
+- Date: 2026-08-01
+- Source: V2.6 can reconstruct a smooth two/three-component curve from teammate Goertzel phase,
+  but `Frontend_PhaseRad()` is still zero and dual-ADC complex calibration is incomplete; the
+  existing phase-fold/Huber path remains the residual reference and fallback.
+
+## Direct raw-sample plotting is mistaken for calibrated waveform reconstruction
+
+Status: active
+
+### Symptom
+
+An ADC demo streams consecutive samples to a PC plotter and the curve looks correct, so the
+same approach is assumed to replace trigger alignment, one-period normalization, harmonic
+phase extraction, front-end calibration, and reconstruction validation.
+
+### Root Cause
+
+Consecutive samples already contain phase implicitly in their time order. Plotting `x[n]`
+therefore preserves shape without estimating an explicit phase. A normalized 1T/3T display
+or synthesis from only spectral components is a different problem: it needs a reliable
+frequency-to-phase coordinate, relative harmonic phase, and correction for the acquisition
+and analog transfer path.
+
+### Better Approach
+
+- State whether the output is a raw time record, a triggered record, a folded period, or an
+  analytical model; do not call all four "reconstruction".
+- Use raw samples as evidence and fallback even when an analytical model is the primary view.
+- Validate explicit phase against frequency error, window leakage, arbitrary frame start,
+  analog phase response, and interleaved-ADC skew.
+- Compare accuracy claims in physical units and synchronized conditions; a visually similar,
+  auto-scaled debug plot is not a calibration result.
+
+### Evidence
+
+- STM32L431 reference firmware streams 4096 internal-ADC samples directly, while its FFT path
+  uses only magnitudes and rough board-specific scale constants.
+- The G474 project needs a fixed 256-slot 1T/3T view and an optional sparse harmonic model,
+  so it must preserve the separate phase-fold, calibration, and residual-validation layers.
+
+## An invalid or absent measurement is handled by dropping the frame
+
+Status: active
+
+### Symptom
+
+After an input is disconnected, a dashboard keeps showing the previous waveform or value and
+looks as if the old signal were still present.
+
+### Root Cause
+
+The pipeline treats “no valid signal” as an early return. Since no new snapshot is published,
+the consumer correctly continues reading the last valid snapshot. “No update” and “measured
+absence” are different states but were represented by the same control flow.
+
+### Better Approach
+
+Publish an explicit valid empty-state snapshot that clears waveform, components, frequency,
+and measurements. Reserve early return for malformed input or transport failure. If the
+measurement can be noisy around the boundary, add calibrated hysteresis before publishing
+the empty state, but never retain stale telemetry unintentionally.
+
+### Evidence
+
+- Project/path: `F:\Project\stm32G474VETx\TI\G_Periodic_Signal_Analyzer`
+- Date: 2026-08-01
+- Source: V2.8 `AnalyzerBridge_PrepareReal()` rejected zero frequency/flag and retained the
+  previous sine; `AnalyzerBridge_PublishNoSignal()` now emits a valid all-zero snapshot.

@@ -209,3 +209,45 @@ Use `Git-ys1/CleanScout_rover/vue3` as canonical source and set `%CLEANSCOUT_VUE
 ### Codex Rule
 
 Treat local paths in ingestion as evidence paths, not portable runbook paths.
+
+## Issue: chat image uploads must not trust client MIME or filename extensions
+
+**Status**: resolved in PR #1, merged as `b7fc1c1b` on 2026-08-17
+**Severity**: high
+
+### Symptom
+
+The Chapter 2 chat-image implementation accepted a non-image file when the multipart request claimed `image/svg+xml`, retained the attacker-controlled `.html` extension, and exposed the result through the backend's static `/uploads` route. Ordinary rejected text uploads also returned HTTP 500 instead of a client-error status.
+
+### Root Cause
+
+The upload filter trusted the client-provided MIME prefix, while the storage service fell back to the original filename extension for MIME values outside its explicit mapping. Multer validation errors were not normalized to 400/415 responses.
+
+### Verified Fix
+
+PR #1 now restricts uploads to an explicit JPEG/PNG/GIF/WebP allowlist, detects the file signature, lets the server choose the stored extension, rejects MIME/signature mismatches with HTTP 415, and normalizes Multer validation failures to client-error responses. Its smoke script covers valid PNG 201, non-image 415, spoofed MIME 415, and unauthenticated upload 401. The reviewer repeated these cases plus a dangerous original extension test before approval and merge.
+
+### Codex Rule
+
+For any user-uploaded static asset, validate content independently of client metadata and never publish an attacker-controlled extension from a same-origin static route.
+
+## Issue: BS Python bootstrap can inherit an incompatible PowerShell module path
+
+**Status**: active, non-blocking follow-up after PR #2
+**Severity**: low
+
+### Symptom
+
+Running `vue3/bs/setup-python.cmd` from the Codex/PowerShell 7 environment can make its child Windows PowerShell fail with `Get-FileHash is not recognized`, even though the system Windows PowerShell module contains that command.
+
+### Root Cause
+
+The `.cmd` process inherits a PowerShell 7-oriented `PSModulePath`; Windows PowerShell then fails to auto-load its compatible utility module. The downloaded Python archive itself matched the pinned SHA-256, and initialization succeeded when Windows PowerShell received its normal module path.
+
+### Recommended Fix
+
+Change the bootstrap hash calculation to a module-independent .NET SHA-256 implementation, or explicitly establish the Windows PowerShell module path before calling `Get-FileHash`. Keep the pinned hash check mandatory.
+
+### Codex Rule
+
+When a Windows bootstrap script nests `cmd` and Windows PowerShell under a PowerShell 7 host, test the inherited environment rather than assuming module auto-loading is identical.

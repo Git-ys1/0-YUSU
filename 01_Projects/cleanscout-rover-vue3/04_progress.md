@@ -32,3 +32,4 @@
 - ESP32-CAM live stream performance depends on raw tunnel and network; avoid re-parsing/re-encoding unless necessary.
 - pc-ros-executor / navigation action execution is intentionally deferred after OpenClaw chat bridge.
 - Credential rotation and device management UI are not fully productized.
+- PR #2 (`02a29e57`) added a standalone local Agnes multimodal Agent under `vue3/bs/`; its Python 3.13 test suite passed 5/5 and the H5 project still builds. It is not yet wired into the existing Vue/Express account and chat system.

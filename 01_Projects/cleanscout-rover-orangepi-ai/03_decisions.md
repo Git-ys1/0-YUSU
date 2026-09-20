@@ -97,6 +97,123 @@ The frozen STM32 baseline is a dual-path gateway, not a pure "bus only" or
   `/dev/ttyUSB0`; concurrent probe/tracker processes previously consumed each
   other's replies.
 
-The first tracking loop remains Servo000 yaw plus Servo003 wrist pitch.
-Servo001/002 caused much larger main-arm motion and are not substitutes for
-the fine tracking axis.
+The early tracking sketch considered Servo000 yaw plus Servo003 wrist pitch, but live C-5.0.5/C-5.0.6 development deliberately split the work into Servo000 yaw-only first, then Servo001 lift-only. Servo003 remains a future fine pitch axis for the 34 end-effector angle.
+
+## Decision: C-5.0.5 starts with bottle-only Servo000 yaw tracking before pitch
+
+**Status**: accepted
+**Date**: 2026-07-03
+
+### Context
+
+By C-5.0.5, YOLO11 can stably recognize the bottle target in the end-camera image. The arm still carries a camera and Servo003/pitch remains mechanically sensitive, so the first closed-loop tracking stage must be smaller than a full yaw+pitch loop.
+
+### Decision
+
+Use `bottle` as the only target class and control only Servo000 yaw:
+
+- `target_selector.track_class = bottle`
+- `visual_servo.control_axes = [yaw]`
+- `driver.stop_servo_indices = [0]`
+- runtime command should include `--control_axes yaw`
+- for yaw-only smoke tests, include `--prepare_pose false` when the arm is already in the saved safe pose
+
+Servo003 pitch remains frozen until yaw direction, yaw gain, dead zone, and target-centering behavior are verified.
+
+### Evidence
+
+- CleanScout main commit `b8009323`.
+- `docs/VERIFY/C-5.0.5_arm_bottle_yaw_tracking.md`.
+- Board-side smoke on 2026-07-03 showed pure bottle detection, yaw-only dry-run frames emitting only `#000P...T0200!`, and a short real yaw-only run ending with `#000PDST!`.
+
+## Decision: C-5.0.6 adds Servo001 lift-only tracking before Servo003 pitch
+
+**Status**: accepted
+**Date**: 2026-07-03
+
+### Context
+
+C-5.0.5 proved `bottle` recognition and Servo000 yaw-only tracking. The arm is currently held in a manually tuned posture where Servo001/002 make the 12/23 chain lean back, Servo003 keeps 34 near horizontal, and the camera/center of mass stay closer to the base. Moving Servo003 too early risks pointing the camera upward or overloading the end section again.
+
+### Decision
+
+Add a separate logical axis `lift` mapped only to Servo001. For `--control_axes lift`, the tracker sends only Servo001 commands and stops only Servo001. Servo002/003/004/005 are not re-commanded by the tracking loop, preserving the safe pose. Servo003 `pitch` remains reserved for the next stage, where it should adjust the 34 end-effector angle rather than lift the whole arm.
+
+### Evidence
+
+- CleanScout main commit `4fe29bdf`.
+- `docs/VERIFY/C-5.0.6_arm_bottle_lift_tracking.md`.
+- Board-side checks on 2026-07-03: py_compile passed, lift dry-run and real-run emitted only `#001...`, synthetic vertical-error tests produced opposite Servo001 PWM outputs, and yaw-only dry-run still emitted only `#000...`.
+
+## Decision: C-5.0.7 adds Servo003 pitch-only tracking before multi-axis coordination
+
+**Status**: accepted
+**Date**: 2026-07-03
+
+### Context
+
+C-5.0.5 validated Servo000 yaw-only tracking and C-5.0.6 validated Servo001 lift-only tracking. The user then asked how `lift` and `pitch` should combine, because both affect target vertical position. The important distinction is mechanical: Servo001 changes the whole arm posture and load distribution, while Servo003 changes the 34 end-effector/camera angle.
+
+### Decision
+
+Validate Servo003 as a separate `pitch` axis before combining axes. For `--control_axes pitch`, the tracker sends only Servo003 commands and stops only Servo003. Future multi-axis vertical control should not let Servo001 and Servo003 both chase the same `err_y` equally. Servo003 should handle fast/small camera-view corrections; Servo001 should only provide slow/coarse posture correction for sustained vertical bias or Servo003 range limits.
+
+### Evidence
+
+- CleanScout main commit `001e08f9`.
+- `docs/VERIFY/C-5.0.7_arm_bottle_pitch_tracking.md`.
+- Board-side checks on 2026-07-03: py_compile passed, pitch dry-run and real-run emitted only `#003...`, synthetic vertical-error tests produced opposite Servo003 PWM outputs, yaw-only dry-run still emitted only `#000...`, and lift-only dry-run still emitted only `#001...` when run sequentially. C-5.0.7A then corrected the live pitch direction by changing only `visual_servo.invert_pitch` from `true` to `false`; `driver.pitch_pwm_sign` remains `-1`.
+
+## Decision: C-5.0.8 combines yaw, lift, and pitch with pitch-first vertical control
+
+**Status**: accepted
+**Date**: 2026-07-06
+
+### Context
+
+C-5.0.5/C-5.0.6/C-5.0.7 separately proved Servo000 yaw, Servo001 lift, and Servo003 pitch. The user then requested a first combined tracker. The known mechanical risk is that Servo001 and Servo003 both affect the target's vertical image position, but Servo001 moves the whole arm/load while Servo003 only changes the end camera angle.
+
+### Decision
+
+Enable `visual_servo.control_axes = [yaw, lift, pitch]`, but do not let lift and pitch chase `err_y` equally:
+
+- Servo000 yaw always follows horizontal error.
+- Servo003 pitch follows vertical error every control tick as the fine/fast axis.
+- Servo001 lift only joins when `abs(err_y) >= 90px`.
+- Servo001 lift is rate-divided by `combined_lift_rate_divider = 4`, so it is a slow/coarse posture correction.
+- `yolo_arm_track.py` uses `command_axes` so the command bundle normally contains 000/003, and includes 001 only on coarse-correction ticks.
+- Stop commands cover only the active combined axes: 000/001/003.
+
+### Evidence
+
+- CleanScout main commit `b5b0fb5c`.
+- C-5.0.8A follow-up commit `6af4fd8d` keeps the no-config stop fallback aligned with `[0,1,3]`.
+- `docs/VERIFY/C-5.0.8_arm_bottle_combined_tracking.md`.
+- Board-side checks on 2026-07-06: py_compile passed, YAML readback showed `[yaw, lift, pitch]`, board synthetic test emitted 000/003 on ticks 1-3/5-7 and 000/001/003 on ticks 4/8, `bottle` dry-run opened camera/RKNN but had no target in the short window, and `any` dry-run produced real detection-driven 000/003 command bundles without invoking 001 because vertical error stayed below threshold.
+
+## Decision: C-5.0.9 uses a fixed startup pose and metrics-based response tuning
+
+**Status**: accepted
+**Date**: 2026-07-06
+
+### Context
+
+The live three-axis tracker worked, but startup could move the arm to an unexpected posture and the visual servo felt slow, abrupt, and shaky. The user provided a manually verified safe pose:
+
+```text
+0=1500,1=1907,2=1900,3=900,4=1500,5=1500
+```
+
+### Decision
+
+- Three-axis tracking should prepare the arm with the above pose before real tracking unless explicitly disabled.
+- Use `tools/arm_tracking_response_test.py` for repeatable tuning: standard pose -> small 000/001/003 perturbation -> run tracking -> write `metrics.jsonl`, `summary.json`, and `score.json`.
+- For scoring, compare final error, mean error, sign changes, and target-frame ratio. Do not rely only on subjective video comments.
+- Keep Servo003 direction as `invert_pitch=false` plus `driver.pitch_pwm_sign=-1`; a brief accidental change to `pitch_pwm_sign=1` was reverted after user correction.
+
+### Evidence
+
+- `docs/VERIFY/C-5.0.9_arm_tracking_start_pose_response_tuning.md`.
+- Board readback on 2026-07-06: `pitch_pwm_sign=-1`, `invert_pitch=False`, standard pose `{0:1500,1:1907,2:1900,3:900,4:1500,5:1500}`.
+- First response run: `~/rk3588_ai/debug_logs/arm_tracking_eval/20260706-173340/score.json`, score `347.8311`, sign changes x/y `6/8`.
+- Second response run after conservative smoothing: `~/rk3588_ai/debug_logs/arm_tracking_eval/20260706-173547/score.json`, score `188.4431`, sign changes x/y `1/3`.

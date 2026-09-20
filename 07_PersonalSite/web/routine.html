@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>YUSU Routine</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="/routine.css?v=20260624-2">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/">
+        <span>Y</span>
+        <strong>YUSU</strong>
+      </a>
+      <nav>
+        <a href="/">主页</a>
+        <a href="/routine/" class="active">例程</a>
+        <a href="/kaoyan/">考研看板</a>
+        <a href="/marginalia/chat">Agent</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="kicker">TOMATO TODO IMPORT</p>
+          <h1>考研例程</h1>
+          <p class="lead">把手机番茄 ToDo 导出的表格导入本地，自动生成高数与考研学习的日、周、月、科目、时段和备注复盘。</p>
+        </div>
+        <form id="upload-form" class="upload-panel">
+          <label for="routine-file">上传番茄 ToDo 导出表</label>
+          <div class="upload-row">
+            <input id="routine-file" name="file" type="file" accept=".xls,.xlsx,.csv,.tsv">
+            <button type="submit">导入</button>
+          </div>
+          <p id="upload-status">支持 .xls / .xlsx / .csv / .tsv，原始表会保存到本机 local/routine/imports。</p>
+        </form>
+      </section>
+
+      <section class="metrics" aria-label="Routine KPIs">
+        <article>
+          <span>总专注</span>
+          <strong id="kpi-hours">--</strong>
+          <em>小时</em>
+        </article>
+        <article>
+          <span>有效记录</span>
+          <strong id="kpi-records">--</strong>
+          <em>条</em>
+        </article>
+        <article>
+          <span>活跃天数</span>
+          <strong id="kpi-days">--</strong>
+          <em>天</em>
+        </article>
+        <article>
+          <span>当前连续</span>
+          <strong id="kpi-streak">--</strong>
+          <em>天</em>
+        </article>
+      </section>
+
+      <section class="dashboard">
+        <div class="main-column">
+          <section class="panel calendar-panel">
+            <div class="panel-head">
+              <div>
+                <p class="kicker">MONTH ROUTINE</p>
+                <h2>月历复盘</h2>
+              </div>
+              <div class="calendar-actions">
+                <div class="calendar-mode-tabs" aria-label="日历视图">
+                  <button type="button" data-calendar-mode="year">年</button>
+                  <button type="button" data-calendar-mode="month" class="active">月</button>
+                  <button type="button" data-calendar-mode="day">日</button>
+                </div>
+                <button id="month-prev" type="button" aria-label="上个月">‹</button>
+                <strong id="calendar-title">等待导入</strong>
+                <button id="month-next" type="button" aria-label="下个月">›</button>
+                <button id="milestones-button" type="button">AI 标注</button>
+              </div>
+            </div>
+            <div class="calendar-workbench">
+              <div class="calendar-main">
+                <div class="calendar-weekdays" aria-hidden="true">
+                  <span>一</span>
+                  <span>二</span>
+                  <span>三</span>
+                  <span>四</span>
+                  <span>五</span>
+                  <span>六</span>
+                  <span>日</span>
+                </div>
+                <div id="calendar-grid" class="month-calendar"></div>
+              </div>
+              <aside id="day-detail" class="day-detail"></aside>
+            </div>
+            <p id="calendar-status" class="calendar-status">等待导入番茄 ToDo 表格。</p>
+          </section>
+
+          <section class="panel task-panel">
+            <div class="panel-head">
+              <div>
+                <p class="kicker">TASK SPLIT</p>
+                <h2>科目占比</h2>
+              </div>
+            </div>
+            <div id="task-pie" class="task-pie"></div>
+            <div id="task-list" class="task-list"></div>
+          </section>
+
+          <section class="panel series-panel">
+            <div class="panel-head">
+              <div>
+                <p class="kicker">DAILY / WEEKLY / MONTHLY</p>
+                <h2>时间序列</h2>
+              </div>
+              <div class="tabs" aria-label="chart mode">
+                <button type="button" data-series="daily" class="active">日</button>
+                <button type="button" data-series="weekly">周</button>
+                <button type="button" data-series="monthly">月</button>
+              </div>
+            </div>
+            <div id="series-chart" class="bar-chart"></div>
+          </section>
+
+          <section class="panel hour-panel">
+            <div class="panel-head">
+              <div>
+                <p class="kicker">FOCUS HOURS</p>
+                <h2>专注时段</h2>
+              </div>
+            </div>
+            <div id="hour-chart" class="hour-chart"></div>
+          </section>
+        </div>
+
+        <aside class="side-column">
+          <section class="panel ai-panel">
+            <div class="panel-head">
+              <div>
+                <p class="kicker">AI REVIEW</p>
+                <h2>智能小结</h2>
+              </div>
+              <button id="summary-button" type="button">生成</button>
+            </div>
+            <div id="summary-box" class="summary-box">DeepSeek 可用时，会基于统计和备注生成短复盘。</div>
+          </section>
+
+          <section class="panel notes-panel">
+            <div class="panel-head">
+              <div>
+                <p class="kicker">NOTES</p>
+                <h2>学习备注</h2>
+              </div>
+            </div>
+            <div id="note-list" class="note-list"></div>
+          </section>
+        </aside>
+      </section>
+
+      <section class="panel records-panel">
+        <div class="panel-head">
+          <div>
+            <p class="kicker">RECENT SESSIONS</p>
+            <h2>最近记录</h2>
+          </div>
+          <p id="store-path"></p>
+        </div>
+        <div id="record-table" class="record-table"></div>
+      </section>
+    </main>
+
+    <script src="/vendor/sheetjs/xlsx.full.min.js"></script>
+    <script src="/routine.js?v=20260624-2" type="module"></script>
+  </body>
+</html>

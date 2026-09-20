@@ -1,5 +1,25 @@
 # Known Issues
 
+## Issue: a passing fixed-view camera matrix is not a calibrated arm
+
+C-5.2.4 accepted `T_base_camera_reference` at the fixed pose with 5.848 mm RMSE and 9.710 mm maximum point error. This validates camera optical points in the arm-base frame only. It does not validate link-axis distances, the gripper TCP, or the physical-angle-to-PWM map.
+
+Before real PRE_GRASP, Servo000--003 still need direction, physical zero, PWM-per-angle scale, and safe-limit evidence; Servo005 needs accepted open/contact/close values. Keep `kinematics.calibrated=false` and `serial.joint_pwm_calibrated=false` until that evidence exists. Do not tune a bottle-location-specific PWM tuple as a substitute.
+
+## Issue: D435 factory extrinsics are not the arm hand-eye transform
+
+The D435 already stores RGB/left-IR/right-IR/depth calibration, and librealsense uses it for `rs.align(rs.stream.color)`. Do not ask the operator to re-measure this internal camera calibration.
+
+The missing transform is external: `T_tool_camera_color_optical`, created by the physical bracket between the RGB optical center and the gripper TCP. It must be calibrated after the final bracket is locked.
+
+## Issue: the camera and TCP are separated by Servo004
+
+The D435 is fixed to the non-rotating Servo004 stator housing, while the TCP is on the Servo004 rotor/Servo005 side. Therefore `T_tool_camera` depends on Servo004 angle. C-5.2.0B permits a constant matrix only with Servo004 fixed at PWM 1500; future wrist rotation requires an explicit `q4` transform chain.
+
+## Issue: official `$KMS` is not a complete grasp controller
+
+Official `$KMS` controls only Servo000--003 and chooses its own deepest valid Alpha. It does not control Servo004/005, define a physical TCP, provide forward kinematics, return structured reachability ACKs, detect collisions, or verify a grasp. Keep 004/005 stages and perception/safety logic outside the firmware IK wrapper.
+
 ## Issue: RKNN Runtime version string can lie if the binary is corrupt
 
 A damaged `/usr/lib/librknnrt.so` still showed version 2.3.2 via `strings`, but was 28 bytes shorter than the official file and segfaulted on `ctypes.CDLL`. Always verify file integrity, not just version strings.
@@ -75,6 +95,19 @@ Do not collapse these facts into either "all six are readable bus servos" or
 protocol; the current STM32 baseline adapts it to both bus forwarding and
 local PWM execution.
 
+## Resolved: mixed RealSense Python/runtime versions caused false RGB-D failures
+
+The OrangePi RKNN venv previously used `pyrealsense2 2.55.1` while the system
+runtime was librealsense 2.56.5. Depth-only operation could work, but aligned
+RGB-D frequently timed out or left USB/UVC errors. The validated path is an
+isolated 2.56.5 RSUSB build for both `librealsense2` and `pyrealsense2`, enabled
+with `source ~/rk3588_ai/scripts/use_realsense_rsusb.sh`.
+
+Do not reintroduce a default 0.17/0.18 m minimum or 4.0 m maximum in depth
+extraction. The depth layer rejects only zero, negative, NaN, and Inf. The
+hardware near capability of about 0.17 m is a device note; reachability belongs
+to coordinate transforms, IK, and safety checks.
+
 Evidence:
 
 - `docs/001-总线舵机资料/1.使用手册/附件1《总线舵机指令表》.docx`
@@ -82,3 +115,16 @@ Evidence:
 - `firmware/mechanical_arm_official_baseline/User/Components/y_usart/y_usart.c`
 - `OrangePi/rk3588_ai/arm_tracking_demo/tools/bus_servo_probe.py`
 - User correction on 2026-06-11: always remember the bus-servo command table and A1 visual-to-serial arm example.
+
+## Issue: C-5.2.2 wrist-camera visual approach was not a successful grasp
+
+The 2026-07-14 bottle experiment was stopped without verified grasp success. Do not describe it as a working automatic grasp baseline.
+
+- The real STM32 accepted `$KMS` text but left Servo000--003 unchanged; direct bus-servo PWM generated from the Python official IK did move the axes.
+- The first automatic plan followed the full camera-to-target 3D vector while the official IK port discarded `pitch_deg`. This produced a top-down dive instead of placing the open gripper in front of the bottle body.
+- Direct PWM PRE_GRASP reduced the central D435 depth from about 0.288 m to 0.172 m, but this was only proof of motion, not proof of a valid grasp pose.
+- Manual 001-forward and 003-up tuning produced a more frontal image, but no repeatable calibrated pose or bottle-off-table evidence was obtained.
+- 005 read about 1112 after `P0600` and about 1897 after `P2400`; these values are ambiguous until empty endpoints, opening width, bottle diameter, and object-contact readback are calibrated.
+- The session ended by sending individual `PDST` commands to Servo000--005.
+
+The repository checkpoint is `226f10b0` and the canonical failure report is `docs/VERIFY/C-5.2.2_arm_grasp_experiment_halted.md`. Before resuming, redesign around a front-of-bottle pre-grasp pose and use an external side view or explicit bottle-bottom-off-table evidence for success verification.

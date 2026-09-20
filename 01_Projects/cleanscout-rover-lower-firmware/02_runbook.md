@@ -168,3 +168,34 @@ save 1-3
 
 - RF1 正式工程收口：2026-06-07
 - 机械臂官方基线识别 + 烧录：2026-06-07
+- 双串口合并固件构建、烧录与短时双域台架：2026-07-19
+
+## Combined Controller Build And Flash
+
+仓库根目录执行：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\firmware\cleanscout_combined_controller\scripts\build.ps1 -StrictWarnings
+python -m unittest discover -s .\firmware\cleanscout_combined_controller\tests -v
+powershell -NoProfile -ExecutionPolicy Bypass -File .\firmware\cleanscout_combined_controller\scripts\static_audit.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\firmware\cleanscout_combined_controller\scripts\flash.ps1
+```
+
+正式产物：
+
+```text
+firmware/cleanscout_combined_controller/Build/Objects/CleanScout_Combined.hex
+firmware/cleanscout_combined_controller/Build/Objects/CleanScout_Combined.axf
+firmware/cleanscout_combined_controller/Build/Listings/CleanScout_Combined.map
+firmware/cleanscout_combined_controller/Build/build.log
+```
+
+接口真值：
+
+- Raspberry Pi -> USART2 PA2/PA3 -> `W/M/E/D/STOP` 和底盘遥测
+- Orange Pi -> USART3 PB10/PB11 -> Legacy / ARM_V2 机械臂协议
+- MCU -> UART5 PC12 半双工 -> 000..005 总线舵机
+
+上板后先做只读 `INFO` / `PRAD`，再架空做低速 `W`。不要直接启动 ROS。首次打开
+USART2 若遇到历史残留字节，可能返回一次 `ERR:line_too_long`；换行边界会清除残帧，随后
+必须重新发 `STOP` / `INFO` 并确认 PWM 为零。

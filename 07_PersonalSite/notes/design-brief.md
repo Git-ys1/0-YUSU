@@ -44,6 +44,10 @@ Observed direction after full time-axis sampling:
 - A top scroll-progress line and cursor-follow glow on key surfaces make the local dashboard feel alive without adding a heavy animation stack.
 - Search results update without leaving the page and link directly to vault-relative paths.
 
+## Proof Wall Layout Rule
+
+The award proof wall should stay as grouped horizontal evidence lanes, not a tall certificate-card wall. Current visible lanes are `省级` and `校级`; national-level evidence remains hidden until there is a real national award. On desktop, each achievement uses a compact horizontal strip with the certificate thumbnail or source-document badge on the left and title/award/meta/source action on the right. On mobile, the same lanes remain in order while individual achievements stack vertically for readable text.
+
 ## V0.5 Video-Driven Visual Pass
 
 Date: 2026-06-21
