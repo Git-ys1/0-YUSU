@@ -183,6 +183,8 @@ Start the local embedding shim on Windows:
 .\tools\run-carbonrag-bge-embedding-server.ps1
 ```
 
+The local shim defaults to a 1024-token maximum per file-level semantic summary. This keeps CPU rebuilds practical while preserving the BGE-M3 1024-dimensional output. Override with `-MaxLength` only when a retrieval evaluation proves longer input is needed.
+
 It serves:
 
 ```text

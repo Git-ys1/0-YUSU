@@ -14,6 +14,7 @@ from pydantic import BaseModel
 DEFAULT_MODEL = "BAAI/bge-m3"
 DEFAULT_DIMENSIONS = 1024
 DEFAULT_API_KEY = "local-bge-key"
+DEFAULT_MAX_LENGTH = 1024
 
 _CONFIGURED = False
 _MODEL_LOADED = False
@@ -77,6 +78,10 @@ def _expected_api_key() -> str:
     return os.environ.get("BGE_EMBEDDING_API_KEY", DEFAULT_API_KEY)
 
 
+def _max_length() -> int:
+    return max(128, int(os.environ.get("BGE_EMBEDDING_MAX_LENGTH", DEFAULT_MAX_LENGTH)))
+
+
 def _check_auth(authorization: str | None) -> None:
     expected = _expected_api_key()
     if not expected or expected.lower() == "none":
@@ -120,6 +125,7 @@ def health() -> dict[str, Any]:
         "provider": "carbonrag-bge-m3",
         "model": DEFAULT_MODEL,
         "dimensions": DEFAULT_DIMENSIONS,
+        "max_length": _max_length(),
         "model_dir": str(_model_dir()),
         "model_dir_exists": _model_dir().exists(),
         "model_loaded": _MODEL_LOADED,
@@ -154,15 +160,26 @@ def create_embeddings(
     texts = _normalize_inputs(payload.input)
     started = time.perf_counter()
     try:
-        from app.rag.embeddings import embed_documents
+        from app.rag.embeddings import get_rag_embedder
 
-        result = embed_documents(texts)
+        embedder = get_rag_embedder()
+        output = embedder._model_instance().encode(
+            texts,
+            batch_size=min(16, max(1, len(texts))),
+            max_length=_max_length(),
+            return_dense=True,
+            return_sparse=False,
+            return_colbert_vecs=False,
+        )
+        vectors = [
+            item.tolist() if hasattr(item, "tolist") else [float(value) for value in item]
+            for item in output.get("dense_vecs", [])
+        ]
     except Exception as exc:  # noqa: BLE001
         raise HTTPException(status_code=500, detail=f"local BGE-M3 embedding failed: {exc}") from exc
     _MODEL_LOADED = True
     _LAST_EMBED_MS = int((time.perf_counter() - started) * 1000)
 
-    vectors = result.dense
     if len(vectors) != len(texts):
         raise HTTPException(
             status_code=500,

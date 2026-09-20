@@ -6,6 +6,7 @@ CARBONRAG_ROOT="${CARBONRAG_ROOT:-/mnt/f/Project/CarbonRag}"
 HOST_ADDRESS="${HOST_ADDRESS:-127.0.0.1}"
 PORT="${PORT:-8011}"
 BGE_EMBEDDING_API_KEY="${BGE_EMBEDDING_API_KEY:-local-bge-key}"
+BGE_EMBEDDING_MAX_LENGTH="${BGE_EMBEDDING_MAX_LENGTH:-1024}"
 
 if [[ -n "${CARBONRAG_PYTHON:-}" ]]; then
   PYTHON_EXE="$CARBONRAG_PYTHON"
@@ -31,11 +32,13 @@ export RAG_EMBEDDING_MODEL="BAAI/bge-m3"
 export RAG_EMBEDDING_DEVICE="${RAG_EMBEDDING_DEVICE:-cpu}"
 export RAG_MODEL_AUTO_DOWNLOAD="false"
 export BGE_EMBEDDING_API_KEY
+export BGE_EMBEDDING_MAX_LENGTH
 
 echo "==> Starting CarbonRag BGE-M3 embedding shim"
 echo "    endpoint: http://$HOST_ADDRESS:$PORT/v1/embeddings"
 echo "    model:    BAAI/bge-m3"
 echo "    dims:     1024"
+echo "    max len:  $BGE_EMBEDDING_MAX_LENGTH tokens"
 echo "    root:     $CARBONRAG_ROOT"
 
 exec "$PYTHON_EXE" "$ROOT_DIR/tools/carbonrag-bge-openai-embedding-server.py" \

@@ -3,7 +3,8 @@ param(
     [string]$PythonPath = "",
     [string]$HostAddress = "127.0.0.1",
     [int]$Port = 8011,
-    [string]$ApiKey = "local-bge-key"
+    [string]$ApiKey = "local-bge-key",
+    [int]$MaxLength = 1024
 )
 
 $ErrorActionPreference = "Stop"
@@ -30,11 +31,13 @@ $env:RAG_EMBEDDING_MODEL = "BAAI/bge-m3"
 $env:RAG_EMBEDDING_DEVICE = "cpu"
 $env:RAG_MODEL_AUTO_DOWNLOAD = "false"
 $env:BGE_EMBEDDING_API_KEY = $ApiKey
+$env:BGE_EMBEDDING_MAX_LENGTH = [string]$MaxLength
 
 Write-Host "==> Starting CarbonRag BGE-M3 embedding shim"
 Write-Host "    endpoint: http://$HostAddress`:$Port/v1/embeddings"
 Write-Host "    model:    BAAI/bge-m3"
 Write-Host "    dims:     1024"
+Write-Host "    max len:  $MaxLength tokens"
 Write-Host "    root:     $carbonRoot"
 
 & $pythonExe $serverScript `
